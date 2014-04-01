@@ -1,0 +1,32 @@
+.post.image {
+    max-height: 600px;
+    max-width: 600px;
+}
+.post_list.image {
+    max-height: 200px;
+    max-width: 500px;
+}
+.top-bar {
+    margin-bottom:20px;
+}
+.title {
+    color:white;
+}
+.tab-bar {
+    margin-bottom:20px;
+}
+.post_list.submit_info {
+    list-style-type: none;
+    margin-left:-10px;
+}
+.post_list.feed_entry {
+    border-bottom: 1px solid #dddddd;
+    margin-bottom:30px;
+}
+fieldset legend {
+    background-color:none;
+}
+p.error {
+    color:red;
+    font-weight:bold;
+}

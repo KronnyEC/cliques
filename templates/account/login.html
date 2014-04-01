@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="large-4 large-offset-4 small-12 columns login form">
+    <p>SlasherTraxx is an invite-only site. You must be invited by a current member.</p>
+    {#<p>Traxx is an invite-only, small group socail networking site. You must be invited by a current member. We will not be taking emails to eventually give out emails.</p>#}
+
+    <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+    {% csrf_token %}
+
+        <fieldset>
+            {% if form.errors %}
+                <p class="error">Your username and password didn't match. Please try again.</p>
+            {% endif %}
+            <legend>Login</legend>
+
+            <label>Username</label>
+            <input type="text" name="username"/>
+
+            <label>Password</label>
+            <input type="password" name="password"/>
+            <input type="submit" value="login" class="button large-12 small-12" />
+            <input type="hidden" name="next" value="/" />
+
+        </fieldset>
+
+
+    </form>
+</div>
+
+{% endblock %}

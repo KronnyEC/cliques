@@ -1,0 +1,34 @@
+{% extends "site_base.html" %}
+
+{% block site_content %}
+    <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
+    <h2>{{ post.title }}</h2>
+    {% if post.type == 'image' %}
+        <img class="post_list image" src="{{ post.url }}">
+    {% elif post.type == 'youtube' %}
+        <div class=" large-9 columns">
+            <div class="flex-video">
+                <iframe id="ytplayer" type="text/html" src="http://www.youtube.com/embed/{{ post.text }}" frameborder="0"/></iframe>
+            </div>
+        </div>
+    {% else %}
+        <p>{{ post.text }}</p>
+    {% endif %}
+    <hr>
+    <div class="large-9 columns">
+      {% for comment in post.comment_set.all %}
+      <!-- Feed Entry -->
+      <div class="row">
+        {{ comment.user.username }}: {{ comment.text }}
+      </div>
+      {% endfor %}
+      <!-- End Feed Entry -->
+    </div>
+    <div class="large-9 columns">
+        <form method="POST" action="/post/{{ post.id }}/comment/">{% csrf_token %}
+            {{ form }}
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+{% endblock %}

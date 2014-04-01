@@ -1,0 +1,5 @@
+To activate your Traxx account, copy and paste the following link into your browser:
+
+http://traxx.com/accounts/activate/{{ activation_key }}/
+
+You have {{ expiration_days }} days to activate.

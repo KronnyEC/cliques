@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head_js %}
+<script src="{% static 'js/signup.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<form action="/accounts/signup/" method="POST">{% csrf_token %}
+{{ form }}
+<button type="submit">Register</button>
+</form>
+
+{% endblock %}

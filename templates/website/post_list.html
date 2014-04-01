@@ -1,0 +1,54 @@
+{% extends "site_base.html" %}
+
+{% block site_content %}
+    <!-- Main Feed -->
+    {% for post in post_list %}
+        <!-- Feed Entry -->
+        <div class="row post_list feed_entry">
+            <div class="large-12 small-12 columns post_list content_column">
+            {% if post.type == 'image' %}
+                <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
+                <img class="post_list image" src="{{ post.url }}">
+            {% elif post.type == 'youtube' %}
+                <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
+                <div class="flex-video">
+                    <iframe id="ytplayer" type="text/html" src="http://www.youtube.com/embed/{{ post.text }}" frameborder="0"/></iframe>
+                </div>
+            {% elif post.type == 'video' %}
+                <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
+            {% elif post.type == 'link' %}
+                <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
+            {% else %}
+                <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
+                <p>{{ post.text }}</p>
+            {% endif %}
+            <div class="row">
+                <div class="large-3 small-3 columns">
+                    <h6>Username</h6>
+                </div>
+                <div class="large-3 small-3 columns">
+                    <h6><a href="/post/{{ post.id }}/">{{ post.comment_set.all|length }} Comments</a></h6>
+                </div>
+                <div class="large-6 small-6 columns">
+                    <h6>{{ post.submitted|timesince }} ago{% if post.submitted != post.edited %} (Edited {{ post.edited|timesince }} ago){% endif %}</h6>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!-- End Feed Entry -->
+
+    {%  empty %}
+        <h1>No posts yet!</h1>
+    {% endfor %}
+    <div >
+
+        <form method="post" action="{% url "post_form_view_url" %}">{% csrf_token %}
+            <fieldset>
+                <legend>Add Post</legend>
+                {{ form }}
+                <button type="submit">Submit</button>
+            </fieldset>
+        </form>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% load staticfiles %}
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Traxx</title>
+    <link rel="stylesheet" href="{% static 'css/foundation.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/traxx.css' %}" />
+    {% block head_css %}{% endblock %}
+    <script src="{% static 'js/vendor/modernizr.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.js' %}"></script>
+    <script src="{% static 'js/foundation/foundation.js' %}"></script>
+    <script src="{% static 'js/foundation/foundation.offcanvas.js' %}"></script>
+    <!-- https://github.com/clickalicious/jQuery.WebSocket -->
+    <script src="{% static 'js/jquery.WebSocket.min.js'%}"></script>
+    <script src="{% static 'js/traxx.js' %}"></script>
+    {% block head_js %}{% endblock %}
+    <script>
+        $(document).foundation();
+    </script>
+</head>
+<body>
+<div class="off-canvas-wrap">
+    <div class="inner-wrap">
+        <nav class="tab-bar">
+            <section class="left-small">
+                <a class="left-off-canvas-toggle menu-icon" ><span></span></a>
+            </section>
+
+            <section class="middle tab-bar-section">
+                <h1 class="title"><a href="/">{{ SITE_NAME }}</a></h1>
+            </section>
+        </nav>
+
+        <aside class="left-off-canvas-menu">
+            <ul class="off-canvas-list">
+                <li><label>Menu</label></li>
+                <li><a href="/profile/">Profile</a></li>
+                <li><a href="/invite/">Invite</a></li>
+                <li><a href="/accounts/logout/">Log out</a></li>
+            </ul>
+        </aside>
+
+        <section class="main-section">
+            <div class="row">
+                {% block content %}{% endblock %}
+            </div>
+        </section>
+
+        <a class="exit-off-canvas"></a>
+        {% include "footer.html" %}
+    </div>
+
+</div>
+
+</body>
+</html>

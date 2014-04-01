@@ -1,0 +1,4 @@
+-r requirements.txt
+South>=0.8.4
+MySQL-python==1.2.5
+appengine-toolkit==0.1.0
