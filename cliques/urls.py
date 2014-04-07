@@ -9,15 +9,25 @@ from website.views import PostDetailView
 from invite_only.models import InviteCode
 from invite_only.views import InviteCodeView
 # from registration.views import RegistrationView
+from website.api import PostList, PostDetail, PostCommentList
+from website.api import CommentList, CommentDetail
+from website.api import UserPostList, UserDetail
+
 
 admin.autodiscover()
-
 
 post_detail = login_required(PostDetailView.as_view(model=Post))
 post_list = login_required(PostsListView.as_view(model=Post))
 post_form = login_required(PostFormView.as_view())
 invite_form = login_required(InviteCodeView.as_view())
 comment_form = login_required(CommentFormView.as_view())
+
+v1_post_urls = patterns('',
+    url(r'^posts/$', PostList.as_view(), name='post-list'),
+    url(r'^posts/(?P<pk>\d+)/$', PostDetail.as_view(), name='post-detail'),
+    url(r'^posts/(?P<pk>\d+)/comments/$', PostCommentList.as_view(),
+        name='post-comment-list')
+)
 
 urlpatterns = patterns('',
     # Examples:
@@ -41,5 +51,11 @@ urlpatterns = patterns('',
     url('^post/(?P<pk>[a-f\d]+)/comment/$',
         require_POST(comment_form),
         name='post_form_view_url'),
-    url('^invite/$', invite_form, name='invite_form')
+    url('^invite/$', invite_form, name='invite_form'),
+
+    # API
+    url(r'^api-auth/', include('rest_framework.urls',
+                               namespace='rest_framework')),
+    url('^api/v1/', include(v1_post_urls))
 )
+

@@ -26,7 +26,6 @@ class Post(models.Model):
     user = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     text = models.TextField(blank=True, null=True)
-    url = models.URLField(blank=True, null=True)
     type = models.CharField(max_length=64, choices=POST_TYPES)
     thumbnail_height = models.IntegerField(default=0)
     thumbnail_width = models.IntegerField(default=0)
@@ -64,12 +63,10 @@ class Post(models.Model):
 
     def set_image(self):
         self.type = 'image'
-        self.url = self.text
         self.text = None
 
     def set_video(self):
         # print 'found video'
-        self.url = self.text
         # Attempt to find video source. If YouTube, deal with it
         #TODO(pcsforeducation) use requests
         # url_data = urlparse.urlparse(self.url)
@@ -86,7 +83,6 @@ class Post(models.Model):
 
     def set_link(self):
         self.type = 'link'
-        self.url = self.text
         self.text = None
 
     def save(self, *args, **kwargs):
@@ -107,7 +103,7 @@ class Post(models.Model):
     def make_thumbnail(self):
         if self.type == 'image':
             # Download the image, make a thumbnail, and upload to cloudfiles.
-            tmp_file = self._download_url(self.url)
+            tmp_file = self._download_url(self.text)
             thumbnail = self._make_thumbnail(tmp_file)
             self.thumbnail = File(open(thumbnail))
 

@@ -9,7 +9,7 @@
 .top-bar {
     margin-bottom:20px;
 }
-.title {
+.title_link {
     color:white;
 }
 .tab-bar {
@@ -29,4 +29,24 @@ fieldset legend {
 p.error {
     color:red;
     font-weight:bold;
+}
+body, html {
+  height: 100%;
+}
+.inner-wrap, .off-canvas-wrap {
+    height:100%;
+}
+.text_field {
+    padding-left:0;
+    padding-right:0;
+}
+.text_label {
+    padding-left:0;
+    padding-right:0
+}
+.post_metadata h6 {
+    font-size: 75%;
+}
+[class*="column"] + [class*="column"]:last-child +[class*="submitted"] {
+    float:none;
 }

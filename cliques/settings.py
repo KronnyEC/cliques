@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'rest_framework',
     'invite_only',
     'website',
 ]
@@ -164,6 +165,7 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_ADAPTER = 'invite_only.adapter.InviteOnlyAccountAdapter'
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 SITE_ID = 1
 
@@ -193,3 +195,17 @@ APPENGINE_TOOLKIT = {
 }
 
 SITE_NAME = 'Slashtraxx'
+
+# API
+REST_FRAMEWORK = {
+    # Use hyperlinked styles by default.
+    # Only used if the `serializer_class` attribute is not set on a view.
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+        'rest_framework.serializers.HyperlinkedModelSerializer',
+
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}

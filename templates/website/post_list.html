@@ -1,5 +1,5 @@
 {% extends "site_base.html" %}
-
+{% load staticfiles %}
 {% block site_content %}
     <!-- Main Feed -->
     {% for post in post_list %}
@@ -22,16 +22,17 @@
                 <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
                 <p>{{ post.text }}</p>
             {% endif %}
-            <div class="row">
-                <div class="large-3 small-3 columns">
+            <div class="row post_metadata">
+                <div class="large-2 small-3 columns">
                     <h6>Username</h6>
                 </div>
-                <div class="large-3 small-3 columns">
+                <div class="large-2 small-3 columns">
                     <h6><a href="/post/{{ post.id }}/">{{ post.comment_set.all|length }} Comments</a></h6>
                 </div>
-                <div class="large-6 small-6 columns">
+                <div class="large-4 small-5 columns submitted">
                     <h6>{{ post.submitted|timesince }} ago{% if post.submitted != post.edited %} (Edited {{ post.edited|timesince }} ago){% endif %}</h6>
                 </div>
+                <div class="large-1 small-1 columns"></div>
             </div>
             </div>
         </div>
@@ -41,14 +42,31 @@
         <h1>No posts yet!</h1>
     {% endfor %}
     <div >
-
+    <div class="large-8 large-offset-2 small-12 columns login form">
+        <div class="row collapse">
         <form method="post" action="{% url "post_form_view_url" %}">{% csrf_token %}
             <fieldset>
                 <legend>Add Post</legend>
-                {{ form }}
-                <button type="submit">Submit</button>
+                <div class="small-3 large-2 columns text_label">
+                    <span class="prefix">Title:</span>
+                </div>
+                <div class="small-9 large-10 columns text_field">
+                    <input id="id_title" maxlength="255" name="title" type="text">
+                </div>
+                 <div class="small-3 large-2 columns text_label">
+                    <span class="prefix">Link (Optional):</span>
+                </div>
+                <div class="small-9 large-10 columns text_field">
+                    <input id="id_link" maxlength="255" name="title" type="text">
+                </div>
+                <button type="submit" class="button tiny">Submit</button>
             </fieldset>
         </form>
+        </div>
     </div>
-
+    </div>
+    <script src="{% static "js/underscore.js" %}"></script>
+    <script src="{% static "js/angular.min.js" %}"></script>
+    <script src="{% static "js/angular-resource.min.js" %}"></script>
+    <script src="{% static "js/traxx.js" %}"></script>
 {% endblock %}
