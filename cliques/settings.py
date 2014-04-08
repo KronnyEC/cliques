@@ -109,6 +109,7 @@ if ENV == 'appengine':
             'USER': 'root',
         }
     }
+    MAIL_PROVIDER = 'APPENGINE'
 elif ENV == 'localprod':
     # Running in development, but want to access the Google Cloud SQL instance
     # in production.
@@ -121,6 +122,7 @@ elif ENV == 'localprod':
             'PASSWORD': os.environ.get('APPENGINE_PASSWORD')
         }
     }
+    MAIL_PROVIDER = 'APPENGINE'
 else:
     # Running in development, so use a local MySQL database.
     DATABASES = {
@@ -131,7 +133,7 @@ else:
             'PASSWORD': 'password',
         }
     }
-
+    MAIL_PROVIDER = 'DJANGO'
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 

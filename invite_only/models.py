@@ -4,6 +4,7 @@ from django import forms
 import random
 from django.conf import settings
 from urllib import urlencode
+from google.appengine.api import mail
 
 
 def random_code():
@@ -33,9 +34,14 @@ class InviteForm(forms.Form):
         }
         query_string = urlencode(query)
         print("qs: {}".format(query_string))
+        subject = "SlasherTraxx Invite",
+        message = "Link: http://slashertraxx.com/accounts/signup/?{}".format(
+            query_string),
+        from_email = "pcsforeducation@gmail.com",
+        recipient_list = [self.cleaned_data['email']]
+        if settings.MAIL_PROVIDER == "APPENGINE":
+            mail.send_mail(from_email, recipient_list[0], subject, message)
+        else:
+            send_mail(subject, message, from_email, recipient_list)
 
-        send_mail(subject="SlasherTraxx Invite",
-                  message="Link: http://slashertraxx.com/accounts/signup/?{}"
-                          .format(query_string),
-                  from_email="invite@slashertraxx.com",
-                  recipient_list=[self.cleaned_data['email']])
+
