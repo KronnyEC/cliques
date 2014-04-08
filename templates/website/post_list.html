@@ -11,20 +11,19 @@
                 <img class="post_list image" src="{{ post.url }}">
             {% elif post.type == 'youtube' %}
                 <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
-                <div class="flex-video">
-                    <iframe id="ytplayer" type="text/html" src="http://www.youtube.com/embed/{{ post.text }}" frameborder="0"/></iframe>
+                <div class="post_list flex-video">
+                    <iframe id="ytplayer" type="text/html" src="http://www.youtube.com/embed/{{ post.url }}" frameborder="0"/></iframe>
                 </div>
             {% elif post.type == 'video' %}
                 <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
             {% elif post.type == 'link' %}
-                <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
+                <h4><a href="{{ post.url }}">{{ post.title }}</a></h4>
             {% else %}
                 <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
-                <p>{{ post.text }}</p>
             {% endif %}
             <div class="row post_metadata">
                 <div class="large-2 small-3 columns">
-                    <h6>Username</h6>
+                    <h6>{{ post.user }}</h6>
                 </div>
                 <div class="large-2 small-3 columns">
                     <h6><a href="/post/{{ post.id }}/">{{ post.comment_set.all|length }} Comments</a></h6>
@@ -54,10 +53,10 @@
                     <input id="id_title" maxlength="255" name="title" type="text">
                 </div>
                  <div class="small-3 large-2 columns text_label">
-                    <span class="prefix">Link (Optional):</span>
+                    <span class="prefix">Link</span>
                 </div>
                 <div class="small-9 large-10 columns text_field">
-                    <input id="id_link" maxlength="255" name="title" type="text">
+                    <input id="id_link" maxlength="255" name="url" type="text">
                 </div>
                 <button type="submit" class="button tiny">Submit</button>
             </fieldset>

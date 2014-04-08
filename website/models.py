@@ -5,6 +5,7 @@ from django.db import models
 from django import forms
 from django.conf import settings
 import os
+import urlparse
 # import requests
 import urllib3
 from django.core.files import File
@@ -12,7 +13,7 @@ from django.core.files import File
 # from registration.forms import RegistrationForm
 
 
-POST_TYPES = (('link', 'link'), ('text', 'text'), ('image', 'image'),
+POST_TYPES = (('link', 'link'), ('image', 'image'),
               ('video', 'video'), ('youtube', 'youtube'))
 
 
@@ -23,10 +24,10 @@ class UserProfile(AbstractUser):
 class Post(models.Model):
     submitted = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
-    user = models.CharField(max_length=255)
+    user = models.ForeignKey(UserProfile)
     title = models.CharField(max_length=255)
-    text = models.TextField(blank=True, null=True)
-    type = models.CharField(max_length=64, choices=POST_TYPES)
+    url = models.URLField(blank=True, null=True)
+    type = models.CharField(max_length=64, choices=POST_TYPES, default="link")
     thumbnail_height = models.IntegerField(default=0)
     thumbnail_width = models.IntegerField(default=0)
     thumbnail = models.ImageField(blank=True,
@@ -38,7 +39,7 @@ class Post(models.Model):
     def detect_link(self):
         validate = URLValidator()
         try:
-            validate(self.text)
+            validate(self.url)
         except ValidationError:
             # Not a URL, just save as text
             self.type = 'text'
@@ -48,13 +49,13 @@ class Post(models.Model):
     def detect_content_type(self):
         # Get mime type of remote URL
         http = urllib3.PoolManager()
-        response = http.request('HEAD', self.text)
+        response = http.request('HEAD', self.url)
         content_type = response.headers.get('content-type')
         # print 'content type', content_type
         if content_type in settings.MIME_IMAGES:
             self.set_image()
             return 'image'
-        elif content_type in settings.MIME_VIDEO or 'youtube.com' in self.text:
+        elif content_type in settings.MIME_VIDEO or 'youtube.com' in self.url:
             self.set_video()
             return 'video'
         else:
@@ -63,31 +64,26 @@ class Post(models.Model):
 
     def set_image(self):
         self.type = 'image'
-        self.text = None
+        # self.url = None
 
     def set_video(self):
         # print 'found video'
         # Attempt to find video source. If YouTube, deal with it
         #TODO(pcsforeducation) use requests
-        # url_data = urlparse.urlparse(self.url)
-        # query = urlparse.parse_qs(url_data.query)
-        url_data = None
-        query = None
+        url_data = urlparse.urlparse(self.url)
+        query = urlparse.parse_qs(url_data.query)
         video = query["v"][0]
         if video is not None:
-            self.text = video
             self.type = 'youtube'
         else:
-            self.text = None
             self.type = 'video'
 
     def set_link(self):
         self.type = 'link'
-        self.text = None
 
     def save(self, *args, **kwargs):
-        self.text = self.text.strip()
         # Check if text field is
+        self.detect_content_type()
         # print 'detecting link'
         # if self.detect_link():
             # print 'detected'
@@ -158,7 +154,8 @@ class Comment(models.Model):
 class PostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__()
-        self.fields['text'].label = "Text/Link"
+        self.fields['title'].label = "Title (*)"
+        self.fields['url'].label = "Link"
 
     def save(self, commit=True):
         instance = super(PostForm, self).save(commit=False)
@@ -167,7 +164,7 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'text']
+        fields = ['title', 'url', 'user']
 
 
 class CommentForm(forms.ModelForm):

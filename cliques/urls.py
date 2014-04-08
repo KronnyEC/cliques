@@ -38,7 +38,7 @@ urlpatterns = patterns('',
     #     name='registration_register'),
     # (r'^accounts/logout/$', 'django.contrib.auth.views.logout',
     #                       {'next_page': '/'}),
-    (r'^accounts/', include('allauth.urls')),
+    url(r'^accounts/', include('allauth.urls')),
     # url(r'^accounts/', include('invite_only.urls')),
     url(r'^auth/', include('django.contrib.auth.urls')),
 

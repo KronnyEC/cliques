@@ -52,7 +52,8 @@ TEMPLATE_DIRS = (
 
 ALLOWED_HOSTS = []
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
 
 # Application definition
 
@@ -194,7 +195,7 @@ APPENGINE_TOOLKIT = {
     'BUCKET_NAME': 'cliquesio',
 }
 
-SITE_NAME = 'Slashtraxx'
+SITE_NAME = 'Slashertraxx'
 
 # API
 REST_FRAMEWORK = {
@@ -209,3 +210,31 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+# Mime Types
+MIME_IMAGES = [
+    'image/gif',
+    'image/jpeg',
+    'image/pjpeg',
+    'image/png',
+    'image/svg+xml',
+    'image/example'
+]
+
+MIME_AUDIO = [
+    'audio/mpeg',
+    'audio/mp4',
+    'audio/ogg',
+    'audio/vorbis',
+    'audio/webm'
+]
+
+MIME_VIDEO = [
+    'video/mpeg',
+    'video/mp4',
+    'video/webm',
+    'video/x-matroska',
+    'video/x-ms-wmv',
+    'video/x-flv',
+    'video/avi'
+]

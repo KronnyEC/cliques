@@ -6,6 +6,10 @@
     max-height: 200px;
     max-width: 500px;
 }
+.post_list.flex-video {
+    max-height: 200px;
+    max-width: 500px;
+}
 .top-bar {
     margin-bottom:20px;
 }

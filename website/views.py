@@ -52,8 +52,13 @@ class PostDetailView(DetailView):
 
 class PostFormView(CreateView):
     model = Post
-    fields = ['title', 'text']
+    fields = ['title', 'url',]
     success_url = '/'
+
+    def form_valid(self, form):
+        user_model = get_user_model()
+        form.instance.user = user_model.objects.get(id=self.request.user.id)
+        return super(PostFormView, self).form_valid(form)
 
 
 class CommentFormView(CreateView):
