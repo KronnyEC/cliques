@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="large-4 large-offset-4 small-8 small-offset-2">
+        <h1>Invites</h1>
+        <p>The only way people can join your group is by being invited.</p>
+        <form action="/invite/" method="POST">{% csrf_token %}
+            {{ form }}
+            <button type="submit">Invite</button>
+        </form>
+    </div>
+{% endblock %}
