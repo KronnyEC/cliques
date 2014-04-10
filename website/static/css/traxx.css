@@ -54,3 +54,11 @@ body, html {
 [class*="column"] + [class*="column"]:last-child +[class*="submitted"] {
     float:none;
 }
+.comment {
+    text-overflow:ellipsis;
+}
+.comment h6 {
+    margin-top:3px;
+    margin-left:20px;
+    font-size:75%;
+}

@@ -52,8 +52,8 @@ TEMPLATE_DIRS = (
 
 ALLOWED_HOSTS = []
 
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
 
 # Application definition
 
@@ -66,6 +66,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'rest_framework',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     'invite_only',
     'website',
 ]

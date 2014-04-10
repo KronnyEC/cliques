@@ -98,3 +98,8 @@ class CommentFormView(CreateView):
 #     profile.save()
 
 # user_registered.connect(user_registered_callback)
+
+class ProfileDetailView(DetailView):
+    model = UserProfile
+    template_name = 'website/profile.html'
+

@@ -61,3 +61,11 @@ class PostCommentList(generics.ListAPIView):
     def get_queryset(self):
         queryset = super(PostCommentList, self).get_queryset()
         return queryset.filter(post__pk=self.kwargs.get('pk'))
+
+
+# class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
+#     model = UserProfile
+#     serializer_class = ProfileSerializer
+#     permission_classes = [
+#         permissions.AllowAny
+#     ]

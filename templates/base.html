@@ -12,8 +12,6 @@
     <script src="{% static 'js/vendor/jquery.js' %}"></script>
     <script src="{% static 'js/foundation/foundation.js' %}"></script>
     <script src="{% static 'js/foundation/foundation.offcanvas.js' %}"></script>
-    <!-- https://github.com/clickalicious/jQuery.WebSocket -->
-    <script src="{% static 'js/jquery.WebSocket.min.js'%}"></script>
     <script src="{% static 'js/traxx.js' %}"></script>
     {% block head_js %}{% endblock %}
     <script>
@@ -36,7 +34,7 @@
         <aside class="left-off-canvas-menu">
             <ul class="off-canvas-list">
                 <li><label>Menu</label></li>
-                <li><a href="/profile/">Profile</a></li>
+                <li><a href="/profile/{{ request.user.id }}/">{{ request.user }}</a></li>
                 <li><a href="/invite/">Invite</a></li>
                 <li><a href="/accounts/logout/">Log out</a></li>
             </ul>

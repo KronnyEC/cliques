@@ -22,6 +22,11 @@ handlers:
 env_variables:
   DJANGO_SETTINGS_MODULE: 'cliques.settings'
 
+automatic_scaling:
+  min_idle_instances: 1
+  max_pending_latency: 1.9s
+
+
 skip_files:
 - ^(.*/)?#.*#
 - ^(.*/)?.*~
