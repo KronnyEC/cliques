@@ -1,3 +1,5 @@
+import logging
+from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -6,19 +8,25 @@ from django import forms
 from django.conf import settings
 import os
 import urlparse
-# import requests
 import urllib3
 from django.core.files import File
-# from PIL import Image
-# from registration.forms import RegistrationForm
+if settings.ENV == 'appengine':
+    from google.appengine.api import mail
 
+logger = logging.getLogger(__name__)
 
 POST_TYPES = (('link', 'link'), ('image', 'image'),
-              ('video', 'video'), ('youtube', 'youtube'))
+              ('video', 'video'), ('youtube', 'youtube'), ('text', 'text'))
+
+EMAIL_PREFERENCES = (('no', 'None'), ('posts', 'New Posts Only'),
+                     ('all', 'Posts and Comments'))
 
 
 class UserProfile(AbstractUser):
-    profile_pic = models.ImageField(upload_to='traxx-profile')
+    profile_pic = models.ImageField(upload_to='traxx-profile', blank=True,
+                                    null=True, default=None)
+    email_settings = models.CharField(max_length=64, choices=EMAIL_PREFERENCES,
+                                      default='no')
 
 
 class Post(models.Model):
@@ -48,9 +56,20 @@ class Post(models.Model):
 
     def detect_content_type(self):
         # Get mime type of remote URL
-        http = urllib3.PoolManager()
-        response = http.request('HEAD', self.url)
-        content_type = response.headers.get('content-type')
+        logger.info(self.url)
+        if not self.url:
+            self.type = 'text'
+            return 'text'
+        if self.url is not None:
+            try:
+                http = urllib3.PoolManager()
+                response = http.request('HEAD', self.url)
+                content_type = response.headers.get('content-type')
+            except Exception:
+                content_type = None
+        else:
+            content_type = None
+
         # print 'content type', content_type
         if content_type in settings.MIME_IMAGES:
             self.set_image()
@@ -70,9 +89,7 @@ class Post(models.Model):
         # print 'found video'
         # Attempt to find video source. If YouTube, deal with it
         #TODO(pcsforeducation) use requests
-        url_data = urlparse.urlparse(self.url)
-        query = urlparse.parse_qs(url_data.query)
-        video = query["v"][0]
+        video = self.youtube_video_id()
         if video is not None:
             self.type = 'youtube'
         else:
@@ -84,16 +101,38 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         # Check if text field is
         self.detect_content_type()
-        # print 'detecting link'
-        # if self.detect_link():
-            # print 'detected'
-            # print self.detect_content_type()
-            # print 'detect'
-        # print 'type detected'
-        # print 'text', self.text
-        # print 'url', self.url
-        # print 'type', self.type
         super(Post, self).save(*args, **kwargs)
+        # Send email to everyone posts or all
+        users_to_email = UserProfile.objects.filter(
+            email_settings__in=['all', 'posts'])
+        users_to_email = users_to_email.values_list('email', flat=True)
+
+        if not users_to_email:
+            logger.info("No users to email for post {}. Whomp Whomp.".format(
+                self.id))
+
+        subject = '[slashertraxx] {} - {}'.format(self.title, self.user.username)
+
+        post_type = self.type
+        if post_type == 'youtube':
+            post_type = 'video'
+        elif post_type == 'text':
+            post_type = 'text post'
+
+        message = '{} posted a new {}. <a href="http://slashertraxx.com/posts/{}/">Click here to view post.' \
+                  '</a>'.format(self.user.username, post_type, self.post.id)
+
+        logger.info("Sending email to {}, subject {}, message {}".format(
+            users_to_email, subject, message))
+        send(users_to_email, subject, message)
+
+    def youtube_video_id(self):
+        url_data = urlparse.urlparse(self.url)
+        query = urlparse.parse_qs(url_data.query)
+        if len(query.get("v", [])) > 0:
+            return query["v"][0]
+        else:
+            return None
 
     # Do asyncronously later.
     def make_thumbnail(self):
@@ -176,5 +215,35 @@ class CommentForm(forms.ModelForm):
         fields = ['text']
 
 
+class ProfileUpdateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileUpdateForm, self).__init__()
+
+    class Meta:
+        model = UserProfile
+        fields = ['email', 'email_settings']
+
 # class ProfileRegistrationForm(RegistrationForm):
 #     is_human = forms.ChoiceField(label = "Are you human?:")
+
+
+def send(recipient_list, subject, body):
+    from_email = "josh@slashertraxx.com"
+    logging.info("Sending invite mail from {} to {}, subject: {}, "
+                 "messages: {}. MAIL_PROVIDER: {}".format(
+                     from_email, recipient_list, subject, body,
+                     settings.MAIL_PROVIDER))
+    if settings.MAIL_PROVIDER == "APPENGINE":
+        # mail.send_mail(from_email, recipient_list[0], subject, message)
+        message = mail.EmailMessage(
+            sender="SlasherTraxx <josh@slashertraxx.com>",
+            subject=subject)
+
+        message.to = recipient_list
+        message.body = body
+        message.send()
+    else:
+        send_mail(subject, body, from_email, recipient_list)
+
+

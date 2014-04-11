@@ -6,33 +6,37 @@
         <!-- Feed Entry -->
         <div class="row post_list feed_entry">
             <div class="large-12 small-12 columns post_list content_column">
-            {% if post.type == 'image' %}
-                <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
-                <a href="/post/{{ post.id }}"><img class="post_list image" src="{{ post.url }}"></a>
-            {% elif post.type == 'youtube' %}
-                <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
-                <div class="post_list flex-video">
-                    <iframe id="ytplayer" type="text/html" src="http://www.youtube.com/embed/{{ post.url }}" frameborder="0"/></iframe>
+                <div>
+                    <div class="large-8 large-offset-2">
+                        {% if post.type == 'image' %}
+                            <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
+                            <a href="/post/{{ post.id }}"><img class="post_list image" src="{{ post.url }}"></a>
+                        {% elif post.type == 'youtube' %}
+                            <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
+                            <div class="flex-video">
+                                <iframe width="420" height="315" src="http://www.youtube.com/embed/{{ post.youtube_video_id }}" frameborder="0" allowfullscreen widescreen></iframe>
+                            </div>
+                        {% elif post.type == 'video' %}
+                            <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
+                        {% elif post.type == 'link' %}
+                            <h4><a href="{{ post.url }}">{{ post.title }}</a></h4>
+                        {% else %}
+                            <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
+                        {% endif %}
+                        <div class="row post_metadata">
+                            <div class="large-3 small-3 columns">
+                                <h6>{{ post.user }}</h6>
+                            </div>
+                            <div class="large-4 small-3 columns">
+                                <h6><a href="/post/{{ post.id }}/">{{ post.comment_set.all|length }} Comments</a></h6>
+                            </div>
+                            <div class="large-5 small-5 columns submitted">
+                                <h6>{{ post.submitted|timesince }} ago{% if post.submitted != post.edited %} (Edited {{ post.edited|timesince }} ago){% endif %}</h6>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            {% elif post.type == 'video' %}
-                <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
-            {% elif post.type == 'link' %}
-                <h4><a href="{{ post.url }}">{{ post.title }}</a></h4>
-            {% else %}
-                <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
-            {% endif %}
-            <div class="row post_metadata">
-                <div class="large-2 small-3 columns">
-                    <h6>{{ post.user }}</h6>
-                </div>
-                <div class="large-2 small-3 columns">
-                    <h6><a href="/post/{{ post.id }}/">{{ post.comment_set.all|length }} Comments</a></h6>
-                </div>
-                <div class="large-4 small-5 columns submitted">
-                    <h6>{{ post.submitted|timesince }} ago{% if post.submitted != post.edited %} (Edited {{ post.edited|timesince }} ago){% endif %}</h6>
-                </div>
-                <div class="large-1 small-1 columns"></div>
-            </div>
+
             </div>
         </div>
         <!-- End Feed Entry -->

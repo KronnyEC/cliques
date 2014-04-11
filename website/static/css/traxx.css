@@ -7,8 +7,8 @@
     max-width: 500px;
 }
 .post_list.flex-video {
-    max-height: 200px;
-    max-width: 500px;
+    /*height: 200px;*/
+    /*max-width: 400px;*/
 }
 .top-bar {
     margin-bottom:20px;
@@ -48,8 +48,11 @@ body, html {
     padding-left:0;
     padding-right:0
 }
+.post_metadata {
+    margin-top:10px;
+}
 .post_metadata h6 {
-    font-size: 75%;
+    font-size: 80%;
 }
 [class*="column"] + [class*="column"]:last-child +[class*="submitted"] {
     float:none;
@@ -58,7 +61,7 @@ body, html {
     text-overflow:ellipsis;
 }
 .comment h6 {
-    margin-top:3px;
+    margin-top:10px;
     margin-left:20px;
-    font-size:75%;
+    font-size:80%;
 }

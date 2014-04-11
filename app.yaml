@@ -2,7 +2,7 @@ application: cliquesio
 version: 1
 runtime: python27
 api_version: 1
-threadsafe: false
+threadsafe: true
 
 libraries:
 - name: django
@@ -24,8 +24,11 @@ env_variables:
 
 automatic_scaling:
   min_idle_instances: 1
-  max_pending_latency: 1.9s
+  max_pending_latency: 1s
 
+inbound_services:
+- warmup
+- mail
 
 skip_files:
 - ^(.*/)?#.*#

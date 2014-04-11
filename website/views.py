@@ -4,8 +4,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseNotFound, Http404, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.views.generic import ListView, FormView, CreateView, DetailView
-from website.models import Post, PostForm, CommentForm, Comment, UserProfile
+from django.views.generic import ListView, FormView, CreateView, DetailView, \
+    UpdateView
+from website.models import Post, PostForm, CommentForm, Comment, UserProfile, \
+    ProfileUpdateForm
 from django.conf import settings
 # from registration.signals import user_registered
 from django.contrib.auth import get_user_model
@@ -103,3 +105,10 @@ class ProfileDetailView(DetailView):
     model = UserProfile
     template_name = 'website/profile.html'
 
+
+class ProfileEditView(UpdateView):
+    template_name = 'website/profile.html'
+    # form_class = ProfileUpdateForm
+    model = UserProfile
+    fields = ['email', 'email_settings']
+    slug_field = 'username'

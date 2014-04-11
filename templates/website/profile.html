@@ -2,7 +2,14 @@
 
 {% block site_content %}
 <h1>{{ request.user }}</h1>
-<p>This site is still under construction</p>
+    {{ profile }}
+<form id="profile_edit" method="POST" action="">{% csrf_token %}
+    {{ form }}
+    <button class="button" type="submit">Update</button>
+</form>
+
+<p>This page is still under construction.</p>
 <p>I assure you, my men are working as fast as they can.</p>
+
 <img src="http://img2.wikia.nocookie.net/__cb20090309234126/starwars/images/e/ee/DeathStar2.jpg">
 {% endblock %}
