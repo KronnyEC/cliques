@@ -120,7 +120,7 @@ class Post(models.Model):
             post_type = 'text post'
 
         message = '{} posted a new {}. <a href="http://slashertraxx.com/posts/{}/">Click here to view post.' \
-                  '</a>'.format(self.user.username, post_type, self.post.id)
+                  '</a>'.format(self.user.username, post_type, self..id)
 
         logger.info("Sending email to {}, subject {}, message {}".format(
             users_to_email, subject, message))
