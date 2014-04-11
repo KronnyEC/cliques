@@ -119,8 +119,22 @@ class Post(models.Model):
         elif post_type == 'text':
             post_type = 'text post'
 
-        message = '{} posted a new {}. <a href="http://slashertraxx.com/posts/{}/">Click here to view post.' \
-                  '</a>'.format(self.user.username, post_type, self.id)
+        message = '''
+        {username} posted a new {post_type}.
+
+        {title}
+        {url}
+        
+        http://slashertraxx.com/post/{id}/
+
+        To unsubscribe, go to http://slashertraxx.com/users/
+        '''.format(**{
+            'username': self.user.username,
+            'post_type': post_type,
+            'id': self.id,
+            'title': self.title,
+            'url': self.url or ''
+        })
 
         logger.info("Sending email to {}, subject {}, message {}".format(
             users_to_email, subject, message))

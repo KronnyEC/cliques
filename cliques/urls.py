@@ -54,6 +54,7 @@ urlpatterns = patterns('',
         require_POST(comment_form),
         name='post_form_view_url'),
     url(r'^invite/$', invite_form, name='invite_form'),
+    url(r'^users/$', 'website.views.user_redirect'),
     url(r'^users/(?P<slug>\w+)/$', profile_update, name='profile_detail'),
 
     # API
@@ -61,4 +62,3 @@ urlpatterns = patterns('',
                                namespace='rest_framework')),
     url('^api/v1/', include(v1_post_urls))
 )
-

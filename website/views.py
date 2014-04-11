@@ -2,7 +2,7 @@ from mimetypes import guess_type
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseNotFound, Http404, HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.views.generic import ListView, FormView, CreateView, DetailView, \
     UpdateView
@@ -30,6 +30,10 @@ def post(request, post_id):
     return render_to_response('post.html',
                               template_data,
                               context_instance=RequestContext(request))
+
+
+def user_redirect(request):
+    return redirect('/users/{}'.format(request.user.username))
 
 
 class PostsListView(ListView):
