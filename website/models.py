@@ -26,7 +26,19 @@ class UserProfile(AbstractUser):
     profile_pic = models.ImageField(upload_to='traxx-profile', blank=True,
                                     null=True, default=None)
     email_settings = models.CharField(max_length=64, choices=EMAIL_PREFERENCES,
-                                      default='no')
+                                      default='posts')
+
+
+class Category(models.Model):
+    created_by = models.ForeignKey(UserProfile)
+    name = models.CharField(max_length=255)
+    color = models.CharField(max_length=64)
+
+    def __unicode__(self):
+        return self.name
+
+    def __repr__(self):
+        return "<{0}, {1}>".format(Post, self.__unicode__())
 
 
 class Post(models.Model):
@@ -43,6 +55,7 @@ class Post(models.Model):
                                   null=True,
                                   upload_to='media'
                                   )
+    category = models.ForeignKey(Category)
 
     def detect_link(self):
         validate = URLValidator()
@@ -99,13 +112,20 @@ class Post(models.Model):
         self.type = 'link'
 
     def save(self, *args, **kwargs):
+        if self.id is None:
+            new = True
+        else:
+            new = False
+
+        super(Post, self).save(*args, **kwargs)
         # Check if text field is
         self.detect_content_type()
-        super(Post, self).save(*args, **kwargs)
-        # Send email to everyone posts or all
-        users_to_email = UserProfile.objects.filter(
-            email_settings__in=['all', 'posts'])
-        users_to_email = users_to_email.values_list('email', flat=True)
+        if not new:
+            return
+
+        # Send email to everyone posts or all for new posts
+        users_to_email = UserProfile.objects.filter(email_settings__in=
+            ['all', 'posts']).exclude(email=u'').values_list('email', flat=True)
 
         if not users_to_email:
             logger.info("No users to email for post {}. Whomp Whomp.".format(
@@ -123,8 +143,7 @@ class Post(models.Model):
         {username} posted a new {post_type}.
 
         {title}
-        {url}
-        
+
         http://slashertraxx.com/post/{id}/
 
         To unsubscribe, go to http://slashertraxx.com/users/
@@ -147,6 +166,13 @@ class Post(models.Model):
             return query["v"][0]
         else:
             return None
+
+    def domain(self):
+        try:
+            url = urlparse.urlparse(self.url)
+        except Exception:
+            return "unknown"
+        return url.netloc
 
     # Do asyncronously later.
     def make_thumbnail(self):
@@ -203,21 +229,31 @@ class Comment(models.Model):
     edited = models.DateTimeField(auto_now=True)
     post = models.ForeignKey(Post)
 
+    def __unicode__(self):
+        return "{0}: {1}".format(self.user, self.text)
+
+    def __repr__(self):
+        return "<{0}, {1}>".format(Post, self.__unicode__())
+
 
 class PostForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__()
         self.fields['title'].label = "Title (*)"
         self.fields['url'].label = "Link"
+        self.fields['category'].label = "Category"
 
     def save(self, commit=True):
         instance = super(PostForm, self).save(commit=False)
+        print "INSTANCE", instance
+
         instance.save(commit)
         return instance
 
     class Meta:
         model = Post
-        fields = ['title', 'url', 'user']
+        fields = ['title', 'url', 'category']
 
 
 class CommentForm(forms.ModelForm):

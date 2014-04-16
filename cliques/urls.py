@@ -1,19 +1,13 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.views.generic import DetailView
 from website.views import PostsListView, PostFormView, CommentFormView, \
-    PostDetailView, ProfileDetailView, ProfileEditView
+    PostDetailView, ProfileDetailView, ProfileEditView, CategoryListView
 from website.models import Post, UserProfile
 from django.contrib import admin
-from invite_only.models import InviteCode
 from invite_only.views import InviteCodeView
-# from registration.views import RegistrationView
 from website.api import PostList, PostDetail, PostCommentList
-from website.api import CommentList, CommentDetail
-from website.api import UserPostList, UserDetail
-
-
+from django.views.generic import TemplateView
 admin.autodiscover()
 
 post_detail = login_required(PostDetailView.as_view(model=Post))
@@ -23,6 +17,7 @@ profile_detail = login_required(ProfileDetailView.as_view(model=UserProfile))
 profile_update = login_required(ProfileEditView.as_view())
 invite_form = login_required(InviteCodeView.as_view())
 comment_form = login_required(CommentFormView.as_view())
+category_list = login_required(CategoryListView.as_view())
 
 v1_post_urls = patterns('',
     url(r'^posts/$', PostList.as_view(), name='post-list'),
@@ -45,6 +40,7 @@ urlpatterns = patterns('',
     url(r'^auth/', include('django.contrib.auth.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
+    url('^_ah/warmup$', 'website.views.warmup'),
 
     url(r'^$', post_list, name='post_list', ),
     url(r'^post/$', require_POST(post_form),
@@ -52,7 +48,8 @@ urlpatterns = patterns('',
     url(r'^post/(?P<pk>[a-f\d]+)/$', post_detail, name='post_detail'),
     url(r'^post/(?P<pk>[a-f\d]+)/comment/$',
         require_POST(comment_form),
-        name='post_form_view_url'),
+        name='comment_form_view_url'),
+    url(r'^posts/', category_list),
     url(r'^invite/$', invite_form, name='invite_form'),
     url(r'^users/$', 'website.views.user_redirect'),
     url(r'^users/(?P<slug>\w+)/$', profile_update, name='profile_detail'),
@@ -60,5 +57,11 @@ urlpatterns = patterns('',
     # API
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),
-    url('^api/v1/', include(v1_post_urls))
+    url(r'^api/v1/', include(v1_post_urls)),
+    url(r'^_ah/channel/connected', 'chat_server.views.connect'),
+    url(r'^_ah/channel/disconnected', 'chat_server.views.disconnect'),
+    url(r'^_ah/channel/receive', 'chat_server.views.receive'),
+    url(r'^chat/$', TemplateView.as_view(template_name="website/chat.html")),
+    url(r'^chat/message/$', 'chat_server.views.receive'),
+    url(r'^chat/join_chat/$', 'chat_server.views.join_chat')
 )

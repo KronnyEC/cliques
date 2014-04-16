@@ -1,18 +1,21 @@
-{% extends "site_base.html" %}
+{% extends "base.html" %}
 
 {% block site_content %}
     <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
-    <h2>{{ post.title }}</h2>
+    {% if post.url %}
+        <h2><a href="{{ post.url }}">{{ post.title }}</a><span class="domain">({{ post.domain }})</span></h2>
+    {% else %}
+        <h2>{{ post.title }}</h2>
+    {% endif %}
+
     {% if post.type == 'image' %}
         <img class="post image" src="{{ post.url }}">
     {% elif post.type == 'youtube' %}
         <div class=" large-9 columns">
             <div class="flex-video">
-                <iframe id="ytplayer" type="text/html" src="http://www.youtube.com/embed/{{ post.text }}" frameborder="0"/></iframe>
+                <iframe width="420" height="315" src="http://www.youtube.com/embed/{{ post.youtube_video_id }}" frameborder="0" allowfullscreen widescreen></iframe>
             </div>
         </div>
-    {% else %}
-        <p>{{ post.text }}</p>
     {% endif %}
     <hr>
     <div class="row">

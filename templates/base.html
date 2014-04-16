@@ -12,6 +12,8 @@
     <script src="{% static 'js/vendor/jquery.js' %}"></script>
     <script src="{% static 'js/foundation/foundation.js' %}"></script>
     <script src="{% static 'js/foundation/foundation.offcanvas.js' %}"></script>
+    <script type="text/javascript" src="/_ah/channel/jsapi"></script>
+
     <script src="{% static 'js/traxx.js' %}"></script>
     {% block head_js %}{% endblock %}
     <script>
@@ -38,6 +40,7 @@
             <ul class="off-canvas-list">
                 <li><label>Menu</label></li>
                 <li><a href="/users/{{ request.user.username }}/">{{ request.user }}</a></li>
+                <li><a href="/chat/">Chat</a></li>
                 <li><a href="/invite/">Invite</a></li>
                 <li><a href="/accounts/logout/">Log out</a></li>
             </ul>
@@ -49,7 +52,7 @@
                 {% block content %}{% endblock %}
             </div>
         </section>
-        {% include "footer.html" %}
+{#        {% include "footer.html" %}#}
         <a class="exit-off-canvas"></a>
 
     </div>

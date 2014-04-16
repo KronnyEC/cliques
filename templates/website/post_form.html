@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="large-8 large-offset-2 small-12 columns login form">
+    <div class="row collapse">
+    <form method="post" action="{% url "post_form_view_url" %}">{% csrf_token %}
+        <fieldset>
+            <legend>Add Post</legend>
+            {% for field in form %}
+                {{ field.errors }}
+                {{ field.non_field_errors }}
+                <div class="small-3 large-2 columns text_label">
+                    <span class="prefix">{{ field.label }}</span>
+                </div>
+                <div class="small-9 large-10 columns text_field">
+                    {{ field }}
+                </div>
+
+            {% endfor %}
+            <button type="submit" class="button tiny">Submit</button>
+        </fieldset>
+    </form>
+    </div>
+</div>
+{% endblock %}

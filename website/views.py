@@ -1,16 +1,16 @@
-from mimetypes import guess_type
-from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseNotFound, Http404, HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.core.exceptions import ObjectDoesNotExist, ImproperlyConfigured
+from django.db.models import Count
+from django.http import HttpResponseNotFound
+from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
-from django.views.generic import ListView, FormView, CreateView, DetailView, \
+from django.views.generic import ListView, CreateView, DetailView, \
     UpdateView
 from website.models import Post, PostForm, CommentForm, Comment, UserProfile, \
-    ProfileUpdateForm
-from django.conf import settings
-# from registration.signals import user_registered
+    Category
 from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.http import HttpResponse
+from django.utils.importlib import import_module
 
 
 def home(request):
@@ -32,6 +32,21 @@ def post(request, post_id):
                               context_instance=RequestContext(request))
 
 
+def warmup(request):
+    """
+    Provides default procedure for handling warmup requests on App
+    Engine. Just add this view to your main urls.py.
+    """
+    for app in settings.INSTALLED_APPS:
+        for name in ('urls', 'views', 'models'):
+            try:
+                import_module('%s.%s' % (app, name))
+            except ImportError:
+                pass
+    content_type = 'text/plain; charset=%s' % settings.DEFAULT_CHARSET
+    return HttpResponse("Warmup done.", content_type=content_type)
+
+
 def user_redirect(request):
     return redirect('/users/{}'.format(request.user.username))
 
@@ -40,10 +55,46 @@ class PostsListView(ListView):
     model = Post
     template_name = 'website/post_list.html'
 
+    def get_queryset(self):
+        """
+        Get the list of items for this view. This must be an iterable, and may
+        be a queryset (in which qs-specific behavior will be enabled).
+        """
+        if self.queryset is not None:
+            queryset = self.queryset
+            if hasattr(queryset, '_clone'):
+                queryset = queryset._clone()
+        elif self.model is not None:
+            queryset = self.model._default_manager.all().select_related(*['user', 'category', 'comment_set'])
+        else:
+            raise ImproperlyConfigured("'%s' must define 'queryset' or 'model'"
+                                       % self.__class__.__name__)
+        queryset = queryset.annotate(comment_count=Count('comment'))
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super(PostsListView, self).get_context_data(**kwargs)
         context['form'] = PostForm
         return context
+
+
+class CategoryListView(ListView):
+    model = Post
+    template_name = 'website/post_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryListView, self).get_context_data(**kwargs)
+        context['form'] = PostForm
+        return context
+
+    def get_queryset(self):
+        category_name = self.request.GET.get('category')
+        print "CATNAME", category_name
+        category = Category.objects.get(name=category_name)
+        qs = super(CategoryListView, self).get_queryset()
+        qs = qs.filter(category=category.id)
+        print "QUERY", qs
+        return qs
 
 
 class PostDetailView(DetailView):
@@ -58,12 +109,15 @@ class PostDetailView(DetailView):
 
 class PostFormView(CreateView):
     model = Post
-    fields = ['title', 'url',]
+    fields = ['title', 'url', 'category']
     success_url = '/'
+    # form_class = PostForm
 
     def form_valid(self, form):
+        print "FORMVALID"
         user_model = get_user_model()
         form.instance.user = user_model.objects.get(id=self.request.user.id)
+        self.object = form.save()
         return super(PostFormView, self).form_valid(form)
 
 

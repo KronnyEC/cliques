@@ -14,8 +14,15 @@ builtins:
 - django_wsgi: on
 
 handlers:
+- url: /favicon\.ico
+  static_files: website/static/favicon.ico
+  upload: static/favicon\.ico
 - url: /static/
   static_dir: staticfiles
+- url: /_ah/channel/connected/
+  script: cliques.wsgi.application
+- url: /_ah/channel/disconnected/
+  script: cliques.wsgi.application
 - url: /.*
   script: cliques.wsgi.application
 
@@ -29,6 +36,7 @@ automatic_scaling:
 inbound_services:
 - warmup
 - mail
+- channel_presence
 
 skip_files:
 - ^(.*/)?#.*#

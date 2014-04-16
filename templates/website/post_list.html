@@ -1,4 +1,4 @@
-{% extends "site_base.html" %}
+{% extends "base.html" %}
 {% load staticfiles %}
 {% block site_content %}
     <!-- Main Feed -->
@@ -8,30 +8,48 @@
             <div class="large-12 small-12 columns post_list content_column">
                 <div>
                     <div class="large-8 large-offset-2">
+
+
                         {% if post.type == 'image' %}
-                            <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
+                            <h4>
+                                <span class="round label {{ post.category.color }} category"><a href="/posts/?category={{ post.category.name }}">{{ post.category.name }}</a></span>
+                                <a href="/post/{{ post.id }}">{{ post.title }}</a>
+                            </h4>
                             <a href="/post/{{ post.id }}"><img class="post_list image" src="{{ post.url }}"></a>
                         {% elif post.type == 'youtube' %}
-                            <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
+                            <h4>
+                                <span class="round label {{ post.category.color }} category"><a href="/posts/?category={{ post.category.name }}">{{ post.category.name }}</a></span>
+                                <a href="/post/{{ post.id }}/">{{ post.title }}</a>
+                            </h4>
                             <div class="flex-video">
                                 <iframe width="420" height="315" src="http://www.youtube.com/embed/{{ post.youtube_video_id }}" frameborder="0" allowfullscreen widescreen></iframe>
                             </div>
                         {% elif post.type == 'video' %}
-                            <h4><a href="/post/{{ post.id }}">{{ post.title }}</a></h4>
+                            <h4>
+                                <span class="round label {{ post.category.color }} category"><a href="/posts/?category={{ post.category.name }}">{{ post.category.name }}</a></span>
+                                <a href="/post/{{ post.id }}">{{ post.title }}</a>
+                            </h4>
                         {% elif post.type == 'link' %}
-                            <h4><a href="{{ post.url }}">{{ post.title }}</a></h4>
+                            <h4>
+                                <span class="round label {{ post.category.color }} category"><a href="/posts/?category={{ post.category.name }}">{{ post.category.name }}</a></span>
+                                <a href="{{ post.url }}">{{ post.title }}</a>
+                            </h4>
                         {% else %}
-                            <h4><a href="/post/{{ post.id }}/">{{ post.title }}</a></h4>
+                            <h4>
+                                <a href="/post/{{ post.id }}/">{{ post.title }}</a>
+                                <span class="round label {{ post.category.color }} category"><a href="/posts/?category={{ post.category.name }}">{{ post.category.name }}</a></span>
+                            </h4>
+
                         {% endif %}
                         <div class="row post_metadata">
                             <div class="large-3 small-3 columns">
                                 <h6>{{ post.user }}</h6>
                             </div>
                             <div class="large-4 small-3 columns">
-                                <h6><a href="/post/{{ post.id }}/">{{ post.comment_set.all|length }} Comments</a></h6>
+                                <h6><a href="/post/{{ post.id }}/">{{ post.comment_count }} Comments</a></h6>
                             </div>
                             <div class="large-5 small-5 columns submitted">
-                                <h6>{{ post.submitted|timesince }} ago{% if post.submitted != post.edited %} (Edited {{ post.edited|timesince }} ago){% endif %}</h6>
+                                <h6>{{ post.submitted|timesince }} ago</h6>
                             </div>
                         </div>
                     </div>
@@ -41,33 +59,29 @@
         </div>
         <!-- End Feed Entry -->
 
-    {%  empty %}
-        <h1>No posts yet!</h1>
-    {% endfor %}
-    <div >
-    <div class="large-8 large-offset-2 small-12 columns login form">
-        <div class="row collapse">
-        <form method="post" action="{% url "post_form_view_url" %}">{% csrf_token %}
-            <fieldset>
-                <legend>Add Post</legend>
-                <div class="small-3 large-2 columns text_label">
-                    <span class="prefix">Title:</span>
-                </div>
-                <div class="small-9 large-10 columns text_field">
-                    <input id="id_title" maxlength="255" name="title" type="text">
-                </div>
-                 <div class="small-3 large-2 columns text_label">
-                    <span class="prefix">Link</span>
-                </div>
-                <div class="small-9 large-10 columns text_field">
-                    <input id="id_link" maxlength="255" name="url" type="text">
-                </div>
-                <button type="submit" class="button tiny">Submit</button>
-            </fieldset>
-        </form>
+        {%  empty %}
+            <h1>No posts yet!</h1>
+        {% endfor %}
+        <div class="large-8 large-offset-2 small-12 columns login form">
+            <div class="row collapse">
+            <form method="post" action="{% url "post_form_view_url" %}">{% csrf_token %}
+                <fieldset>
+                    <legend>Add Post</legend>
+                    {% for field in form %}
+                        {{ field.errors }}
+                        <div class="small-3 large-2 columns text_label">
+                            <span class="prefix">{{ field.label }}</span>
+                        </div>
+                        <div class="small-9 large-10 columns text_field">
+                            {{ field }}
+                        </div>
+
+                    {% endfor %}
+                    <button type="submit" class="button tiny">Submit</button>
+                </fieldset>
+            </form>
+            </div>
         </div>
-    </div>
-    </div>
 {#    <script src="{% static "js/underscore.js" %}"></script>#}
 {#    <script src="{% static "js/angular.min.js" %}"></script>#}
 {#    <script src="{% static "js/angular-resource.min.js" %}"></script>#}
