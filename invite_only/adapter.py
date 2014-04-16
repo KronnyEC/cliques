@@ -1,4 +1,3 @@
-from django.conf import settings
 from allauth.account.adapter import DefaultAccountAdapter
 from invite_only.models import InviteCode
 import logging
@@ -9,7 +8,8 @@ logger = logging.getLogger(__name__)
 class InviteOnlyAccountAdapter(DefaultAccountAdapter):
     def is_open_for_signup(self, request):
         if request.method == 'GET':
-            logger.info("is oepn for signup {} {}".format(request.GET, request.POST))
+            logger.info("is oepn for signup {} {}".format(
+                request.GET, request.POST))
             invite_code = self._get_invite(request)
             # If None, return False
             return invite_code is not None

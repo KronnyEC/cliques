@@ -9,6 +9,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 logger = logging.getLogger()
 
+
 # Create your views here.
 @csrf_exempt
 @login_required
@@ -18,8 +19,8 @@ def connect(request):
         token = ChatUser.objects.get(user=request.user.id).token
     except Exception:
         return
-    # channel.send_message(request.user.username, '[system] Connected! Welcome to the prototype '
-    #                             'chat system.')
+    logger.info("Connect, token {}".format(token))
+
 
 @csrf_exempt
 @login_required
@@ -45,7 +46,7 @@ def _get_messages(start, end):
 @csrf_exempt
 @login_required
 def join_chat(request):
-    token = channel.create_channel(request.user.username, 24*60)
+    token = channel.create_channel(request.user.username, 24 * 60)
     logger.info("Created token {} for {}".format(token, request.user.username))
     chat_user, created = ChatUser.objects.get_or_create(user=request.user)
     chat_user.token = token

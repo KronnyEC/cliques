@@ -6,10 +6,9 @@ from django.core.validators import URLValidator
 from django.db import models
 from django import forms
 from django.conf import settings
-import os
 import urlparse
 import urllib3
-from django.core.files import File
+
 if settings.ENV == 'appengine':
     from google.appengine.api import mail
 
@@ -99,9 +98,8 @@ class Post(models.Model):
         # self.url = None
 
     def set_video(self):
-        # print 'found video'
-        # Attempt to find video source. If YouTube, deal with it
-        #TODO(pcsforeducation) use requests
+        """Attempt to find video source. If YouTube, deal with it"""
+        # TODO(pcsforeducation) use requests
         video = self.youtube_video_id()
         if video is not None:
             self.type = 'youtube'
@@ -124,14 +122,16 @@ class Post(models.Model):
             return
 
         # Send email to everyone posts or all for new posts
-        users_to_email = UserProfile.objects.filter(email_settings__in=
-            ['all', 'posts']).exclude(email=u'').values_list('email', flat=True)
+        users_to_email = UserProfile.objects.filter(
+            email_settings__in=['all', 'posts'])\
+            .exclude(email=u'').values_list('email', flat=True)
 
         if not users_to_email:
             logger.info("No users to email for post {}. Whomp Whomp.".format(
                 self.id))
 
-        subject = '[slashertraxx] {} - {}'.format(self.title, self.user.username)
+        subject = '[slashertraxx] {} - {}'.format(self.title,
+                                                  self.user.username)
 
         post_type = self.type
         if post_type == 'youtube':
@@ -173,44 +173,6 @@ class Post(models.Model):
         except Exception:
             return "unknown"
         return url.netloc
-
-    # Do asyncronously later.
-    def make_thumbnail(self):
-        if self.type == 'image':
-            # Download the image, make a thumbnail, and upload to cloudfiles.
-            tmp_file = self._download_url(self.text)
-            thumbnail = self._make_thumbnail(tmp_file)
-            self.thumbnail = File(open(thumbnail))
-
-    def _download_url(self, url):
-        local_filename = url.split('/')[-1]
-        # print "saving to: ", local_filename
-        # NOTE the stream=True parameter
-        http = urllib3.PoolManager()
-        r = http.request('GET', self.text)
-        with open(os.path.join(settings.TMP_DIR, local_filename), 'wb') as f:
-            for chunk in r.iter_content(chunk_size=1024):
-                if chunk:  # filter out keep-alive new chunks
-                    f.write(chunk)
-                    f.flush()
-        # print "saved"
-        return os.path.join(settings.TMP_DIR, local_filename)
-
-    def _make_thumbnail(self, filename):
-        # print 'API', settings.CUMULUS['API_KEY']
-        outfilename = os.path.splitext(filename)[0] + ".thumbnail"
-        outfile = os.path.join(settings.THUMBNAIL_DIR, outfilename)
-        # print "saving thumbnail: ", outfile
-        try:
-            im = Image.open(filename)
-            im.thumbnail(settings.THUMBNAIL_MAX_SIZE, Image.ANTIALIAS)
-            im.save(outfile, "JPEG")
-        except IOError as e:
-            pass
-            # print e
-            # print "cannot create thumbnail for '%s'" % filename
-        # print "saved"
-        return outfile
 
     def __unicode__(self):
         return "{0}: {1}".format(self.type, self.title)
@@ -295,5 +257,3 @@ def send(recipient_list, subject, body):
         message.send()
     else:
         send_mail(subject, body, from_email, recipient_list)
-
-

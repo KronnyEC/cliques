@@ -1,5 +1,5 @@
 from django import forms
-from django.views.generic import CreateView, FormView
+from django.views.generic import FormView
 from invite_only.models import InviteForm
 
 

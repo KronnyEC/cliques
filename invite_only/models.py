@@ -13,14 +13,14 @@ logger = logging.getLogger(__name__)
 
 
 def random_code():
-    return '%08x' % random.randrange(16**8)
+    return '%08x' % random.randrange(16 ** 8)
 
 
 class InviteCode(models.Model):
     invited_by = models.ForeignKey(settings.AUTH_USER_MODEL)
     code = models.CharField(max_length=32, default=random_code, unique=True)
     used = models.BooleanField(default=False)
-    #TODO(pcsforeducation) Add site FK
+    # TODO(pcsforeducation) Add site FK
 
 
 class InviteForm(forms.Form):
@@ -58,5 +58,3 @@ class InviteForm(forms.Form):
             message.send()
         else:
             send_mail(subject, body, from_email, recipient_list)
-
-

@@ -24,7 +24,7 @@ def home(request):
 def post(request, post_id):
     template_data = {}
     try:
-        post = Post.object.get(id=post_id)
+        template_data['post'] = Post.object.get(id=post_id)
     except (Post.MultipleObjectsReturned, ObjectDoesNotExist):
         return HttpResponseNotFound("No post {}".format(post_id))
     return render_to_response('post.html',
@@ -65,7 +65,8 @@ class PostsListView(ListView):
             if hasattr(queryset, '_clone'):
                 queryset = queryset._clone()
         elif self.model is not None:
-            queryset = self.model._default_manager.all().select_related(*['user', 'category', 'comment_set'])
+            queryset = self.model._default_manager.all()\
+                .select_related(*['user', 'category', 'comment_set'])
         else:
             raise ImproperlyConfigured("'%s' must define 'queryset' or 'model'"
                                        % self.__class__.__name__)
@@ -131,33 +132,10 @@ class CommentFormView(CreateView):
         user_model = get_user_model()
         form.instance.post = Post.objects.get(id=self.kwargs.get('pk'))
         form.instance.user = user_model.objects.get(id=self.request.user.id)
-        #print form
         self.object = form.save()
-        #print self.object
         self.success_url = "/post/{}/".format(self.kwargs.get('pk'))
         return super(CommentFormView, self).form_valid(form)
-    # def get_initial(self):
-    #     post = get_object_or_404(Post, id=s)
-    #     print "post", post
-    #     return {
-    #         'post': post
-    #     }
 
-
-    # def form_valid(self, form):
-    #     # This method is called when valid form data has been POSTed.
-    #     # It should return an HttpResponse.
-    #     # form.send_email()
-    #     print "form valid"
-    #     return super(PostFormView, self).form_valid(form)
-
-
-# def user_registered_callback(sender, user, request, **kwargs):
-#     profile = UserProfile(user=user)
-#     profile.is_human = bool(request.POST["is_human"])
-#     profile.save()
-
-# user_registered.connect(user_registered_callback)
 
 class ProfileDetailView(DetailView):
     model = UserProfile
