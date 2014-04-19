@@ -58,7 +58,11 @@ function join_chat() {
 
 function chat_message(msg) {
     console.log(window.socket, msg);
-    window.socket.send(msg);
+    $.ajax({
+        type: "POST",
+        url: '/chat/message/',
+        data: {'msg': msg}
+    });
 }
 
 function urlify(text) {
