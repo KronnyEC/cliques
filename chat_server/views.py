@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.auth.decorators import login_required
 import json
 from django.http import HttpResponse
@@ -6,6 +7,7 @@ import logging
 from django.views.decorators.csrf import csrf_exempt
 from chat_server.models import ChatUser, ChatMessage
 from django.core.serializers.json import DjangoJSONEncoder
+from website.utils import render_to_json
 
 logger = logging.getLogger()
 
@@ -39,8 +41,8 @@ def _get_messages(start, end):
     """Get messages (in reverse chronological order) from start to end,
     0 indexed
     """
-    return list(ChatMessage.objects.order_by('-sent')[start:end]
-                .values_list('user__username', 'message', 'sent'))
+    return list(reversed(ChatMessage.objects.order_by('-sent')[start:end]
+                .values_list('user__username', 'message', 'sent')))
 
 
 @csrf_exempt
@@ -61,24 +63,11 @@ def join_chat(request):
 @login_required
 def receive(request):
     logging.info("recieved chat msg from {}".format(request.user.username))
+    msg = json.dumps([request.user.username, request.POST['msg'],
+           str(datetime.datetime.now())])
     for chat_user in ChatUser.objects.all():
-        msg = "{}: {}".format(request.user.username, request.POST['msg'])
         logger.info("Sending {} to {}".format(chat_user.token, msg))
         channel.send_message(chat_user.token, msg)
     chat_message = ChatMessage(user=request.user, message=request.POST['msg'])
     chat_message.save()
     return HttpResponse('OK')
-
-
-def render_to_json(request, data):
-    # msgs = {}
-    # messages_list = messages.get_messages(request)
-    # count = 0
-    # for message in messages_list:
-    #     msgs[count] = {'message': message.message, 'level': message.level}
-    #     count += 1
-    # data['messages'] = msgs
-    return HttpResponse(
-        json.dumps(data, ensure_ascii=False, cls=DjangoJSONEncoder),
-        content_type=request.is_ajax() and "application/json" or "text/html"
-    )

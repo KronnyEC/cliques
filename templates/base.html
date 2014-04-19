@@ -49,7 +49,12 @@
 
         <section class="main-section">
             <div class="row">
-                {% block content %}{% endblock %}
+                <div class="large-9 small-12 columns">
+                    {% block content %}{% endblock %}
+                </div>
+                <div class="large-3 hide-for-small columns">
+                    {% include "website/chat_include.html" %}
+                </div>
             </div>
         </section>
 {#        {% include "footer.html" %}#}

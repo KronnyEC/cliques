@@ -1,13 +1,12 @@
 import logging
 from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
 from django.db import models
 from django import forms
 from django.conf import settings
 import urlparse
-import urllib3
+from website import utils
+from website.utils import YouTube, detect_content_type
 
 if settings.ENV == 'appengine':
     from google.appengine.api import mail
@@ -56,59 +55,6 @@ class Post(models.Model):
                                   )
     category = models.ForeignKey(Category)
 
-    def detect_link(self):
-        validate = URLValidator()
-        try:
-            validate(self.url)
-        except ValidationError:
-            # Not a URL, just save as text
-            self.type = 'text'
-            return False
-        return True
-
-    def detect_content_type(self):
-        # Get mime type of remote URL
-        logger.info(self.url)
-        if not self.url:
-            self.type = 'text'
-            return 'text'
-        if self.url is not None:
-            try:
-                http = urllib3.PoolManager()
-                response = http.request('HEAD', self.url)
-                content_type = response.headers.get('content-type')
-            except Exception:
-                content_type = None
-        else:
-            content_type = None
-
-        # print 'content type', content_type
-        if content_type in settings.MIME_IMAGES:
-            self.set_image()
-            return 'image'
-        elif content_type in settings.MIME_VIDEO or 'youtube.com' in self.url:
-            self.set_video()
-            return 'video'
-        else:
-            self.set_link()
-            return 'link'
-
-    def set_image(self):
-        self.type = 'image'
-        # self.url = None
-
-    def set_video(self):
-        """Attempt to find video source. If YouTube, deal with it"""
-        # TODO(pcsforeducation) use requests
-        video = self.youtube_video_id()
-        if video is not None:
-            self.type = 'youtube'
-        else:
-            self.type = 'video'
-
-    def set_link(self):
-        self.type = 'link'
-
     def save(self, *args, **kwargs):
         if self.id is None:
             new = True
@@ -117,7 +63,7 @@ class Post(models.Model):
 
         super(Post, self).save(*args, **kwargs)
         # Check if text field is
-        self.detect_content_type()
+        self.type = detect_content_type(self.url)
         if not new:
             return
 
@@ -133,11 +79,14 @@ class Post(models.Model):
         subject = '[slashertraxx] {} - {}'.format(self.title,
                                                   self.user.username)
 
-        post_type = self.type
-        if post_type == 'youtube':
+        if self.type in ['youtube', 'video']:
             post_type = 'video'
-        elif post_type == 'text':
+        elif self.type == 'text':
             post_type = 'text post'
+        elif self.type in ['imgur', 'image']:
+            post_type = 'image'
+        else:
+            post_type = 'none'
 
         message = '''
         {username} posted a new {post_type}.
@@ -160,12 +109,8 @@ class Post(models.Model):
         send(users_to_email, subject, message)
 
     def youtube_video_id(self):
-        url_data = urlparse.urlparse(self.url)
-        query = urlparse.parse_qs(url_data.query)
-        if len(query.get("v", [])) > 0:
-            return query["v"][0]
-        else:
-            return None
+        youtube = YouTube(self.url, 'youtube')
+        return youtube.youtube_video_id(self.url)
 
     def domain(self):
         try:

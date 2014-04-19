@@ -63,5 +63,7 @@ urlpatterns = patterns('',
     url(r'^_ah/channel/receive', 'chat_server.views.receive'),
     url(r'^chat/$', TemplateView.as_view(template_name="website/chat.html")),
     url(r'^chat/message/$', 'chat_server.views.receive'),
-    url(r'^chat/join_chat/$', 'chat_server.views.join_chat')
+    url(r'^chat/join_chat/$', 'chat_server.views.join_chat'),
+
+    url(r'^poll/(?P<submission_id>\d+)/vote/$', 'poll.views.vote')
 )

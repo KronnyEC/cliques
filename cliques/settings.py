@@ -19,7 +19,6 @@ elif os.getenv('SETTINGS_MODE') == 'prod':
     ENV = 'localprod'
 else:
     ENV = 'local'
-print "ENV IS", ENV
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/

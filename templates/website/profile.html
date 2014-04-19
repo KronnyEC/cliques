@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block site_content %}
+{% block content %}
 <h1>{{ request.user }}</h1>
     {{ profile }}
 <form id="profile_edit" method="POST" action="">{% csrf_token %}

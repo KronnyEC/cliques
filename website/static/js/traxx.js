@@ -1,4 +1,3 @@
-var ws = new WebSocket ('ws://127.0.0.1:8765');
 var token;
 var chan;
 var socket;
@@ -10,10 +9,8 @@ function socket_open(e) {
 
 function socket_message(e) {
     var message = e.data;
-    console.log('Received message ' + message);
-    $('#chat_messages').append("<p>" + message + "</p><hr>");
-    var element = document.getElementById("chat_messages");
-    element.scrollTop = element.scrollHeight;
+    console.log("socket message", message, jQuery.parseJSON(message));
+    add_chat_message(jQuery.parseJSON(message));
 }
 
 function socket_error(e) {
@@ -36,14 +33,25 @@ function build_socket() {
     });
 }
 
+function add_chat_message(msg) {
+    console.log("add chat message", msg);
+    var message = urlify(msg[1]);
+    var chat_messages = $('#chat_messages');
+    $('#chat_messages').append("<p>" + msg[0] + ": " + message  + "</p><hr>");
+    $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
+}
+
 function join_chat() {
     $.ajax({
         type: "POST",
         url: '/chat/join_chat/',
         success: function(result) {
-            console.log('join success', result);
+            console.log("result", result);
             window.token = result.token;
             build_socket();
+            result.msgs.forEach(function(msg) {
+                add_chat_message(msg)
+            });
         }
     });
 }
@@ -51,6 +59,17 @@ function join_chat() {
 function chat_message(msg) {
     console.log(window.socket, msg);
     window.socket.send(msg);
+}
+
+function urlify(text) {
+    var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+    var regex = new RegExp(expression);
+    var t = 'www.google.com';
+    return text.replace(regex, function(url) {
+        return '<a href="' + url + '">' + url + '</a>';
+    });
+    // or alternatively
+    // return text.replace(urlRegex, '<a href="$1">$1</a>')
 }
 
 $(document).ready(function() {
