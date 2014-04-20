@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'invite_only',
     'chat_server',
+    'poll',
     'website',
 ]
 

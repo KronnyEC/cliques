@@ -1,3 +1,4 @@
+import importlib
 import json
 import urlparse
 import logging
@@ -11,72 +12,30 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
-class ContentType(object):
-    def __init__(self, url, content_type):
-        self.url = url
-        self.content_type = content_type
-
-    def detect(self, url, content_type):
-        pass
-
-    def render(self):
-        return None
-
-
-class Video(ContentType):
-    def detect(self, url, content_type):
-        return 'video'
-
-
-class Image(ContentType):
-    def detect(self, url, content_type):
-        return 'image'
-
-
-class YouTube(Video):
-    def detect(self, url, content_type):
-        url_data = urlparse.urlparse(url)
-        query = urlparse.parse_qs(url_data.query)
-        if len(query.get("v", [])) > 0:
-            # return query["v"][0]
-            return 'youtube'
-
-    def youtube_video_id(self, url):
-        url_data = urlparse.urlparse(url)
-        query = urlparse.parse_qs(url_data.query)
-        if len(query.get("v", [])) > 0:
-            return query["v"][0]
-
-
-class Imgur(ContentType):
-    def detect(self, url, content_type):
-        url_data = urlparse.urlparse(url)
-        if url_data.netloc() == 'imgur.com':
-            return 'imgur'
-
-
 content_types = {
     'image': [
-        'Imgur',
-        'Image'
+        'website.content_types.Imgur',
+        'website.content_types.Image'
     ],
     'video': [
-        'Youtube',
-        'Video'
+        'website.content_types.YouTube',
+        'website.content_types.Video'
     ],
     'link': [
-        'Link'
+        'website.content_types.Link'
     ]
 }
 
 
 def get_class_from_string(class_name):
-    return getattr(sys.modules[__name__], class_name)
+    module_name, cls_name = class_name.rsplit(".", 1)
+    module = importlib.import_module(module_name)
+    return getattr(module, cls_name)
 
 
 def detect_content_type(url=None):
     # Default
-    if url is None:
+    if not url:
         return 'text'
 
     # Get mime type of remote url
@@ -92,8 +51,11 @@ def detect_content_type(url=None):
         key = 'image'
     elif content_type in settings.MIME_VIDEO or 'youtube.com' in url:
         key = 'video'
-    else:
+    elif url:
         key = 'link'
+    else:
+        return 'text'
+    print 'key', key
 
     # Go through content detectors in order, returning if any matches
     for content_type in content_types[key]:

@@ -6,7 +6,8 @@ from django import forms
 from django.conf import settings
 import urlparse
 from website import utils
-from website.utils import YouTube, detect_content_type
+from website.utils import detect_content_type
+from website.content_types import YouTube
 
 if settings.ENV == 'appengine':
     from google.appengine.api import mail
@@ -64,6 +65,7 @@ class Post(models.Model):
         super(Post, self).save(*args, **kwargs)
         # Check if text field is
         self.type = detect_content_type(self.url)
+        print 'type is', self.type
         if not new:
             return
 
@@ -109,7 +111,7 @@ class Post(models.Model):
         send(users_to_email, subject, message)
 
     def youtube_video_id(self):
-        youtube = YouTube(self.url, 'youtube')
+        youtube = YouTube()
         return youtube.youtube_video_id(self.url)
 
     def domain(self):

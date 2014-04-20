@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from poll.views import SubmissionCreateView
 from website.views import PostsListView, PostFormView, CommentFormView, \
     PostDetailView, ProfileDetailView, ProfileEditView, CategoryListView
 from website.models import Post, UserProfile
@@ -51,6 +52,8 @@ urlpatterns = patterns('',
         name='comment_form_view_url'),
     url(r'^posts/', category_list),
     url(r'^invite/$', invite_form, name='invite_form'),
+    url(r'^poll/add/$', SubmissionCreateView.as_view()),
+    url(r'^poll/cron/$', 'poll.views.cron'),
     url(r'^users/$', 'website.views.user_redirect'),
     url(r'^users/(?P<slug>\w+)/$', profile_update, name='profile_detail'),
 
@@ -65,5 +68,4 @@ urlpatterns = patterns('',
     url(r'^chat/message/$', 'chat_server.views.receive'),
     url(r'^chat/join_chat/$', 'chat_server.views.join_chat'),
 
-    url(r'^poll/(?P<submission_id>\d+)/vote/$', 'poll.views.vote')
 )
