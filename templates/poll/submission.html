@@ -1,0 +1,52 @@
+{% extends "base_with_chat.html" %}
+
+
+{% block content %}
+<div class="row submissions_form">
+    <form method="post" action="/poll/{{ poll.stub }}/submission/">
+    {% csrf_token %}
+
+        <fieldset>
+            <legend>New Submission</legend>
+
+            {% for field in form %}
+                {{ field.errors }}
+                <div class="small-3 large-2 columns text_label">
+                    <span class="prefix">{{ field.label }}</span>
+                </div>
+                <div class="small-9 large-10 columns text_field">
+                    {{ field }}
+                </div>
+
+            {% endfor %}
+            <button type="submit" class="button tiny">Submit</button>
+
+        </fieldset>
+
+
+    </form>
+</div>
+{% for submission in poll.poll_submissions.all %}
+    <div class="large-6 small-12 columns submission_entry">
+        <div class="row">
+            <div class="large-8 large-offset-2 columns submission_title">
+                {{ submission.title }}
+            </div>
+            <div class="large-12 columns submission_image">
+                <img class="post_list image" src="{{ submission.url }}">
+            </div>
+            <div class="row">
+            <div class="large-4 large-offset-4 small-12 columns submission_vote">
+                {% if vote.submission.id == submission.id %}
+                <a href="/poll/{{ poll.stub }}/{{ submission.id }}/vote/" class="button tiny alert submission_vote_button">Remove</a>
+                {% else %}
+                <a href="/poll/{{ poll.stub }}/{{ submission.id }}/vote/" class="button tiny submission_vote_button">Vote</a>
+                {% endif %}
+            </div>
+            </div>
+            <div class="large-4 columns"></div>
+        </div>
+    </div>
+
+{% endfor %}
+{% endblock %}

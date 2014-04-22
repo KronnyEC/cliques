@@ -116,3 +116,20 @@ body, html {
     margin: 0;
     line-height: 1;
 }
+.submission_entry {
+    margin-top:10px;
+    margin-bottom:10px;
+}
+.submission_title {
+    margin-bottom:10px;
+    text-align: center;
+}
+.submission_image img {
+    display:block;
+    margin:auto;
+}
+.submission_vote_button {
+    margin-top:10px;
+    display:block;
+    /*margin:auto;*/
+}

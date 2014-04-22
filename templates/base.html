@@ -41,6 +41,7 @@
                 <li><label>Menu</label></li>
                 <li><a href="/users/{{ request.user.username }}/">{{ request.user }}</a></li>
                 <li><a href="/chat/">Chat</a></li>
+                <li><a href="/poll/BotD">Babe of the Day</a></li>
                 <li><a href="/invite/">Invite</a></li>
                 <li><a href="/accounts/logout/">Log out</a></li>
             </ul>
@@ -49,12 +50,7 @@
 
         <section class="main-section">
             <div class="row">
-                <div class="large-9 small-12 columns">
-                    {% block content %}{% endblock %}
-                </div>
-                <div class="large-3 hide-for-small columns">
-                    {% include "website/chat_include.html" %}
-                </div>
+                {% block base_content %}{% endblock %}
             </div>
         </section>
 {#        {% include "footer.html" %}#}

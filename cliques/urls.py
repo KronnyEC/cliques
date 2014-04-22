@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from poll.views import SubmissionCreateView
+from poll.views import PollDetailView, SubmissionFormView
 from website.views import PostsListView, PostFormView, CommentFormView, \
     PostDetailView, ProfileDetailView, ProfileEditView, CategoryListView
 from website.models import Post, UserProfile
@@ -52,7 +52,11 @@ urlpatterns = patterns('',
         name='comment_form_view_url'),
     url(r'^posts/', category_list),
     url(r'^invite/$', invite_form, name='invite_form'),
-    url(r'^poll/add/$', SubmissionCreateView.as_view()),
+    url(r'^poll/(?P<stub>[\w_]+)/$', PollDetailView.as_view(),
+        name='poll_submission'),
+    url(r'^poll/(?P<stub>[\w_]+)/submission/$', SubmissionFormView.as_view()),
+    url(r'^poll/(?P<poll_stub>[\w_]+)/(?P<submission_id>\d+)/vote/$',
+        'poll.views.vote'),
     url(r'^poll/cron/$', 'poll.views.cron'),
     url(r'^users/$', 'website.views.user_redirect'),
     url(r'^users/(?P<slug>\w+)/$', profile_update, name='profile_detail'),
@@ -64,7 +68,7 @@ urlpatterns = patterns('',
     url(r'^_ah/channel/connected', 'chat_server.views.connect'),
     url(r'^_ah/channel/disconnected', 'chat_server.views.disconnect'),
     url(r'^_ah/channel/receive', 'chat_server.views.receive'),
-    url(r'^chat/$', TemplateView.as_view(template_name="website/chat.html")),
+    url(r'^chat/$', TemplateView.as_view(template_name="chat/chat.html")),
     url(r'^chat/message/$', 'chat_server.views.receive'),
     url(r'^chat/join_chat/$', 'chat_server.views.join_chat'),
 

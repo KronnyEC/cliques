@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block base_content %}
+<div class="large-9 small-12 columns">
+    {% block content %}{% endblock %}
+</div>
+{% if request.user.is_authenticated %}
+<div class="large-3 hide-for-small columns">
+    {% include "chat/chat_include.html" %}
+</div>
+{% endif %}
+{% endblock %}

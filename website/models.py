@@ -166,9 +166,6 @@ class PostForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(CommentForm, self).__init__()
-
     class Meta:
         model = Comment
         fields = ['text']

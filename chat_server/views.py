@@ -6,7 +6,6 @@ from google.appengine.api import channel
 import logging
 from django.views.decorators.csrf import csrf_exempt
 from chat_server.models import ChatUser, ChatMessage
-from django.core.serializers.json import DjangoJSONEncoder
 from website.utils import render_to_json
 
 logger = logging.getLogger()

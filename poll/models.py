@@ -1,4 +1,5 @@
 from django.db import models
+from django import forms
 from website.utils import detect_content_type
 from website.models import UserProfile
 
@@ -20,7 +21,8 @@ class Submission(models.Model):
     url = models.URLField()
     submitted = models.DateTimeField(auto_now_add=True)
     votes = models.ManyToManyField(UserProfile, through='Vote')
-    poll = models.ForeignKey(Poll, related_name='submissions')
+    poll = models.ForeignKey(Poll, related_name='poll_submissions')
+    user = models.ForeignKey(UserProfile, related_name='user_submissions')
 
     def save(self, *args, **kwargs):
         if self.id is None:
@@ -35,11 +37,22 @@ class Submission(models.Model):
             return
 
 
+class SubmissionForm(forms.ModelForm):
+    class Meta:
+        model = Submission
+        fields = ['title', 'url']
+
+
 class Vote(models.Model):
-    submission = models.ForeignKey(Submission)
-    user = models.ForeignKey(UserProfile)
+    submission = models.ForeignKey(Submission, related_name='submission_votes')
+    user = models.ForeignKey(UserProfile, related_name='user_votes')
     day = models.DateField(auto_now_add=True)
 
     class Meta:
-        # One vote per submission per user per day.
-        unique_together = (('submission', 'user', 'day'))
+        # One vote per user per day.
+        unique_together = (('submission', 'day'))
+
+    def __unicode__(self):
+        return "{} voted on {} on {}".format(self.user.username,
+                                             self.submission.title,
+                                             self.day)
