@@ -1,11 +1,14 @@
+from collections import defaultdict
+import operator
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseForbidden, \
-    HttpResponseBadRequest, HttpResponseRedirect
+    HttpResponseBadRequest, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render, render_to_response
 # Create your views here.
 from django.views.generic import CreateView, DetailView
 from poll.models import Vote, Submission, SubmissionForm, Poll
 import logging
+from website.models import Post, UserProfile
 
 logger = logging.getLogger()
 
@@ -16,18 +19,59 @@ def vote(request, poll_stub, submission_id):
     #     return HttpResponseBadRequest('Must be a POST')
     try:
         submission = Submission.objects.get(id=submission_id)
-        vote_ob, created = Vote.objects.get_or_create(
-            user=request.user, submission=submission)
     except:
-        logging.exception('Already voted')
-        return HttpResponseForbidden({'error:': 'Already voted on this pic'})
-    if not created:
-        vote_ob.delete()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return HttpResponseNotFound("Submission does not exist: {}".format(
+            submission_id
+        ))
+    try:
+        prev_vote = Vote.objects.get(user=request.user)
+    except Vote.DoesNotExist:
+        # First vote
+        Vote(user=request.user, submission=submission).save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    try:
+        # Switch vote or undo vote
+        if prev_vote.submission == submission:
+            # Undo
+            prev_vote.delete()
+        else:
+            # Switch
+            prev_vote.delete()
+            Vote(user=request.user, submission=submission).save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    except:
+        logging.exception('Could not switch vote')
+        raise
 
 
 def cron(request):
-    pass
+    # Get all the votes (may need to improve filtering on poll here).
+    #TODO(pcsforeducation) support multiple polls
+    poll = Poll.objects.all()[0]
+    submissions = defaultdict(int)
+    votes = Vote.objects.all()
+    for vote in votes:
+        submissions[vote.submission.id] += 1
+    # Eww.
+    top_submissions = list(reversed(sorted(submissions.iteritems(),
+                                    key=operator.itemgetter(1))))
+    top_votes = top_submissions[0]
+    if top_votes > 0:
+        for submission in top_submissions:
+            if submission[0] == top_votes:
+                _post_winning_submission(poll, submission)
+
+    # Delete the votes
+    votes.delete()
+
+
+def _post_winning_submission(poll, submission):
+    user = UserProfile.objects.get(username=poll.bot_name)
+    post = Post(user=user,
+                category=poll.category,
+                title=poll.title,
+                url=submission.url)
+    post.save()
 
 
 class PollDetailView(DetailView):

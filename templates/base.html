@@ -41,7 +41,9 @@
                 <li><label>Menu</label></li>
                 <li><a href="/users/{{ request.user.username }}/">{{ request.user }}</a></li>
                 <li><a href="/chat/">Chat</a></li>
-                <li><a href="/poll/BotD">Babe of the Day</a></li>
+                {% for poll in POLLS %}
+                <li><a href="/poll/{{ poll.stub }}/">{{ poll.title }}</a></li>
+                {% endfor %}
                 <li><a href="/invite/">Invite</a></li>
                 <li><a href="/accounts/logout/">Log out</a></li>
             </ul>

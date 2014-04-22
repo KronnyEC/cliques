@@ -1,7 +1,7 @@
 from django.db import models
 from django import forms
 from website.utils import detect_content_type
-from website.models import UserProfile
+from website.models import UserProfile, Category
 
 FREQUENCY_CHOICES = (('daily', 'daily'), ('once', 'once'))
 
@@ -10,6 +10,7 @@ class Poll(models.Model):
     title = models.CharField(max_length=255)
     stub = models.CharField(max_length=32)
     bot_name = models.CharField(max_length=32)
+    category = models.ForeignKey(Category)
     # In hours
     frequency = models.IntegerField(default=24)
     # In hours, when old submissions that haven't won will be removed
@@ -49,8 +50,13 @@ class Vote(models.Model):
     day = models.DateField(auto_now_add=True)
 
     class Meta:
-        # One vote per user per day.
-        unique_together = (('submission', 'day'))
+        """One vote per user per day. Problem if votes are counted at 5am..
+        TODO(pcsforeducation) fix the uniqueness here. Also need to point
+        at the poll. This only supports one vote across all polls, rather than
+        one vote per poll per day per user.
+
+        """
+        unique_together = (('user', 'day'))
 
     def __unicode__(self):
         return "{} voted on {} on {}".format(self.user.username,

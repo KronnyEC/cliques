@@ -43,6 +43,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "allauth.account.context_processors.account",
     "allauth.socialaccount.context_processors.socialaccount",
     "cliques.context_processor.settings_context",
+    "cliques.context_processor.polls",
 )
 
 TEMPLATE_DIRS = (
