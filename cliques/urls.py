@@ -57,7 +57,7 @@ urlpatterns = patterns('',
     url(r'^poll/(?P<stub>[\w_]+)/submission/$', SubmissionFormView.as_view()),
     url(r'^poll/(?P<poll_stub>[\w_]+)/(?P<submission_id>\d+)/vote/$',
         'poll.views.vote'),
-    url(r'^poll/cron/$', 'poll.views.cron'),
+    url(r'^cron/poll/$', 'poll.views.cron'),
     url(r'^users/$', 'website.views.user_redirect'),
     url(r'^users/(?P<slug>\w+)/$', profile_update, name='profile_detail'),
 

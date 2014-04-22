@@ -55,22 +55,30 @@ def cron(request):
     # Eww.
     top_submissions = list(reversed(sorted(submissions.iteritems(),
                                     key=operator.itemgetter(1))))
-    top_votes = top_submissions[0]
-    if top_votes > 0:
-        for submission in top_submissions:
-            if submission[0] == top_votes:
-                _post_winning_submission(poll, submission)
+    logging.info("Top submissions: {}".format(top_submissions))
+    if top_submissions:
+        top_votes = top_submissions[0][1]
+        if top_votes > 0:
+            for submission in top_submissions:
+                logging.info("Testing submission: {}, top_votes: {}, equal? {}"
+                             .format(submission, top_votes,
+                                     submission[0] == top_votes))
+                if submission[1] == top_votes:
+                    _post_winning_submission(poll, submission[0])
 
-    # Delete the votes
-    votes.delete()
+        # Delete the votes
+        votes.delete()
+    return HttpResponse('ok')
 
 
-def _post_winning_submission(poll, submission):
+def _post_winning_submission(poll, submission_id):
     user = UserProfile.objects.get(username=poll.bot_name)
+    submission = Submission.objects.get(id=submission_id)
     post = Post(user=user,
                 category=poll.category,
                 title=poll.title,
-                url=submission.url)
+                url=submission.url,
+                type='image')
     post.save()
 
 
