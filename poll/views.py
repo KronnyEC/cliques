@@ -80,6 +80,10 @@ def _post_winning_submission(poll, submission_id):
                 url=submission.url,
                 type='image')
     post.save()
+    winning_user = UserProfile.objects.filter(id=submission.user.id)
+    winning_user.votes += 1
+    winning_user.save()
+    submission.delete()
 
 
 class PollDetailView(DetailView):

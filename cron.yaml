@@ -1,5 +1,5 @@
 cron:
 - description: morning poll post
-  url: /poll/cron/
+  url: /cron/poll/
   schedule: every day 05:00
   timezone: America/Chicago

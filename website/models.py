@@ -26,6 +26,7 @@ class UserProfile(AbstractUser):
                                     null=True, default=None)
     email_settings = models.CharField(max_length=64, choices=EMAIL_PREFERENCES,
                                       default='posts')
+    poll_votes = models.IntegerField(default=0)
 
 
 class Category(models.Model):
