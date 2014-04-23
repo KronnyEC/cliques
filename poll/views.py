@@ -116,4 +116,3 @@ class SubmissionFormView(CreateView):
         self.object = form.save()
         self.success_url = "/poll/{}/".format(stub)
         return super(SubmissionFormView, self).form_valid(form)
-
