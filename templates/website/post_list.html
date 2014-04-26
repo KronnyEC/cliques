@@ -86,11 +86,14 @@
         {% if is_paginated %}
             <div class="row pagination">
                 <span class="page-links">
-                    <div class="large-2 large-offset-3 small-4 columns">
+                    <div class="large-2 large-offset-3  small-4 columns">
                     {% if page_obj.has_previous %}
                         <a href="/?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% else %}
+                        &nbsp;
                     {% endif %}
                     </div>
+
                     <div class="large-2 small-4 columns">
                         <span class="page-current">
                             Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
