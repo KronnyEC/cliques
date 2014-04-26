@@ -66,8 +66,6 @@ def cron(request):
                 if submission[1] == top_votes:
                     _post_winning_submission(poll, submission[0])
 
-        # Delete the votes
-        votes.delete()
     return HttpResponse('ok')
 
 
@@ -80,8 +78,8 @@ def _post_winning_submission(poll, submission_id):
                 url=submission.url,
                 type='image')
     post.save()
-    winning_user = UserProfile.objects.filter(id=submission.user.id)
-    winning_user.votes += 1
+    winning_user = UserProfile.objects.get(id=submission.user.id)
+    winning_user.poll_votes += 1
     winning_user.save()
     submission.delete()
 

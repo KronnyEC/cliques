@@ -5,12 +5,16 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.views.generic import ListView, CreateView, DetailView, \
     UpdateView
+import notify.utils
 from website.models import Post, PostForm, CommentForm, Comment, UserProfile, \
     Category
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils.importlib import import_module
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def home(request):
@@ -52,6 +56,7 @@ def user_redirect(request):
 
 
 class PostsListView(ListView):
+    paginate_by = 10
     model = Post
     template_name = 'website/post_list.html'
 
@@ -126,11 +131,26 @@ class CommentFormView(CreateView):
     model = Comment
     success_url = '/'
     fields = ['text']
+    notification_text = "{user} commented on {title}"
     # template_name = 'website/post.html'
 
     def form_valid(self, form):
         user_model = get_user_model()
-        form.instance.post = Post.objects.get(id=self.kwargs.get('pk'))
+        post = Post.objects.get(id=self.kwargs.get('pk'))
+        form.instance.post = post
+        other_users = Comment.objects.select_related().filter(post=post)\
+            .exclude(user=self.request.user).values_list('user', flat=True)
+        logger.info(other_users)
+        notify.utils.notify_users(
+            user_ids=other_users,
+            text=self.notification_text.format(**{
+                'user': self.request.user.username,
+                'title': post.title
+            }),
+            link="http://www.slashertraxx.com/post/{}/".format(post.id),
+            type='comment',
+            method='site',
+            level='info')
         form.instance.user = user_model.objects.get(id=self.request.user.id)
         self.object = form.save()
         self.success_url = "/post/{}/".format(self.kwargs.get('pk'))

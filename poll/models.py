@@ -16,6 +16,9 @@ class Poll(models.Model):
     # In hours, when old submissions that haven't won will be removed
     submission_removal = models.IntegerField(default=7*24)
 
+    def __unicode__(self):
+        return self.title
+
 
 class Submission(models.Model):
     title = models.CharField(max_length=255)
@@ -36,6 +39,9 @@ class Submission(models.Model):
         self.type = detect_content_type(self.url)
         if not new:
             return
+
+    def __unicode__(self):
+        return "{}: {}".format(self.user, self.title)
 
 
 class SubmissionForm(forms.ModelForm):

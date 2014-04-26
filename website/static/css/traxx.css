@@ -133,3 +133,10 @@ body, html {
     display:block;
     /*margin:auto;*/
 }
+.connected_users {
+    margin-bottom:10px;
+    margin-top:10px;
+}
+.connect_users_title {
+    border-bottom: 1px solid grey;
+}

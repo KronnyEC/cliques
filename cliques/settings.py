@@ -72,14 +72,10 @@ INSTALLED_APPS = [
     'invite_only',
     'chat_server',
     'poll',
+    'notify',
     'website',
 ]
 
-if ENV in ['localprod', 'local']:
-    INSTALLED_APPS += [
-        'south',
-        # 'appengine_toolkit'
-    ]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -89,6 +85,16 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+if ENV in ['localprod', 'local']:
+    INSTALLED_APPS += [
+        'south',
+        # 'debug_toolbar',
+        # 'appengine_toolkit'
+    ]
+    # DEBUG_TOOLBAR_PATCH_SETTINGS = False
+    # MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+
 
 ROOT_URLCONF = 'cliques.urls'
 

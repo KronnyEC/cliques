@@ -41,7 +41,14 @@ def _get_messages(start, end):
     0 indexed
     """
     return list(reversed(ChatMessage.objects.order_by('-sent')[start:end]
-                .values_list('user__username', 'message', 'sent')))
+                .values_list("user__username", "message", "sent")))
+
+
+def _get_connected_users():
+    five_mins_ago = datetime.datetime.now() - datetime.timedelta(minutes=5)
+    return list(ChatUser.objects.filter(
+        connected_at__gt=five_mins_ago).values_list("user__username",
+                                                    flat=True))
 
 
 @csrf_exempt
@@ -52,10 +59,34 @@ def join_chat(request):
     chat_user, created = ChatUser.objects.get_or_create(user=request.user)
     chat_user.token = token
     chat_user.save()
+    connected_users = _get_connected_users()
     # channel.send_message(request.user.username,
     #                      '[system] Joined the Slashertraxx chat room.')
     return render_to_json(request, {'token': token,
-                                    'msgs': _get_messages(0, 20)})
+                                    'msgs': _get_messages(0, 20),
+                                    'connected_users': connected_users})
+
+
+@csrf_exempt
+@login_required
+def check_in(request):
+    try:
+        ChatUser.objects.get(user=request.user).save()
+    except ChatUser.DoesNotExist:
+        pass
+    return render_to_json(request, {'connected_users': _get_connected_users()})
+
+
+@csrf_exempt
+@login_required
+def leave_chat(request):
+    try:
+        chat_user = ChatUser.objects.get(user=request.user)
+        logger.info("{} left chat".format(chat_user.user.username))
+        chat_user.delete()
+    except ChatUser.DoesNotExist:
+        pass
+    return render_to_json(request, {'status': 'ok'})
 
 
 @csrf_exempt

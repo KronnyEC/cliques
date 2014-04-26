@@ -10,17 +10,21 @@ function socket_open(e) {
 function socket_message(e) {
     var message = e.data;
     console.log("socket message", message, jQuery.parseJSON(message));
-    add_chat_message(jQuery.parseJSON(message));
+    add_chat_message(jQuery.parseJSON(message), false);
 }
 
 function socket_error(e) {
-    var code = error.field;
-    var description = error.description;
+    var code = e.field;
+    var description = e.description;
     console.log("Socket error", code, description);
+    // Token timed out, get a new one.
+    if (code == 401 && description == "Token+timed+out.") {
+        join_chat();
+    }
 }
 
 function socket_close(e) {
-    console.log("Socket closed");
+    console.log("Socket closed", e);
 }
 
 function build_socket() {
@@ -33,13 +37,27 @@ function build_socket() {
     });
 }
 
-function add_chat_message(msg) {
+function add_chat_message(msg, notify) {
     console.log("add chat message", msg);
     var message = urlify(msg[1]);
     var chat_messages = $('#chat_messages');
     $('#chat_messages').append("<p>" + msg[0] + ": " + message  + "</p><hr>");
     $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
+    if (notify) {
+        chat_notify();
+    }
+
 }
+
+function chat_notify() {
+    document.title = '(1) Slashertraxx'
+}
+
+
+function add_chat_user(user) {
+    $("#connected_users").append(user + ", ");
+}
+
 
 function join_chat() {
     $.ajax({
@@ -51,6 +69,10 @@ function join_chat() {
             build_socket();
             result.msgs.forEach(function(msg) {
                 add_chat_message(msg)
+            });
+            $("#connected_users").empty();
+            result.connected_users.forEach(function(user) {
+                add_chat_user(user);
             });
         }
     });
@@ -76,6 +98,20 @@ function urlify(text) {
     // return text.replace(urlRegex, '<a href="$1">$1</a>')
 }
 
+function check_in() {
+    console.log('check in');
+    $.ajax({
+        type: "POST",
+        url: '/chat/check_in/',
+        success: function(result) {
+            $("#connected_users").empty();
+            result.connected_users.forEach(function(user) {
+                add_chat_user(user);
+            });
+        }
+    });
+}
+
 $(document).ready(function() {
     join_chat();
 
@@ -98,5 +134,32 @@ $(document).ready(function() {
         console.log('enter');
         chat_message(inputBox.value);
         inputBox.value="";
+    });
+
+    // Clear notifications
+    $(function() {
+        $(window).focus(function() {
+            window.title = 'SlasherTraxx';
+            console.log('Focus');
+        });
+
+        $(window).blur(function() {
+            console.log('Lost focus');
+        });
+    });
+
+    // Check in every minute
+    setInterval(function() {
+        check_in();
+    }, 60*1000);
+});
+
+$( window ).unload(function() {
+    $.ajax({
+        type: "POST",
+        url: '/chat/leave_chat/',
+        success: function(result) {
+            console.log("left chat", result);
+        }
     });
 });

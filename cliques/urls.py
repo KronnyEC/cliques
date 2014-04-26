@@ -1,3 +1,4 @@
+from cliques import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -9,6 +10,8 @@ from django.contrib import admin
 from invite_only.views import InviteCodeView
 from website.api import PostList, PostDetail, PostCommentList
 from django.views.generic import TemplateView
+
+
 admin.autodiscover()
 
 post_detail = login_required(PostDetailView.as_view(model=Post))
@@ -71,5 +74,16 @@ urlpatterns = patterns('',
     url(r'^chat/$', TemplateView.as_view(template_name="chat/chat.html")),
     url(r'^chat/message/$', 'chat_server.views.receive'),
     url(r'^chat/join_chat/$', 'chat_server.views.join_chat'),
+    url(r'^chat/leave_chat/$', 'chat_server.views.leave_chat'),
+    url(r'^chat/check_in/$', 'chat_server.views.check_in'),
+
+    # Notifications
+    url(r'^notifications/$', 'notify.views.get_notifications'),
 
 )
+
+# if settings.ENV in ['local', 'localprod']:
+#     import debug_toolbar
+#     urlpatterns += patterns('',
+#         url(r'^__debug__/', include(debug_toolbar.urls)),
+#     )
