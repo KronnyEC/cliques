@@ -84,17 +84,24 @@
         {% endfor %}
         {# Pagination #}
         {% if is_paginated %}
-            <div class="pagination">
+            <div class="row pagination">
                 <span class="page-links">
+                    <div class="large-2 large-offset-3 small-4 columns">
                     {% if page_obj.has_previous %}
                         <a href="/?page={{ page_obj.previous_page_number }}">previous</a>
                     {% endif %}
-                    <span class="page-current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                    </span>
+                    </div>
+                    <div class="large-2 small-4 columns">
+                        <span class="page-current">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </div>
+                    <div class="large-2 small-4 columns">
                     {% if page_obj.has_next %}
                         <a href="/?page={{ page_obj.next_page_number }}">next</a>
                     {% endif %}
+                    </div>
+                    <div class="large-3 hide-for-small">&nbsp;</div>
                 </span>
             </div>
         {% endif %}
