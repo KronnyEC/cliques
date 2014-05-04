@@ -9,6 +9,8 @@ from django.views.generic import CreateView, DetailView
 from poll.models import Vote, Submission, SubmissionForm, Poll
 import logging
 from website.models import Post, UserProfile
+import datetime
+from django.utils.timezone import utc
 
 logger = logging.getLogger()
 
@@ -65,6 +67,11 @@ def cron(request):
                                      submission[0] == top_votes))
                 if submission[1] == top_votes:
                     _post_winning_submission(poll, submission[0])
+
+
+    seven_days_ago = datetime.datetime.utcnow().replace(tzinfo=utc) \
+                           - datetime.timedelta(days=7)
+    Submission.objects.filter(submitted__lt=seven_days_ago).delete()
 
     return HttpResponse('ok')
 

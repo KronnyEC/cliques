@@ -66,7 +66,7 @@ class Post(models.Model):
         super(Post, self).save(*args, **kwargs)
         # Check if text field is
         self.type = detect_content_type(self.url)
-        print 'type is', self.type
+        logger.info('type is {}'.format(self.type))
         if not new:
             return
 
@@ -156,7 +156,6 @@ class PostForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super(PostForm, self).save(commit=False)
-        print "INSTANCE", instance
 
         instance.save(commit)
         return instance

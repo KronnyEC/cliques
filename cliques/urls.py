@@ -2,6 +2,7 @@ from cliques import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from notify.api import NotificationList
 from poll.views import PollDetailView, SubmissionFormView
 from website.views import PostsListView, PostFormView, CommentFormView, \
     PostDetailView, ProfileDetailView, ProfileEditView, CategoryListView
@@ -78,7 +79,8 @@ urlpatterns = patterns('',
     url(r'^chat/check_in/$', 'chat_server.views.check_in'),
 
     # Notifications
-    url(r'^notifications/$', 'notify.views.get_notifications'),
+    # url(r'^notifications/$', 'notify.views.get_notifications'),
+    url('^notifications/$', NotificationList.as_view()),
 
 )
 

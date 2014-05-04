@@ -95,11 +95,9 @@ class CategoryListView(ListView):
 
     def get_queryset(self):
         category_name = self.request.GET.get('category')
-        print "CATNAME", category_name
         category = Category.objects.get(name=category_name)
         qs = super(CategoryListView, self).get_queryset()
         qs = qs.filter(category=category.id)
-        print "QUERY", qs
         return qs
 
 
@@ -120,7 +118,6 @@ class PostFormView(CreateView):
     # form_class = PostForm
 
     def form_valid(self, form):
-        print "FORMVALID"
         user_model = get_user_model()
         form.instance.user = user_model.objects.get(id=self.request.user.id)
         self.object = form.save()
@@ -138,19 +135,22 @@ class CommentFormView(CreateView):
         user_model = get_user_model()
         post = Post.objects.get(id=self.kwargs.get('pk'))
         form.instance.post = post
-        other_users = Comment.objects.select_related().filter(post=post)\
-            .exclude(user=self.request.user).values_list('user', flat=True)
-        logger.info(other_users)
-        notify.utils.notify_users(
-            user_ids=other_users,
-            text=self.notification_text.format(**{
-                'user': self.request.user.username,
-                'title': post.title
-            }),
-            link="http://www.slashertraxx.com/post/{}/".format(post.id),
-            type='comment',
-            method='site',
-            level='info')
+        # other_users = set(Comment.objects.select_related().filter(post=post)\
+        #     .exclude(user=self.request.user).values_list('user', flat=True))
+        # Add post auth
+        # if post.user_id not in other_users and \
+        #                 post.user_id != self.request.user.id:
+        #     other_users.append(post.user_id)
+        # logger.info(other_users)
+        # notify.utils.notify_users(
+        #     user_ids=other_users,
+        #     text=self.notification_text.format(**{
+        #         'user': self.request.user.username,
+        #         'title': post.title
+        #     }),
+        #     link="http://www.slashertraxx.com/post/{}/".format(post.id),
+        #     type='comment',
+        #     level='info')
         form.instance.user = user_model.objects.get(id=self.request.user.id)
         self.object = form.save()
         self.success_url = "/post/{}/".format(self.kwargs.get('pk'))

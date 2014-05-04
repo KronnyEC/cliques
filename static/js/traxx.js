@@ -112,9 +112,37 @@ function check_in() {
     });
 }
 
+// Notifications
+function get_notifications() {
+    console.log('getting notifications');
+    $.ajax({
+        type: "GET",
+        url: '/notifications/',
+        success: function(results) {
+            console.log('notifications', results);
+            $("#notifications").empty();
+            results.forEach(function(n) {
+                add_notification(n)
+            });
+        },
+        error: function(e) {
+            console.log("note err", e);
+        }
+    });
+}
+
+function add_notification(n) {
+    // n requires: text, level, link, created_at
+    var template = '<div data-alert class="alert-box ' + n.level + ' radius"><a href="' + n.link + '">' + n.text + '</a><a href="#" class="close">&times;</a></div>';
+    console.log(template);
+    $("#notifications").append(template);
+}
+
+// End notifications
+
 $(document).ready(function() {
     join_chat();
-
+    get_notifications();
     // Bind chat_server keys
     var inputBox = document.getElementById("chat_box");
 
