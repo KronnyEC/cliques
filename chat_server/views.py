@@ -1,4 +1,5 @@
 import datetime
+from django.utils.timezone import utc
 from django.contrib.auth.decorators import login_required
 import json
 from django.http import HttpResponse
@@ -45,7 +46,8 @@ def _get_messages(start, end):
 
 
 def _get_connected_users():
-    five_mins_ago = datetime.datetime.now() - datetime.timedelta(minutes=5)
+    now = datetime.datetime.utcnow().replace(tzinfo=utc)
+    five_mins_ago = now - datetime.timedelta(minutes=5)
     return list(ChatUser.objects.filter(
         connected_at__gt=five_mins_ago).values_list("user__username",
                                                     flat=True))
@@ -93,8 +95,9 @@ def leave_chat(request):
 @login_required
 def receive(request):
     logging.info("recieved chat msg from {}".format(request.user.username))
+    now = datetime.datetime.utcnow().replace(tzinfo=utc)
     msg = json.dumps([request.user.username, request.POST['msg'],
-           str(datetime.datetime.now())])
+           str(now)])
     for chat_user in ChatUser.objects.all():
         logger.info("Sending {} to {}".format(chat_user.token, msg))
         channel.send_message(chat_user.token, msg)
