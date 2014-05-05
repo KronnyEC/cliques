@@ -17,7 +17,9 @@
             </div>
         </div>
     {% endif %}
-    <p>Submitted by: {{ post.user }} {% if post.user.poll_votes %}<span class="label votes">{{ post.user.poll_votes }}</span>{% endif %}</p>
+    <div class="row">
+        <p class="large-12 columns">Submitted by: {{ post.user }} {% if post.user.poll_votes %}<span class="label votes">{{ post.user.poll_votes }}</span>{% endif %}</p>
+    </div>
     <hr>
     <div class="row">
         <div class="large-12 small-12 columns">
