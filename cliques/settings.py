@@ -52,9 +52,6 @@ TEMPLATE_DIRS = (
 
 ALLOWED_HOSTS = []
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -121,6 +118,8 @@ if ENV == 'appengine':
         }
     }
     MAIL_PROVIDER = 'APPENGINE'
+    EMAIL_SENDER = 'josh@slashertraxx.com'
+    EMAIL_BACKEND = 'cliques.mail.EmailBackend'
 elif ENV == 'localprod':
     # Running in development, but want to access the Google Cloud SQL instance
     # in production.
@@ -134,6 +133,9 @@ elif ENV == 'localprod':
         }
     }
     MAIL_PROVIDER = 'APPENGINE'
+    EMAIL_SENDER = 'josh@slashertraxx.com'
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    # EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
 else:
     # Running in development, so use a local MySQL database.
     DATABASES = {
@@ -145,6 +147,9 @@ else:
         }
     }
     MAIL_PROVIDER = 'DJANGO'
+    EMAIL_SENDER = 'josh@slashertraxx.com'
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    # EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 

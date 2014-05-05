@@ -144,3 +144,11 @@ body, html {
     margin-bottom:20px;
     padding-bottom:20px;
 }
+.label.votes {
+    line-height: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 6px;
+    border-radius: 5px;
+    background-color: #5da423;
+}

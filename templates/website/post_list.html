@@ -52,7 +52,7 @@
                         {% elif post.type == 'link' %}
                             <h4>
                                 <span class="round label {{ post.category.color }} category"><a href="/posts/?category={{ post.category.name }}">{{ post.category.name }}</a></span>
-                                <a href="{{ post.url }}">{{ post.title }}</a>
+                                <a href="{{ post.url }}" target="_blank">{{ post.title }}</a>
                             </h4>
                         {% else %}
                             <h4>
@@ -63,7 +63,7 @@
                         {% endif %}
                         <div class="row post_metadata">
                             <div class="large-3 small-3 columns">
-                                <h6>{{ post.user }}</h6>
+                                <h6>{{ post.user }} {% if post.user.poll_votes %}<span class="label votes">{{ post.user.poll_votes }}</span>{% endif %}</h6>
                             </div>
                             <div class="large-4 small-3 columns">
                                 <h6><a href="/post/{{ post.id }}/">{{ post.comment_count }} Comments</a></h6>
