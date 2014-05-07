@@ -2,7 +2,7 @@ from cliques import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from notify.api import NotificationList
+from notify.api import NotificationViewSet
 from poll.views import PollDetailView, SubmissionFormView
 from website.views import PostsListView, PostFormView, CommentFormView, \
     PostDetailView, ProfileDetailView, ProfileEditView, CategoryListView
@@ -30,6 +30,17 @@ v1_post_urls = patterns('',
     url(r'^posts/(?P<pk>\d+)/comments/$', PostCommentList.as_view(),
         name='post-comment-list')
 )
+
+notification_list = NotificationViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+notification_detail = NotificationViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
 
 urlpatterns = patterns('',
     # Examples:
@@ -80,7 +91,8 @@ urlpatterns = patterns('',
 
     # Notifications
     # url(r'^notifications/$', 'notify.views.get_notifications'),
-    url('^notifications/$', NotificationList.as_view()),
+    url('^notifications/$', notification_list),
+    url('^notifications/(?P<pk>\d+)/$', notification_detail),
 
 )
 
