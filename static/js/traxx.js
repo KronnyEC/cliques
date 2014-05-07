@@ -119,9 +119,10 @@ function get_notifications() {
         type: "GET",
         url: '/notifications/',
         success: function(results) {
-            console.log('notifications', results);
+            console.log('notifications', results, results.length);
             $("#notifications").empty();
-            results.forEach(function(n) {
+            
+            results.results.forEach(function(n) {
                 add_notification(n)
             });
         },
@@ -133,16 +134,61 @@ function get_notifications() {
 
 function add_notification(n) {
     // n requires: text, level, link, created_at
-    var template = '<div data-alert class="alert-box ' + n.level + ' radius"><a href="' + n.link + '">' + n.text + '</a><a href="#" class="close">&times;</a></div>';
+    var template = '<li class="notification_container" id="notification_' + n.id + '_container"><a id="notification_' + n.id + '" >' + n.text + '</a></li></div>';
     console.log(template);
     $("#notifications").append(template);
 }
 
+function clear_notification(notification_id) {
+    $.ajax({
+        type: "DELETE",
+        url: '/notifications/' + notification_id + '/',
+        success: function(results) {
+            var notification_selector = '#notification_' + notification_id;
+            $(notification_selector).remove();
+        },
+        error: function(e) {
+            console.log("notification delete err", e);
+        }
+    });
+}
+
 // End notifications
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+function sameOrigin(url) {
+    // test that a given url is a same-origin URL
+    // url could be relative or scheme relative or absolute
+    var host = document.location.host; // host + port
+    var protocol = document.location.protocol;
+    var sr_origin = '//' + host;
+    var origin = protocol + sr_origin;
+    // Allow absolute or scheme relative URLs to same origin
+    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+}
 
 $(document).ready(function() {
     join_chat();
     get_notifications();
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            }
+        }
+    });
+
+
     // Bind chat_server keys
     var inputBox = document.getElementById("chat_box");
 
@@ -180,6 +226,12 @@ $(document).ready(function() {
     setInterval(function() {
         check_in();
     }, 60*1000);
+
+    $(document).on('click', '.notification_container', function(e) {
+        var notification_id = e.target.id.split('_')[1];
+//        console.log();
+        clear_notification(notification_id);
+    });
 });
 
 $( window ).unload(function() {

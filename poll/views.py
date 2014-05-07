@@ -1,16 +1,17 @@
 from collections import defaultdict
-import operator
-from django.contrib.auth import get_user_model
-from django.http import HttpResponse, HttpResponseForbidden, \
-    HttpResponseBadRequest, HttpResponseRedirect, HttpResponseNotFound
-from django.shortcuts import render, render_to_response
-# Create your views here.
-from django.views.generic import CreateView, DetailView
-from poll.models import Vote, Submission, SubmissionForm, Poll
-import logging
-from website.models import Post, UserProfile
 import datetime
+import logging
+import operator
+import random
+
+from django.contrib.auth import get_user_model
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.utils.timezone import utc
+from django.views.generic import CreateView, DetailView
+
+from poll.models import Vote, Submission, SubmissionForm, Poll
+from website.models import Post, UserProfile
+
 
 logger = logging.getLogger()
 
@@ -61,13 +62,17 @@ def cron(request):
     if top_submissions:
         top_votes = top_submissions[0][1]
         if top_votes > 0:
+            # Choose winning vote
+            winning_submissions = []
             for submission in top_submissions:
                 logging.info("Testing submission: {}, top_votes: {}, equal? {}"
                              .format(submission, top_votes,
                                      submission[0] == top_votes))
                 if submission[1] == top_votes:
-                    _post_winning_submission(poll, submission[0])
+                    winning_submissions.append(submission[0])
+            winning_index = random.randrange(0, len(winning_submissions))
 
+            _post_winning_submission(poll, winning_submissions[winning_index])
 
     seven_days_ago = datetime.datetime.utcnow().replace(tzinfo=utc) \
                            - datetime.timedelta(days=7)
