@@ -152,3 +152,9 @@ body, html {
     border-radius: 5px;
     background-color: #5da423;
 }
+.top-bar-section li.inactive:not(.has-form) a:not(.button) {
+    background:#333333;
+    padding: 0 15px;
+    line-height: 45px;
+    color: white;
+}

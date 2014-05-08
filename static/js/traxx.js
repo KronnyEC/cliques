@@ -122,7 +122,10 @@ function get_notifications() {
         success: function(results) {
             console.log('notifications', results, results.length);
             $("#notifications").empty();
-            
+            if (results.results.length > 0) {
+                $('#notifications_button').removeClass('inactive');
+                $('#notifications_button').addClass('active');
+            }
             results.results.forEach(function(n) {
                 add_notification(n)
             });
@@ -135,7 +138,7 @@ function get_notifications() {
 
 function add_notification(n) {
     // n requires: text, level, link, created_at
-    var template = '<li class="notification_container" id="notification_' + n.id + '_container"><a id="notification_' + n.id + '" >' + n.text + '</a></li></div>';
+    var template = '<li class="notification_container" id="notification_' + n.id + '_container"><a href="' + n.link + '" id="notification_' + n.id + '" >' + n.text + '</a></li></div>';
     console.log(template);
     $("#notifications").append(template);
 }
