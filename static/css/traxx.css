@@ -157,4 +157,8 @@ body, html {
     padding: 0 15px;
     line-height: 45px;
     color: white;
+    padding-right:10px;
+}
+.top-bar-section ul li.active > a {
+    padding-right:10px;
 }
