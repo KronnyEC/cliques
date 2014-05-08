@@ -19,3 +19,9 @@ class Notification(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+    def __unicode__(self):
+        return "{}: {}".format(self.user.username, self.text)
+
+    def __repr__(self):
+        return self.__unicode__()

@@ -135,22 +135,22 @@ class CommentFormView(CreateView):
         user_model = get_user_model()
         post = Post.objects.get(id=self.kwargs.get('pk'))
         form.instance.post = post
-        # other_users = set(Comment.objects.select_related().filter(post=post)\
-        #     .exclude(user=self.request.user).values_list('user', flat=True))
+        other_users = set(Comment.objects.select_related().filter(post=post)\
+            .exclude(user=self.request.user).values_list('user', flat=True))
         # Add post auth
-        # if post.user_id not in other_users and \
-        #                 post.user_id != self.request.user.id:
-        #     other_users.append(post.user_id)
-        # logger.info(other_users)
-        # notify.utils.notify_users(
-        #     user_ids=other_users,
-        #     text=self.notification_text.format(**{
-        #         'user': self.request.user.username,
-        #         'title': post.title
-        #     }),
-        #     link="http://www.slashertraxx.com/post/{}/".format(post.id),
-        #     type='comment',
-        #     level='info')
+        if post.user_id not in other_users and \
+                        post.user_id != self.request.user.id:
+            other_users.add(post.user_id)
+        logger.info(other_users)
+        notify.utils.notify_users(
+            user_ids=other_users,
+            text=self.notification_text.format(**{
+                'user': self.request.user.username,
+                'title': post.title
+            }),
+            link="http://www.slashertraxx.com/post/{}/".format(post.id),
+            type='comment',
+            level='info')
         form.instance.user = user_model.objects.get(id=self.request.user.id)
         self.object = form.save()
         self.success_url = "/post/{}/".format(self.kwargs.get('pk'))
