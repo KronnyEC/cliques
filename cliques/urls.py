@@ -1,4 +1,3 @@
-from cliques import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -11,8 +10,6 @@ from django.contrib import admin
 from invite_only.views import InviteCodeView
 from website.api import PostList, PostDetail, PostCommentList
 from django.views.generic import TemplateView
-from django.conf.urls.static import static
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 admin.autodiscover()

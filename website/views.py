@@ -135,7 +135,7 @@ class CommentFormView(CreateView):
         user_model = get_user_model()
         post = Post.objects.get(id=self.kwargs.get('pk'))
         form.instance.post = post
-        other_users = set(Comment.objects.select_related().filter(post=post)\
+        other_users = set(Comment.objects.select_related().filter(post=post)
             .exclude(user=self.request.user).values_list('user', flat=True))
         # Add post auth
         if post.user_id not in other_users and \

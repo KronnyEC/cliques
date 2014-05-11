@@ -94,7 +94,8 @@ if ENV in ['localprod', 'local']:
         # 'appengine_toolkit'
     ]
     # DEBUG_TOOLBAR_PATCH_SETTINGS = False
-    # MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+    # MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.'
+    #                        'DebugToolbarMiddleware',)
 
 
 ROOT_URLCONF = 'cliques.urls'
@@ -175,7 +176,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_FILE_STORAGE = 'appengine_toolkit.storage.GoogleCloudStorage'
 MEDIA_ROOT = 'media'
 

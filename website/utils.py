@@ -1,11 +1,10 @@
 import importlib
 import json
-import urlparse
 import logging
-import sys
+import re
+
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
-import re
 
 import urllib3
 from django.conf import settings

@@ -21,7 +21,7 @@ handlers:
   static_files: staticfiles/robots.txt
   upload: staticfiles/robots.txt
 - url: /static/
-  static_dir: staticfiles
+  static_dir: static
 - url: /_ah/channel/connected/
   script: cliques.wsgi.application
 - url: /_ah/channel/disconnected/

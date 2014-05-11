@@ -1,13 +1,14 @@
 import logging
+import urlparse
+
 from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django import forms
 from django.conf import settings
-import urlparse
-from website import utils
-from website.utils import detect_content_type
+from django import forms
+
 from website.content_types import YouTube
+from website.utils import detect_content_type
 
 if settings.ENV == 'appengine':
     from google.appengine.api import mail
