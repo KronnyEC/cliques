@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions
 
 from website.serializers import UserSerializer, PostSerializer, \
-    CommentSerializer
-from website.models import UserProfile, Post, Comment
+    CommentSerializer, CategorySerializer
+from website.models import UserProfile, Post, Comment, Category
 
 
 class UserDetail(generics.RetrieveAPIView):
@@ -63,9 +63,17 @@ class PostCommentList(generics.ListAPIView):
         return queryset.filter(post__pk=self.kwargs.get('pk'))
 
 
-# class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
-#     model = UserProfile
-#     serializer_class = ProfileSerializer
-#     permission_classes = [
-#         permissions.AllowAny
-#     ]
+class CategoryList(generics.ListCreateAPIView):
+    model = Category
+    serializer_class = CategorySerializer
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+
+class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Category
+    serializer_class = CategorySerializer
+    permission_classes = [
+        permissions.AllowAny
+    ]
