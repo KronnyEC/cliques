@@ -8,9 +8,10 @@ from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.utils.timezone import utc
 from django.views.generic import CreateView, DetailView
+import notify.utils
 
 from poll.models import Vote, Submission, SubmissionForm, Poll
-from website.models import Post, UserProfile
+from website.models import Post, UserProfile, Comment
 
 
 logger = logging.getLogger()
@@ -86,14 +87,30 @@ def _post_winning_submission(poll, submission_id):
     submission = Submission.objects.get(id=submission_id)
     post = Post(user=user,
                 category=poll.category,
-                title=poll.title,
+                title="{}: {}".format(poll.stub, submission.title),
                 url=submission.url,
                 type='image')
     post.save()
+    text = poll.winning_text.format(
+        title=poll.title,
+        stub=poll.stub,
+        username=submission.user.username)
+
+    comment = Comment(user=user,
+                      post=post,
+                      text=text)
+    comment.save()
     winning_user = UserProfile.objects.get(id=submission.user.id)
     winning_user.poll_votes += 1
     winning_user.save()
     submission.delete()
+    # Notify the winner they won
+    notify.utils.notify_users(
+        user_ids=[winning_user.id],
+        text="Your {} submission won!".format(poll.title),
+        link="http://www.slashertraxx.com/post/{}/".format(post.id),
+        type='comment',
+        level='info')
 
 
 class PollDetailView(DetailView):

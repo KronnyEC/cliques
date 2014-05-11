@@ -9,7 +9,7 @@
     {% endif %}
 
     {% if post.type == 'image' %}
-        <a href="{{ post.url }}" target="_blank"><img class="post image" src="{{ post.url }}"></a>
+        <div clas="image_container"><a href="{{ post.url }}" target="_blank"><img class="post image" src="{{ post.url }}"></a></div>
     {% elif post.type == 'youtube' %}
         <div class=" large-9 columns">
             <div class="flex-video">

@@ -11,6 +11,8 @@ from django.contrib import admin
 from invite_only.views import InviteCodeView
 from website.api import PostList, PostDetail, PostCommentList
 from django.views.generic import TemplateView
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 admin.autodiscover()
@@ -93,11 +95,16 @@ urlpatterns = patterns('',
     # url(r'^notifications/$', 'notify.views.get_notifications'),
     url('^notifications/$', notification_list),
     url('^notifications/(?P<pk>\d+)/$', notification_detail),
-
 )
-
 # if settings.ENV in ['local', 'localprod']:
 #     import debug_toolbar
 #     urlpatterns += patterns('',
 #         url(r'^__debug__/', include(debug_toolbar.urls)),
+#     )
+# if settings.DEBUG:
+#     urlpatterns += staticfiles_urlpatterns()
+
+# if settings.DEBUG:
+#     urlpatterns += patterns('django.contrib.staticfiles.views',
+#         url(r'^static/(?P<path>.*)$', 'serve'),
 #     )

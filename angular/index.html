@@ -1,0 +1,16 @@
+<html ng-app="CliquesApp">
+<head>
+  <script src="js/angular.min.js"></script>
+  <script src="js/cliques.js"></script>
+</head>
+<body ng-controller="PostListCtrl">
+
+  <ul>
+    <li ng-repeat="post in posts">
+        {{post.title}}
+
+    </li>
+  </ul>
+
+</body>
+</html>
