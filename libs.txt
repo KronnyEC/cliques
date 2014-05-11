@@ -1,0 +1,13 @@
+PIL
+allauth
+corsheaders
+debug_toolbar
+django
+oauthlib
+openid
+requests
+requests_oauthlib
+rest_framework
+south
+sqlparse
+urllib3
