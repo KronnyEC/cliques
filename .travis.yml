@@ -12,5 +12,6 @@ script:
 before_script:
   - pip install -r requirements.txt
   - mysql -e "create database cliques;"
-  - python manage.py syncdb --noinput
+  - python manage.py syncdb --noinput  
+  - DJANGO_SETTINGS_MODULE="cliques.settings" python manage.py help
   - DJANGO_SETTINGS_MODULE="cliques.settings" python manage.py migrate
