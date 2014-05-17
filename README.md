@@ -3,6 +3,8 @@ cliques
 
 A private social network focused on small (under 25 people) groups.
 
+1. Install the necessary system packages: `sudo apt-get install python-dev git`
+
 1. First, install tox `sudo pip install tox` 
 
 1. Then run `tox -e dev` to create your dev environment. 

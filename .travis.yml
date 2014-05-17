@@ -12,6 +12,7 @@ script:
 before_script:
   - tox -e dev
   - source dev/bin/activate
-  - mysql -e 'create database cliques;'
+  - mysql -e "create database cliques;"
+  - mysql -e "SET PASSWORD FOR 'root'@'%' = PASSWORD('password');"
   - python manage.py syncdb --noinput
   - python manage.py migrate
