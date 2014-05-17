@@ -3,15 +3,15 @@ python: 2.7
 services:
   - mysql
 env:
-  - DJANGO_SETTINGS_MODULE="cliques.settings"
-env:
-  - TOX_ENV=django
-  - TOX_ENV=flake8
+  - TOX_ENV=django DJANGO_SETTINGS_MODULE="cliques.settings"
+  - TOX_ENV=flake8 DJANGO_SETTINGS_MODULE="cliques.settings"
 install:
   - pip install tox
 script:
   - tox -e $TOX_ENV
 before_script:
+  - tox -e dev
+  - source dev/bin/activate
   - mysql -e 'create database cliques;'
   - python manage.py syncdb --noinput
   - python manage.py migrate
