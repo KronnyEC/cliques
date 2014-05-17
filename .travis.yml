@@ -10,8 +10,7 @@ install:
 script:
   - tox -e $TOX_ENV
 before_script:
-  - tox -e dev
-  - source dev/bin/activate
+  - pip install -r requirements.txt
   - mysql -e "create database cliques;"
   - python manage.py syncdb --noinput
   - python manage.py migrate
