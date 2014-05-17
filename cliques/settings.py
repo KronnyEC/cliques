@@ -17,6 +17,8 @@ if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
     ENV = 'appengine'
 elif os.getenv('SETTINGS_MODE') == 'prod':
     ENV = 'localprod'
+elif os.getenv('TRAVIS') == 'True':
+    ENV = 'travis'
 else:
     ENV = 'local'
 
@@ -141,6 +143,18 @@ elif ENV == 'localprod':
     EMAIL_SENDER = 'josh@slashertraxx.com'
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     # EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
+elif ENV == 'travis':
+    # Running in development, so use a local MySQL database.
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'cliques',
+            'USER': 'travis',
+        }
+    }
+    MAIL_PROVIDER = 'DJANGO'
+    EMAIL_SENDER = 'josh@slashertraxx.com'
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     # Running in development, so use a local MySQL database.
     DATABASES = {

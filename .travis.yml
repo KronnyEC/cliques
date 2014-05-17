@@ -3,8 +3,8 @@ python: 2.7
 services:
   - mysql
 env:
-  - TOX_ENV=django DJANGO_SETTINGS_MODULE="cliques.settings"
-  - TOX_ENV=flake8 DJANGO_SETTINGS_MODULE="cliques.settings"
+  - TOX_ENV=django DJANGO_SETTINGS_MODULE="cliques.settings" TRAVIS='True'
+  - TOX_ENV=flake8 DJANGO_SETTINGS_MODULE="cliques.settings" TRAVIS='True
 install:
   - pip install tox
 script:
@@ -13,6 +13,5 @@ before_script:
   - tox -e dev
   - source dev/bin/activate
   - mysql -e "create database cliques;"
-  - mysql -e "SET PASSWORD FOR 'root'@'%' = PASSWORD('password');"
   - python manage.py syncdb --noinput
   - python manage.py migrate
