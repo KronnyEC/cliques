@@ -7,7 +7,9 @@ env:
   - TOX_ENV=flake8 DJANGO_SETTINGS_MODULE="cliques.settings" TRAVIS='True
 install:
   - pip install tox
-script:
+  - pip install south
+  - pip install Django==1.5
+  - pip install -e .script:
   - tox -e $TOX_ENV
 before_script:
   - pip install -r requirements.txt
