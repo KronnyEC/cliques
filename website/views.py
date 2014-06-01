@@ -13,6 +13,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.utils.importlib import import_module
 import logging
+from website.serializers import PostSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +60,7 @@ class PostsListView(ListView):
     paginate_by = 10
     model = Post
     template_name = 'website/post_list.html'
+    serializer = PostSerializer
 
     def get_queryset(self):
         """
@@ -75,7 +77,7 @@ class PostsListView(ListView):
         else:
             raise ImproperlyConfigured("'%s' must define 'queryset' or 'model'"
                                        % self.__class__.__name__)
-        queryset = queryset.annotate(comment_count=Count('comment'))
+        queryset = queryset.annotate(comment_count=Count('comment')).select_related('category')
         return queryset
 
     def get_context_data(self, **kwargs):

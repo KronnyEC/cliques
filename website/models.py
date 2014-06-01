@@ -20,6 +20,9 @@ POST_TYPES = (('link', 'link'), ('image', 'image'),
 EMAIL_PREFERENCES = (('no', 'None'), ('posts', 'New Posts Only'),
                      ('all', 'Posts and Comments'))
 
+CATEGORY_COLORS = (('red', 'Red'), ('blue', 'Blue'), ('purple', 'Purple'),
+                   ('orange', 'Orange'), ('green', 'Green'))
+
 
 class UserProfile(AbstractUser):
     profile_pic = models.ImageField(upload_to='traxx-profile', blank=True,
@@ -32,7 +35,7 @@ class UserProfile(AbstractUser):
 class Category(models.Model):
     created_by = models.ForeignKey(UserProfile)
     name = models.CharField(max_length=255)
-    color = models.CharField(max_length=64)
+    color = models.CharField(max_length=64, choices=CATEGORY_COLORS)
 
     def __unicode__(self):
         return self.name

@@ -1,3 +1,4 @@
+from django.db.models import Count
 from rest_framework import generics, permissions
 
 from website.serializers import UserSerializer, PostSerializer, \
@@ -19,6 +20,13 @@ class PostList(generics.ListCreateAPIView):
     permission_classes = [
         permissions.AllowAny
     ]
+    paginate_by = 10
+    paginate_by_param = 'page_size'
+    max_paginate_by = 100
+
+    def get_queryset(self):
+        queryset = Post.objects.annotate(comment_count=Count('comment'))
+        return queryset
 
 
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -28,10 +36,18 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
         permissions.AllowAny
     ]
 
+    def get_queryset(self):
+        queryset = super(PostList, self).get_queryset()
+        queryset = queryset.annotate(comment_count=Count('comment_set'))
+        return queryset
+
 
 class UserPostList(generics.ListAPIView):
     model = Post
     serializer_class = PostSerializer
+    paginate_by = 10
+    paginate_by_param = 'page_size'
+    max_paginate_by = 100
 
     def get_queryset(self):
         queryset = super(UserPostList, self).get_queryset()
@@ -49,6 +65,9 @@ class CommentList(generics.ListCreateAPIView):
 class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Comment
     serializer_class = CommentSerializer
+    paginate_by = 100
+    paginate_by_param = 'page_size'
+    max_paginate_by = 1000
     permission_classes = [
         permissions.AllowAny
     ]
@@ -57,6 +76,9 @@ class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
 class PostCommentList(generics.ListAPIView):
     model = Comment
     serializer_class = CommentSerializer
+    paginate_by = 100
+    paginate_by_param = 'page_size'
+    max_paginate_by = 1000
 
     def get_queryset(self):
         queryset = super(PostCommentList, self).get_queryset()

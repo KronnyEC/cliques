@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'allauth',
     'allauth.account',
@@ -219,7 +220,13 @@ APPENGINE_TOOLKIT = {
 SITE_NAME = 'Slashertraxx'
 
 # API
-# REST_FRAMEWORK = {
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
 #     # Use hyperlinked styles by default.
 #     # Only used if the `serializer_class` attribute is not set on a view.
 #     'DEFAULT_MODEL_SERIALIZER_CLASS':

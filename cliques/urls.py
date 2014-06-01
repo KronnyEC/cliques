@@ -1,3 +1,4 @@
+from api.views import get_token, get_cookie
 from cliques import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
@@ -82,6 +83,8 @@ urlpatterns = patterns('',
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),
     url(r'^api/v1/', include(v1_post_urls)),
+    url(r'^api/token/', get_token),
+    url(r'^api/cookie/', get_cookie),
     url(r'^_ah/channel/connected', 'chat_server.views.connect'),
     url(r'^_ah/channel/disconnected', 'chat_server.views.disconnect'),
     url(r'^_ah/channel/receive', 'chat_server.views.receive'),

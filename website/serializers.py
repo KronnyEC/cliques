@@ -8,18 +8,21 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('username', 'profile_pic', 'email',
+        fields = ('id', 'username', 'profile_pic', 'email',
                   'first_name', 'last_name')
 
 
 class PostSerializer(serializers.ModelSerializer):
+    comment_count = serializers.Field(source='comment_set.count')
+
     class Meta:
         model = Post
-        fields = ('submitted', 'edited', 'user', 'title', 'url', 'type',
-                  'thumbnail')
+        fields = ('id', 'submitted', 'edited', 'user', 'title', 'url', 'type',
+                  'thumbnail', 'category', 'comment_set')
+        depth = 1
 
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ('user', 'text', 'submitted', 'edited', 'post')
+        fields = ('id', 'user', 'text', 'submitted', 'edited', 'post')
