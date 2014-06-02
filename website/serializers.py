@@ -14,11 +14,14 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     comment_count = serializers.Field(source='comment_set.count')
+    url = serializers.URLField(source='url', required=False)
+    comment_set = serializers.RelatedField(source='comment_set',
+                                           read_only=True)
 
     class Meta:
         model = Post
         fields = ('id', 'submitted', 'edited', 'user', 'title', 'url', 'type',
-                  'thumbnail', 'category', 'comment_set')
+                  'category', 'comment_set')
         depth = 1
 
 

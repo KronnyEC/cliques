@@ -1,0 +1,49 @@
+<div class="row post_list feed_entry" ng-repeat="post in posts">
+    <div class="large-12 small-12 columns post_list content_column">
+        <div class="post {{ post.category.color }}" ng-switch="post.type">
+            <div class="image" ng-switch-when="image">
+                <h4>
+                    <a href="/post/{{ post.id }}">{{ post.title }}</a>
+                </h4>
+                <a href="/post/{{ post.id }}"><img class="post_list image" src="{{ post.url }}"></a>
+            </div>
+            <div class="youtube" ng-switch-when="youtube">
+                <h4>
+                    <a href="/post/{{ post.id }}/">{{ post.title }}</a>
+                </h4>
+                <div class="flex-video">
+                    <iframe width="420" height="315" src="http://www.youtube.com/embed/{{ post.youtube_video_id }}" frameborder="0" allowfullscreen widescreen></iframe>
+                </div>
+            </div>
+            <div class="video" ng-switch-when="video">
+                <h4>
+                    <a href="/post/{{ post.id }}">{{ post.title }}</a>
+                </h4>
+            </div>
+            <div class="link" ng-switch-when="link">
+                <h4>
+                    <a href="{{ post.url }}" target="_blank">{{ post.title }}</a>
+                </h4>
+            </div>
+            <div class="text" ng-switch-default>
+                <h4>
+                    <a href="/post/{{ post.id }}/">{{ post.title }}</a>
+                </h4>
+            </div>
+            <!--Metadata-->
+            <span class="category_label {{ post.category.color }}">
+                <a href="/posts/?category={{ post.category.name }}">{{ post.category.name }}</a>
+            </span>
+            <span class="post_user {{ post.category.color }}">
+                <a href="/user/{{ post.user.id }}/">{{ post.user.username }}</a>
+            </span>
+            <span class="post_comments {{ post.category.color }}">
+                <a href="/post/{{ post.id }}/">{{ post.comment_set.length }}<span class="icon-chat"></span></a>
+            </span>
+            <span class="post_submitted {{ post.category.color }}" ng-bind="post.submitted | DTSince ">
+                {{ post.submitted  }}
+            </span>
+            <!--End Metadata-->
+        </div>
+    </div>
+</div>

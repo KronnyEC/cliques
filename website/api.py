@@ -3,7 +3,7 @@ from rest_framework import generics, permissions
 
 from website.serializers import UserSerializer, PostSerializer, \
     CommentSerializer
-from website.models import UserProfile, Post, Comment
+from website.models import UserProfile, Post, Comment, Category
 
 
 class UserDetail(generics.RetrieveAPIView):
@@ -27,6 +27,13 @@ class PostList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Post.objects.annotate(comment_count=Count('comment'))
         return queryset
+
+    def create(self, request):
+        print "CREATE", request
+
+    def pre_save(self, obj):
+        obj.user = self.request.user or UserProfile.objects.all()[0]
+        obj.category = Category.objects.get(name=obj.category).id
 
 
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):

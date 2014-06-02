@@ -1,0 +1,384 @@
+/*
+
+Holo
+
+ 51, 181, 229 blue 33B5E5
+170, 102, 204 purple AA66CC
+153, 204,   0 green 99CC00
+255, 187,  51 orange #FFBB33
+255,  68,  68 red #FF4444
+  0, 153, 204 dark blue #0099CC
+153,  51, 204 dark purple #9933CC
+102, 153,   0 dark green #669900
+255, 136,   0 dark orange #FF8800
+204,   0,   0 dark red #CC0000
+
+
+*/
+.post {
+    min-height: 150px;
+    margin-top: 20px;
+    border-radius: 10px;
+    padding: 10px;
+}
+.post.blue {
+    border: 5px solid rgba(51, 181, 229, .3);
+}
+.post.purple {
+    border: 5px solid rgba(170, 102, 204, .3);
+}
+.post.green {
+    border: 5px solid rgba(153, 204,   0, .3);
+}
+.post.orange {
+    border: 5px solid rgba(255, 187,  51, .3);
+}
+.post.red {
+    border: 5px solid rgba(255,  68,  68, .3);
+}
+.category_label {
+    position:absolute;
+    top:35px;
+}
+
+.category_label.blue a {
+    color: rgb(51, 181, 229);
+}
+.category_label.purple a {
+    color: rgb(170, 102, 204);
+}
+.category_label.green a {
+    color: rgb(153, 204,   0);
+}
+.category_label.orange a {
+    color: rgb(255, 187,  51);
+}
+.category_label.red a {
+    color: rgb(255,  68,  68);
+}
+
+.post_submitted {
+    position:absolute;
+    top:35px;
+    right:20px;
+    text-align: right;
+}
+.post_user {
+    position:absolute;
+    bottom:15px;
+    left:20px;
+}
+.post_comments {
+    position:absolute;
+    bottom:15px;
+    right:20px;
+    text-align: right;
+}
+
+.post.image {
+    max-height: 600px;
+    /*max-width: 600px;*/
+    max-width:90%;
+}
+.post_list.image {
+    max-height: 200px;
+    max-width: 500px;
+    display:block;
+    margin:0 auto;
+}
+.link h4,
+.text h4 {
+    margin-top:40px;
+    margin-bottom:40px;
+}
+
+.label.round.category {
+    float:none;
+    margin-bottom:0px;
+}
+.post h4 {
+    text-align:center;
+    padding-top:20px;
+}
+.post_list.flex-video {
+    /*height: 200px;*/
+    /*max-width: 400px;*/
+}
+.youtube,
+.video {
+    padding-bottom:20px;
+}
+.image {
+    padding-bottom:5px;
+}
+.top-bar {
+    margin-bottom:20px;
+}
+.title_link {
+    color:white;
+}
+.post_list a {
+    vertical-align: bottom;
+    margin-left:6px;
+}
+.post_list h4 {
+    line-height: 20px;;
+}
+.category {
+    float:left;
+    font-size:8px;
+}
+.category a,
+.category a:visited,
+.category a:hover,
+.category a:active {
+    color:white;
+    font-size:120%;
+}
+.tab-bar {
+    margin-bottom:20px;
+}
+.post_list.submit_info {
+    list-style-type: none;
+    margin-left:-10px;
+}
+.post_list.feed_entry {
+    border-bottom: 1px solid #dddddd;
+}
+.post_list {
+    padding-left:0;
+    padding-right:0;
+}
+fieldset legend {
+    background-color:none;
+}
+p.error {
+    color:red;
+    font-weight:bold;
+}
+body, html {
+  height: 100%;
+}
+.inner-wrap, .off-canvas-wrap {
+    height:100%;
+}
+.text_field {
+    padding-left:0;
+    padding-right:0;
+}
+.text_label {
+    padding-left:0;
+    padding-right:0;
+}
+.text_label label {
+    vertical-align: middle;
+    line-height: 100%;
+}
+.post_metadata {
+    margin-top:10px;
+}
+.post_metadata h6 {
+    font-size: 80%;
+}
+[class*="column"] + [class*="column"]:last-child +[class*="submitted"] {
+    float:none;
+}
+.comment {
+    text-overflow:ellipsis;
+}
+.comment h6 {
+    margin-top:10px;
+    margin-left:20px;
+    font-size:80%;
+}
+.domain {
+    font-size: 35%;
+    color: grey;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+.chat_server {
+    position: relative;
+}
+.main-section {
+    margin-top:45px;
+}
+#chat_messages {
+    max-height: 500px;
+    /*overflow-y: scroll;*/
+    padding-left: 5px;
+    padding-right: 5px;
+    min-height: 500px;
+    border: 1px solid grey;
+    overflow-y:scroll;
+}
+#chat_form {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+#chat_messages p {
+    margin-bottom:0;
+}
+#chat_messages hr {
+    margin: 0;
+    line-height: 1;
+}
+.submission_entry {
+    margin-top:10px;
+    margin-bottom:10px;
+}
+.submission_title {
+    margin-bottom:10px;
+    text-align: center;
+}
+.submission_image img {
+    display:block;
+    margin:auto;
+}
+.submission_vote_button {
+    margin-top:10px;
+    display:block;
+    /*margin:auto;*/
+}
+.connected_users {
+    margin-bottom:10px;
+    margin-top:10px;
+}
+.connect_users_title {
+    border-bottom: 1px solid grey;
+}
+.pagination {
+    margin-bottom:20px;
+    padding-bottom:20px;
+}
+.label.votes {
+    line-height: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 6px;
+    border-radius: 5px;
+    background-color: #5da423;
+}
+.top-bar-section li.inactive:not(.has-form) a:not(.button) {
+    background:#333333;
+    padding: 0 15px;
+    line-height: 45px;
+    color: white;
+    padding-right:10px;
+}
+.top-bar-section ul li.active > a {
+    padding-right:10px;
+}
+.notification_icon {
+    font-size:200%;
+}
+.notifications_button {
+    margin-top: 5px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+.notification_wrapper {
+    line-height: 1;
+}
+.image_container {
+    max-width:90%;
+}
+.top-bar .button {
+    font-size: 0.875rem;
+    position: relative;
+    top: 7px;
+}
+.add_post_button {
+    font-size:200%;
+    color: #f5f5f5;
+}
+
+/*Icomoon*/
+@font-face {
+	font-family: 'icomoon';
+	src:url('/fonts/icomoon.eot?3m559g');
+	src:url('/fonts/icomoon.eot?#iefix3m559g') format('embedded-opentype'),
+		url('/fonts/icomoon.woff?3m559g') format('woff'),
+		url('/fonts/icomoon.ttf?3m559g') format('truetype'),
+		url('/fonts/icomoon.svg?3m559g#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-paperplane:before {
+	content: "\e601";
+}
+.icon-user:before {
+	content: "\e602";
+}
+.icon-users:before {
+	content: "\e603";
+}
+.icon-user-add:before {
+	content: "\e604";
+}
+.icon-chat:before {
+	content: "\e600";
+}
+.icon-comment:before {
+	content: "\e605";
+}
+.icon-bell:before {
+	content: "\e606";
+}
+.icon-link:before {
+	content: "\e607";
+}
+.icon-flag:before {
+	content: "\e608";
+}
+.icon-cog:before {
+	content: "\e609";
+}
+.icon-tools:before {
+	content: "\e60a";
+}
+.icon-plus:before {
+	content: "\e60b";
+}
+.icon-cross:before {
+	content: "\e60c";
+}
+.icon-plus2:before {
+	content: "\e60d";
+}
+.icon-cross2:before {
+	content: "\e60e";
+}
+.icon-info:before {
+	content: "\e60f";
+}
+.icon-layout:before {
+	content: "\e610";
+}
+.icon-list:before {
+	content: "\e611";
+}
+.icon-pictures:before {
+	content: "\e612";
+}
+.icon-video:before {
+	content: "\e613";
+}.icon-chat {
+    margin-left:5px;
+}
+/*End IcoMoon*/
