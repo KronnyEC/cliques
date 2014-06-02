@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from website.models import UserProfile, Post, Comment
+from website.models import UserProfile, Post, Comment, Category
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -29,3 +29,9 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'user', 'text', 'submitted', 'edited', 'post')
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('created_by', 'name', 'color')

@@ -17,6 +17,8 @@ if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
     ENV = 'appengine'
 elif os.getenv('SETTINGS_MODE') == 'prod':
     ENV = 'localprod'
+elif os.getenv('TRAVIS') == 'True':
+    ENV = 'travis'
 else:
     ENV = 'local'
 
@@ -32,22 +34,22 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-    "django.core.context_processors.request",
-    "allauth.account.context_processors.account",
-    "allauth.socialaccount.context_processors.socialaccount",
-    "cliques.context_processor.settings_context",
-    "cliques.context_processor.polls",
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request',
+    'allauth.account.context_processors.account',
+    'allauth.socialaccount.context_processors.socialaccount',
+    'cliques.context_processor.settings_context',
+    'cliques.context_processor.polls',
 )
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, "templates")
+    os.path.join(BASE_DIR, 'templates')
 )
 
 ALLOWED_HOSTS = []
@@ -95,7 +97,8 @@ if ENV in ['localprod', 'local']:
         # 'appengine_toolkit'
     ]
     # DEBUG_TOOLBAR_PATCH_SETTINGS = False
-    # MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+    # MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.'
+    #                        'DebugToolbarMiddleware',)
 
 
 ROOT_URLCONF = 'cliques.urls'
@@ -104,10 +107,10 @@ WSGI_APPLICATION = 'cliques.wsgi.application'
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
-    "django.contrib.auth.backends.ModelBackend",
+    'django.contrib.auth.backends.ModelBackend',
 
     # `allauth` specific authentication methods, such as login by e-mail
-    "allauth.account.auth_backends.AuthenticationBackend",
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 # Database
@@ -141,6 +144,18 @@ elif ENV == 'localprod':
     EMAIL_SENDER = 'josh@slashertraxx.com'
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     # EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
+elif ENV == 'travis':
+    # Running in development, so use a local MySQL database.
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'cliques',
+            'USER': 'travis',
+        }
+    }
+    MAIL_PROVIDER = 'DJANGO'
+    EMAIL_SENDER = 'josh@slashertraxx.com'
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     # Running in development, so use a local MySQL database.
     DATABASES = {
@@ -173,10 +188,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, 'static'),
 )
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_FILE_STORAGE = 'appengine_toolkit.storage.GoogleCloudStorage'
 MEDIA_ROOT = 'media'
 
