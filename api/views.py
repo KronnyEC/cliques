@@ -1,13 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view
 from website.utils import render_to_json
 
 
-@csrf_exempt
-@login_required
+@api_view(['GET'])
 def get_token(request):
-    token = Token.objects.get_or_create(user=request.user)
+    token = Token.objects.get_or_create(user=request.user.id)
     return render_to_json(request, {
         'id': request.user.id,
         'username': request.user.username,

@@ -1,23 +1,78 @@
 var BASE_URL = 'http://127.0.0.1:8080/api/v1/';
+//var BASE_URL = 'http://10.0.2.2:8080/api/v1/';
+//var BASE_URL = 'http://www.slashertraxx.com/api/v1/';
 
 angular.module('post_controllers', [])
+.controller('UserCtrl', function($scope, $rootScope, $http) {
+    // Get data on startup
+    var username = localStorage.getItem('username');
+    $http.get(BASE_URL + 'users/' + username + '\/')
+        .then(function(res) {
+            console.log('user result', res);
+            $scope.user = res.data
+    });
 
-.controller('PostListCtrl', function($scope, $http, $location) {
+})
+.controller('PostListCtrl', function($scope, $http) {
     // Get data on startup
     $http.get(BASE_URL + 'posts/')
         .then(function(res){
             $scope.posts = res.data.results;
             console.log($scope.posts);
     });
+    $scope.infiniteScroll = function() {
+        console.log('scroll!');
+    };
+    console.log("post list auth", $http.defaults.headers.common.Authorization)
 })
-
-.controller('AuthCtrl', function ($scope, $rootScope, $location, $cookieStore, httpInterceptor, authorization, api, AuthService, Auth) {
+.directive('youtube', function($sce) {
+  return {
+    restrict: 'EA',
+    scope: { post:'=' },
+    replace: true,
+    template: '<div class="flex-video"><iframe style="overflow:hidden;" width="420px" height="315px" src="{{url}}" frameborder="0" allowfullscreen></iframe></div>',
+    link: function (scope) {
+        scope.$watch('video_id', function (newVal) {
+           if (newVal) {
+               scope.url = $sce.trustAsResourceUrl("http://www.youtube.com/embed/" + newVal);
+           }
+        });
+    }
+  };
+})
+.controller('PostDetailCtrl', function($scope, $http, $routeParams, $location) {
+    $scope.postId = $routeParams.postId;
+    $http.get(BASE_URL + 'posts/' + $scope.postId + '\/')
+        .then(function(res){
+            $scope.post = res.data;
+    });
+    $scope.new_comment_submit = function() {
+        $scope.formData['post'] = $scope.postId;
+        console.log("submitting", $scope.formData, this);
+        $http({
+            url: BASE_URL + 'posts\/' + $scope.postId + '/comments\/',
+            method: "POST",
+            data:  $.param($scope.formData),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Authorization': 'Token ' + localStorage.getItem('token')
+            }
+        }).success(function (data, status, headers, config) {
+            console.log('new post');
+            $location.path('/#/posts/' + $scope.postId);
+        }).error(function ($scope, data, status, headers, config) {
+            console.log('error', data);
+            $scope.status = status + ' ' + headers;
+        });
+    };
+})
+.controller('AuthCtrl', function ($scope, $rootScope, $location, httpInterceptor, authorization, api, AuthService, Auth) {
     $scope.credentials = {
         username: '',
         password: ''
     };
     $scope.login = function (credentials) {
-        Auth.setCredentials(credentials);
+        Auth.setCredentials($rootScope, credentials);
         $location.path('/#/posts');
     };
 })
@@ -63,7 +118,7 @@ angular.module('post_controllers', [])
 
       var error = function (response) {
           if (response.status === 401) {
-              $location.url('/login');
+              $location.path('/login');
           }
 
           return $q.reject(response);
@@ -106,20 +161,37 @@ angular.module('post_controllers', [])
     }
   };
 })
-.factory('Auth', ['Base64', '$cookieStore', '$http', function (Base64, $cookieStore, $http) {
+.factory('Auth', ['Base64', '$http', '$rootScope', '$location', function (Base64, $http, $location) {
     // initialize to whatever is in the cookie, if anything
-    $http.defaults.headers.common['Authorization'] = 'Basic ' + $cookieStore.get('authdata');
+    $http.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
 
     return {
-        setCredentials: function (credentials) {
+        setCredentials: function (scope, credentials) {
             var encoded = Base64.encode(credentials['username'] + ':' + credentials['password']);
-            $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
-            $cookieStore.put('authdata', encoded);
+            console.log('encoded', encoded);
+            $http({
+                url: BASE_URL + 'token\/',
+                method: "GET",
+                headers: {
+                    'Authorization': 'Basic ' + encoded
+                }
+            }).success(function (data, status, headers, config) {
+                console.log('data', data);
+                var token = data['token'];
+                $http.defaults.headers.common.Authorization = 'Token ' + token;
+                localStorage.setItem('token', token);
+                localStorage.setItem('username', data['username']);
+                scope.loggedIn = true;
+                $location.path('/#/posts');
+            }).error(function (data, status, headers, config) {
+                console.log('login error', status, headers);
+            });
         },
         clearCredentials: function () {
             document.execCommand("ClearAuthenticationCache");
-            $cookieStore.remove('authdata');
+            localStorage.removeItem('token');
             $http.defaults.headers.common.Authorization = 'Basic ';
+            $rootScope.loggedIn = false;
         }
     };
 }])
@@ -207,25 +279,195 @@ angular.module('post_controllers', [])
         }
     };
 })
-.controller('PostDetailCtrl', function() {
+.controller('NewPostCtrl', function($scope, $rootScope, $http, $location) {
+    // Get a list of categories for the dropdown
+    $http.get(BASE_URL + 'categories/')
+        .success(function(res, status, headers, config){
+            console.log('categories', res);
+            $scope.cats = res;
+    });
 
-})
-.controller('NewPostCtrl', function($scope, $http, $location) {
     $scope.formData = {};
+
     $scope.new_post_submit = function() {
-        console.log("submit");
+        console.log("submitting", $scope.formData);
         $http({
             url: BASE_URL + 'posts\/',
             method: "POST",
             data:  $.param($scope.formData),
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Authorization': 'Token ' + localStorage.getItem('token')
             }
         }).success(function (data, status, headers, config) {
-            $location('/#/posts')
-        }).error(function (data, status, headers, config) {
+            console.log('new post');
+            $location.path('/#/posts')
+        }).error(function ($scope, data, status, headers, config) {
+            console.log('error', data);
+            $scope.status = status + ' ' + headers;
+        });
+    };
+
+})
+.controller('ProfileCtrl', function() {
+
+})
+.controller('ChatCtrl', function($scope, chatService) {
+    function check_in(users){
+        $scope.connected_users = users;
+    }
+
+    function add_chat_messages(msgs) {
+        msgs.forEach(function(msg) {
+            $scope.messages.append(msgs);
+        });
+    }
+
+    $scope.init = function() {
+        console.log('chat init');
+        chat_box_init();
+        setInterval(function() {
+            chatService.check_in();
+        }, 60*1000);
+        chatService.join_chat(function add_chat_messages(msgs) {
+            msgs.forEach(function(msg) {
+                $scope.messages.append(msgs);
+            });
+        });
+        chatService.get_messages(add_chat_messages);
+    };
+
+    $scope.send_message = function() {
+        chatService.send_message($scope.text);
+    }
+
+})
+.controller('PollListCtrl', function() {
+    $http.get(BASE_URL + 'polls/')
+        .then(function(res){
+            $scope.polls = res.data.results;
+    });
+})
+.controller('PollDetailCtrl', function($scope, $http, $routeParams, $location) {
+    $scope.pollStub = $routeParams.pollStub;
+    console.log('/#/polls/' + $scope.pollStub );
+    $scope.new_submission_submit = function() {
+        $scope.formData['poll'] = $scope.poll.id;
+        console.log("submitting", $scope.formData, this, $scope.poll);
+        $http({
+            url: BASE_URL + 'polls\/' + $scope.pollStub + '/submissions\/',
+            method: "POST",
+            data:  $.param($scope.formData),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Authorization': 'Token ' + localStorage.getItem('token')
+            }
+        }).success(function (data, status, headers, config) {
+            console.log('new post');
+            $location.path('/#/polls/' + $scope.pollStub );
+        }).error(function ($scope, data, status, headers, config) {
+            console.log('error', data);
+            $scope.status = status + ' ' + headers;
+        });
+    };
+    $scope.removeVote = function(id) {
+        console.log('removeVote');
+        $http({
+            url: BASE_URL + 'votes/' + id + '\/',
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Authorization': 'Token ' + localStorage.getItem('token')
+            }
+            }).success(function(data, status, headers, config) {
+                console.log('vote killed', data);
+            }).error(function ($scope, data, status, headers, config) {
+                console.log('error', data);
+            })
+    };
+    $scope.addVote = function(id) {
+        console.log('addVote');
+        var data = {'submission': id, 'user': $scope.user.id};
+        console.log('submitting', data);
+        $http({
+            url: BASE_URL + 'votes\/',
+            method: "POST",
+            data: $.param(data),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Authorization': 'Token ' + localStorage.getItem('token')
+            }
+            }).success(function(data, status, headers, config) {
+                consol.log('new vote', data);
+            }).error(function ($scope, data, status, headers, config) {
+                console.log('error', data);
+            })
+    };
+
+    $http.get(BASE_URL + 'polls/' + $scope.pollStub + '\/')
+        .then(function(res){
+            console.log('poll results', res);
+            $scope.poll = res.data;
+    });
+})
+.controller('InviteCtrl', function() {
+    $scope.invite_submit = function() {
+        console.log("submitting", $scope.formData, $rootScope.basic_authorization);
+        $http({
+            url: BASE_URL + 'invite\/',
+            method: "POST",
+            data:  $.param($scope.formData),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Authorization': 'Token ' + localStorage.getItem('token')
+            }
+        }).success(function ($location, data, status, headers, config) {
+            $location.path('/#/posts')
+        }).error(function ($scope, data, status, headers, config) {
+            console.log('error', data);
             $scope.status = status + ' ' + headers;
         });
     }
-});
+})
+.controller('NotificationCtrl', function($scope, $http) {
+    $http.get(BASE_URL + 'notifications/')
+    .then(function(res){
+        $scope.notifications = res.data.results;
+    });
+    $scope.remove = function(item) {
+        console.log("notification remove", item);
+        $http.get(BASE_URL + 'notificaitons/' + item.id + '\/')
+            .then(function (res) {
+                console.log('removed notification', item.id);
 
+            });
+        var index = $scope.notifications.indexOf(item);
+        $scope.notifications.splice(index, 1);
+
+    }
+})
+.controller('TabCtrl', function($scope) {
+    $scope.tabs = [
+        {'name': 'Posts', 'link': '/#/posts'},
+        {'name': 'Notifications', 'link': '/#/notifications'},
+        {'name': 'Chat', 'link': '/#/chat'},
+        {'name': 'BotD', 'link': '/#/polls/BotD'},
+        {'name': 'Profile', 'link': '/#/profile'}
+    ];
+    console.log($scope.tabs);
+    $scope.selected = $scope.tabs[0];
+    $scope.select= function(item) {
+       $scope.selected = item;
+    };
+    $scope.itemClass = function(item) {
+        return item === $scope.selected ? 'active' : undefined;
+    };
+})
+.controller('SwipeCtrl', function($scope) {
+    console.log('swipe');
+    $scope.swipeLeft = function() {
+        console.log('swipe left');
+    }
+})
+.controller('OffCanvasDemoCtrl', function ($scope) {
+});

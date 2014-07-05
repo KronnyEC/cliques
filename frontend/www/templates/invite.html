@@ -1,0 +1,22 @@
+<div class="large-6 large-offset-3 small-10 small-offset-1">
+    <h1>Invites</h1>
+    <p>The only way people can join your group is by being invited.</p>
+
+    <form ng-submit="invite_submit" ng-controller="InviteCtrl">
+        <p>Who do you want to invite?</p>
+        <div class="small-3 large-2 columns text_label">
+            <span class="prefix">Email(*)</span>
+        </div>
+        <div class="small-9 large-10 columns text_field">
+            <input type="email" name="email" ng-model="formData.email">
+        </div>
+
+        <div class="small-3 large-2 columns text_label">
+            <span class="prefix">Name(*)</span>
+        </div>
+        <div class="small-9 large-10 columns text_field">
+            <input type="text" name="name" ng-model="formData.name">
+        </div>
+        <button type="submit">Invite</button>
+    </form>
+</div>

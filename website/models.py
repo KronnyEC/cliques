@@ -42,7 +42,7 @@ class Category(models.Model):
         return self.name
 
     def __repr__(self):
-        return "<{0}, {1}>".format(Post, self.__unicode__())
+        return "<{0}, {1}>".format(Category, self.__unicode__())
 
 
 class Post(models.Model):

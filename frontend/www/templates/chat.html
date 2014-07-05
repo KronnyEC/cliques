@@ -1,0 +1,27 @@
+<div class="chat_box" data-ng-init="init()">
+    <div class="connected_users_container">
+        <span class="connect_users_title">Connected Users</span>
+        <div id="connected_users" class="connected_users" ng-repeat="user in connected_users">
+            <div ng-model="user.username"></div>
+        </div>
+    </div>
+
+    <div class="chat_server">
+        <div id="chat_messages" ng-repeat="message in messages">
+            <div>
+                <div>ng-model="message.user"</div>:
+                <div>ng-model="message.text"</div></div>
+        </div>
+    </div>
+    <form name="chat_server" id="chat_form" ng-submit="send_message()"
+          ng-controller="ChatCtrl" ui-keypress="{13:'myFunc($event)'}">
+        <div class="row collapse">
+            <div class="small-10 columns">
+                <input name="text" type="text" placeholder="Chat" id="chat_box">
+            </div>
+            <div class="small-2 columns">
+                <a href="#" class="button postfix" id="chat_send">Send</a>
+            </div>
+        </div>
+    </form>
+</div>

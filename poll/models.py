@@ -30,7 +30,6 @@ class Submission(models.Model):
     user = models.ForeignKey(UserProfile, related_name='user_submissions')
     # The text that will be show below a winning submission
 
-
     def save(self, *args, **kwargs):
         if self.id is None:
             new = True

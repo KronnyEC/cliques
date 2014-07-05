@@ -1,4 +1,4 @@
-<form ng-submit="new_post_submit()" ng-controller="NewPostCtrl">
+<form ng-submit="new_post_submit()">
     <div class="small-3 large-2 columns text_label">
         <span class="prefix">Title(*)</span>
     </div>
@@ -17,7 +17,7 @@
         <span class="prefix">Category</span>
     </div>
     <div class="small-9 large-10 columns text_field">
-        <input type="text" name="category" ng-model="formData.category">
+        <select ng-model="formData.category" name="category" required="true" ng-options="category.id as category.name for category in cats"></select><br>
     </div>
 
     <button type="submit" class="button tiny">Submit</button>

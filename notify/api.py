@@ -12,7 +12,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     List all snippets, or create a new snippet.
     """
     model = Notification
-    paginate_by = 5
+    paginate_by = 10
     paginate_by_param = 'num_notifications'
     max_paginate_by = 20
     serializer = NotificationSerializer
