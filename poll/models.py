@@ -15,6 +15,7 @@ class Poll(models.Model):
     frequency = models.IntegerField(default=24)
     # In hours, when old submissions that haven't won will be removed
     submission_removal = models.IntegerField(default=7*24)
+    winning_text = models.CharField(max_length=255, blank=True, null=True)
 
     def __unicode__(self):
         return self.title
@@ -27,6 +28,7 @@ class Submission(models.Model):
     votes = models.ManyToManyField(UserProfile, through='Vote')
     poll = models.ForeignKey(Poll, related_name='poll_submissions')
     user = models.ForeignKey(UserProfile, related_name='user_submissions')
+    # The text that will be show below a winning submission
 
     def save(self, *args, **kwargs):
         if self.id is None:

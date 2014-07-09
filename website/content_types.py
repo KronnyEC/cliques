@@ -37,7 +37,6 @@ class YouTube(Video):
 class Imgur(ContentType):
     def detect(self, url, content_type):
         url_data = urlparse.urlparse(url)
-        print url_data
         if url_data.netloc == 'imgur.com':
             return 'imgur'
 

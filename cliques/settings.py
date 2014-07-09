@@ -17,6 +17,8 @@ if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
     ENV = 'appengine'
 elif os.getenv('SETTINGS_MODE') == 'prod':
     ENV = 'localprod'
+elif os.getenv('TRAVIS') == 'True':
+    ENV = 'travis'
 else:
     ENV = 'local'
 
@@ -32,28 +34,25 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-    "django.core.context_processors.request",
-    "allauth.account.context_processors.account",
-    "allauth.socialaccount.context_processors.socialaccount",
-    "cliques.context_processor.settings_context",
-    "cliques.context_processor.polls",
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request',
+    'allauth.account.context_processors.account',
+    'allauth.socialaccount.context_processors.socialaccount',
+    'cliques.context_processor.settings_context',
+    'cliques.context_processor.polls',
 )
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, "templates")
+    os.path.join(BASE_DIR, 'frontend/www')
 )
 
 ALLOWED_HOSTS = []
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
 
 # Application definition
 
@@ -66,6 +65,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -84,7 +85,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 )
+CORS_ORIGIN_ALLOW_ALL = True
 
 if ENV in ['localprod', 'local']:
     INSTALLED_APPS += [
@@ -93,7 +97,8 @@ if ENV in ['localprod', 'local']:
         # 'appengine_toolkit'
     ]
     # DEBUG_TOOLBAR_PATCH_SETTINGS = False
-    # MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+    # MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.'
+    #                        'DebugToolbarMiddleware',)
 
 
 ROOT_URLCONF = 'cliques.urls'
@@ -102,10 +107,10 @@ WSGI_APPLICATION = 'cliques.wsgi.application'
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
-    "django.contrib.auth.backends.ModelBackend",
+    'django.contrib.auth.backends.ModelBackend',
 
     # `allauth` specific authentication methods, such as login by e-mail
-    "allauth.account.auth_backends.AuthenticationBackend",
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 # Database
@@ -121,6 +126,8 @@ if ENV == 'appengine':
         }
     }
     MAIL_PROVIDER = 'APPENGINE'
+    EMAIL_SENDER = 'josh@slashertraxx.com'
+    EMAIL_BACKEND = 'cliques.mail.EmailBackend'
 elif ENV == 'localprod':
     # Running in development, but want to access the Google Cloud SQL instance
     # in production.
@@ -134,6 +141,21 @@ elif ENV == 'localprod':
         }
     }
     MAIL_PROVIDER = 'APPENGINE'
+    EMAIL_SENDER = 'josh@slashertraxx.com'
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    # EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
+elif ENV == 'travis':
+    # Running in development, so use a local MySQL database.
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'cliques',
+            'USER': 'travis',
+        }
+    }
+    MAIL_PROVIDER = 'DJANGO'
+    EMAIL_SENDER = 'josh@slashertraxx.com'
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     # Running in development, so use a local MySQL database.
     DATABASES = {
@@ -145,6 +167,9 @@ else:
         }
     }
     MAIL_PROVIDER = 'DJANGO'
+    EMAIL_SENDER = 'josh@slashertraxx.com'
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    # EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -163,11 +188,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, 'frontend/www'),
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 DEFAULT_FILE_STORAGE = 'appengine_toolkit.storage.GoogleCloudStorage'
 MEDIA_ROOT = 'media'
 
@@ -212,17 +236,16 @@ SITE_NAME = 'Slashertraxx'
 
 # API
 REST_FRAMEWORK = {
-    # Use hyperlinked styles by default.
-    # Only used if the `serializer_class` attribute is not set on a view.
-    'DEFAULT_MODEL_SERIALIZER_CLASS':
-        'rest_framework.serializers.HyperlinkedModelSerializer',
-
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }
+
 
 # Mime Types
 MIME_IMAGES = [

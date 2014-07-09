@@ -1,10 +1,11 @@
 import importlib
 import json
-import urlparse
 import logging
-import sys
+import re
+
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
+import re
 
 import urllib3
 from django.conf import settings
@@ -37,6 +38,12 @@ def detect_content_type(url=None):
     # Default
     if not url:
         return 'text'
+    urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|'
+                      '(?:%[0-9a-fA-F][0-9a-fA-F]))+', url)
+    if not urls or len(urls) > 1:
+        return 'text'
+
+    logger.info("Detecting content type of {}".format(urls))
 
     # Get mime type of remote url
     try:
@@ -44,7 +51,9 @@ def detect_content_type(url=None):
         response = http.request('HEAD', url)
         content_type = response.headers.get('content-type')
     except Exception:
-        return None
+        logger.exception("Could not detect content type. Defaulting to "
+                         "link for url: {}".format(url))
+        return 'link'
 
     # Find list of content detectors based on mime
     if content_type in settings.MIME_IMAGES:
@@ -55,7 +64,7 @@ def detect_content_type(url=None):
         key = 'link'
     else:
         return 'text'
-    print 'key', key
+    logger.info('content type is {}'.format(key))
 
     # Go through content detectors in order, returning if any matches
     for content_type in content_types[key]:

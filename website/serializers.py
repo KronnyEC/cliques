@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from website.models import UserProfile, Post, Comment
+from website.models import UserProfile, Post, Comment, Category
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -8,18 +8,30 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('username', 'profile_pic', 'email',
-                  'first_name', 'last_name')
+        fields = ('id', 'username', 'profile_pic', 'email',
+                  'first_name', 'last_name', 'poll_votes', 'user_votes')
 
 
 class PostSerializer(serializers.ModelSerializer):
+    comment_count = serializers.Field(source='comment_set.count')
+    url = serializers.URLField(source='url', required=False)
+
     class Meta:
         model = Post
-        fields = ('submitted', 'edited', 'user', 'title', 'text', 'type',
-                  'thumbnail')
+        fields = ('id', 'submitted', 'edited', 'user', 'title', 'url', 'type',
+                  'category', 'comment_set')
+        depth = 2
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.WritableField(source='user', required=False)
+
     class Meta:
         model = Comment
-        fields = ('user', 'text', 'submitted', 'edited', 'post')
+        fields = ('id', 'user', 'text', 'submitted', 'edited', 'post')
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'created_by', 'name', 'color')

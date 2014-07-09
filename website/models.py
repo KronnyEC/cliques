@@ -1,13 +1,14 @@
 import logging
+import urlparse
+
 from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django import forms
 from django.conf import settings
-import urlparse
-from website import utils
-from website.utils import detect_content_type
+from django import forms
+
 from website.content_types import YouTube
+from website.utils import detect_content_type
 
 if settings.ENV == 'appengine':
     from google.appengine.api import mail
@@ -19,6 +20,9 @@ POST_TYPES = (('link', 'link'), ('image', 'image'),
 
 EMAIL_PREFERENCES = (('no', 'None'), ('posts', 'New Posts Only'),
                      ('all', 'Posts and Comments'))
+
+CATEGORY_COLORS = (('red', 'Red'), ('blue', 'Blue'), ('purple', 'Purple'),
+                   ('orange', 'Orange'), ('green', 'Green'))
 
 
 class UserProfile(AbstractUser):
@@ -32,13 +36,13 @@ class UserProfile(AbstractUser):
 class Category(models.Model):
     created_by = models.ForeignKey(UserProfile)
     name = models.CharField(max_length=255)
-    color = models.CharField(max_length=64)
+    color = models.CharField(max_length=64, choices=CATEGORY_COLORS)
 
     def __unicode__(self):
         return self.name
 
     def __repr__(self):
-        return "<{0}, {1}>".format(Post, self.__unicode__())
+        return "<{0}, {1}>".format(Category, self.__unicode__())
 
 
 class Post(models.Model):
@@ -66,7 +70,7 @@ class Post(models.Model):
         super(Post, self).save(*args, **kwargs)
         # Check if text field is
         self.type = detect_content_type(self.url)
-        print 'type is', self.type
+        logger.info('type is {}'.format(self.type))
         if not new:
             return
 
@@ -156,7 +160,6 @@ class PostForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super(PostForm, self).save(commit=False)
-        print "INSTANCE", instance
 
         instance.save(commit)
         return instance

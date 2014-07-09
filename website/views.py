@@ -13,6 +13,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.utils.importlib import import_module
 import logging
+from website.serializers import PostSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +60,7 @@ class PostsListView(ListView):
     paginate_by = 10
     model = Post
     template_name = 'website/post_list.html'
+    serializer = PostSerializer
 
     def get_queryset(self):
         """
@@ -75,7 +77,7 @@ class PostsListView(ListView):
         else:
             raise ImproperlyConfigured("'%s' must define 'queryset' or 'model'"
                                        % self.__class__.__name__)
-        queryset = queryset.annotate(comment_count=Count('comment'))
+        queryset = queryset.annotate(comment_count=Count('comment')).select_related('category')
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -95,11 +97,9 @@ class CategoryListView(ListView):
 
     def get_queryset(self):
         category_name = self.request.GET.get('category')
-        print "CATNAME", category_name
         category = Category.objects.get(name=category_name)
         qs = super(CategoryListView, self).get_queryset()
         qs = qs.filter(category=category.id)
-        print "QUERY", qs
         return qs
 
 
@@ -120,7 +120,6 @@ class PostFormView(CreateView):
     # form_class = PostForm
 
     def form_valid(self, form):
-        print "FORMVALID"
         user_model = get_user_model()
         form.instance.user = user_model.objects.get(id=self.request.user.id)
         self.object = form.save()
@@ -138,8 +137,12 @@ class CommentFormView(CreateView):
         user_model = get_user_model()
         post = Post.objects.get(id=self.kwargs.get('pk'))
         form.instance.post = post
-        other_users = Comment.objects.select_related().filter(post=post)\
-            .exclude(user=self.request.user).values_list('user', flat=True)
+        other_users = set(Comment.objects.select_related().filter(post=post)\
+            .exclude(user=self.request.user).values_list('user', flat=True))
+        # Add post auth
+        if post.user_id not in other_users and \
+                        post.user_id != self.request.user.id:
+            other_users.add(post.user_id)
         logger.info(other_users)
         notify.utils.notify_users(
             user_ids=other_users,
@@ -149,7 +152,6 @@ class CommentFormView(CreateView):
             }),
             link="http://www.slashertraxx.com/post/{}/".format(post.id),
             type='comment',
-            method='site',
             level='info')
         form.instance.user = user_model.objects.get(id=self.request.user.id)
         self.object = form.save()

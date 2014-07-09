@@ -43,3 +43,5 @@ share/
 *.log
 staticfiles
 libs/
+frontend/platforms
+dev/
