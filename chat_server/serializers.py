@@ -13,5 +13,5 @@ class ChatSessionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatSession
-        fields = ('started', 'last_update', 'ended', 'session_key')
+        fields = ('id', 'started', 'last_update', 'ended', 'session_key')
         depth = 1

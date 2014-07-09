@@ -1,60 +1,70 @@
 <div class="post_detail {{ post.category.color }}" ng-switch="post.type">
-    <div class="image" ng-switch-when="image">
-        <h4>
-            <a href="/post/{{ post.id }}">{{ post.title }}</a>
-        </h4>
-        <a href="/post/{{ post.id }}"><img class="post_list image" src="{{ post.url }}"></a>
+  <div class="image" ng-switch-when="image">
+    <h4>
+      <a href="/#/post/{{ post.id }}">{{ post.title }}</a>
+    </h4>
+    <a href="/#/post/{{ post.id }}"><img class="post_list image"
+                                         src="{{ post.url }}"></a>
+  </div>
+  <div class="youtube" ng-switch-when="youtube">
+    <h4>
+      <a href="/#/post/{{ post.id }}/">{{ post.title }}</a>
+    </h4>
+
+    <div class="flex-video">
+      <iframe width="420" height="315"
+              src="http://www.youtube.com/embed/{{ post.youtube_video_id }}"
+              frameborder="0" allowfullscreen widescreen></iframe>
     </div>
-    <div class="youtube" ng-switch-when="youtube">
-        <h4>
-            <a href="/post/{{ post.id }}/">{{ post.title }}</a>
-        </h4>
-        <div class="flex-video">
-            <iframe width="420" height="315" src="http://www.youtube.com/embed/{{ post.youtube_video_id }}" frameborder="0" allowfullscreen widescreen></iframe>
-        </div>
-    </div>
-    <div class="video" ng-switch-when="video">
-        <h4>
-            <a href="/post/{{ post.id }}">{{ post.title }}</a>
-        </h4>
-    </div>
-    <div class="link" ng-switch-when="link">
-        <h4>
-            <a href="{{ post.url }}" target="_blank">{{ post.title }}</a>
-        </h4>
-    </div>
-    <div class="text" ng-switch-default>
-        <h4>
-            <a href="/post/{{ post.id }}/">{{ post.title }}</a>
-        </h4>
-    </div>
-    <!--Metadata-->
+  </div>
+  <div class="video" ng-switch-when="video">
+    <h4>
+      <a href="/#/post/{{ post.id }}">{{ post.title }}</a>
+    </h4>
+  </div>
+  <div class="link" ng-switch-when="link">
+    <h4>
+      <a href="{{ post.url }}" target="_blank">{{ post.title }}</a>
+    </h4>
+  </div>
+  <div class="text" ng-switch-default>
+    <h4>
+      <a href="/#/post/{{ post.id }}/">{{ post.title }}</a>
+    </h4>
+  </div>
+  <!--Metadata-->
     <span class="category_label {{ post.category.color }}">
-        <p><a href="/posts/?category={{ post.category.name }}">{{ post.category.name }}</a></p>
+        <p><a
+            href="/#/posts/?category={{ post.category.name }}">{{ post.category.name }}</a>
+        </p>
     </span>
     <span class="post_user {{ post.category.color }}">
-        <p><a href="/user/{{ post.user.id }}/">{{ post.user.username }}</a></p>
+        <p><a href="/#/user/{{ post.user.id }}/">{{ post.user.username }}</a>
+        </p>
     </span>
-    <span class="post_submitted {{ post.category.color }}" ng-bind="post.submitted | DTSince ">
-        <p>{{ post.submitted  }}</p>
+    <span class="post_submitted {{ post.category.color }}"
+          ng-bind="post.submitted | DTSince ">
+        <p>{{ post.submitted }}</p>
     </span>
-    <!--End Metadata-->
+  <!--End Metadata-->
 </div>
 <div class="row comment_list" ng-repeat="comment in post.comment_set">
-    <div class="large-12 small-12 columns comment">
-        <p class="text">{{ comment.text }}</p>
-        <p class="user">{{ comment.user.username }}</p>
-        <p class="submitted">{{ comment.submitted | DTSince }}</p>
-    </div>
+  <div class="large-12 small-12 columns comment">
+    <p class="text">{{ comment.text }}</p>
+
+    <p class="user">{{ comment.user.username }}</p>
+
+    <p class="submitted">{{ comment.submitted | DTSince }}</p>
+  </div>
 </div>
 <div class="row comment_form">
-<form ng-submit="new_comment_submit()">
+  <form ng-submit="new_comment_submit()">
     <div class="small-3 large-2 columns text_label">
-        <span class="prefix textbox">Comment</span>
+      <span class="prefix textbox">Comment</span>
     </div>
     <div class="small-9 large-10 columns text_field">
-        <textarea name="title" ng-model="formData.text"></textarea>
+      <textarea name="title" ng-model="formData.text"></textarea>
     </div>
     <button type="submit" class="button tiny">Submit</button>
-</form>
+  </form>
 </div>
