@@ -3,6 +3,8 @@ from chat_server.models import ChatMessage, ChatSession
 
 
 class ChatMessageSerializer(serializers.ModelSerializer):
+    session = serializers.PrimaryKeyRelatedField()
+
     class Meta:
         model = ChatMessage
         fields = ('session', 'message', 'sent')

@@ -98,118 +98,85 @@ app.config(['$routeProvider',
   })
   .factory('Notifications', function ($http, $timeout, BACKEND_SERVER) {
     var data = [];
-    var poller = function () {
-      $http.get(BACKEND_SERVER + 'notifications\/').then(function (r) {
-        data = r.data.results;
-        $timeout(poller, 30000);
-      });
-    };
-    poller();
 
     return {
       data: data
     };
   })
-  .factory('Chat', function ($http, $timeout, BACKEND_SERVER) {
-    var token;
-    var chan;
-    var socket;
-    var messages = [];
-    var connected_users = [];
-    var session;
+  .factory('Chat', function($http, Channel, BACKEND_SERVER) {
+    var Chats = {};
+    Chats.messages = [];
+    Chats.connected_users = [];
 
-    function get_messages() {
-      // callback will get a list of messages as the only arg
-      console.log(BACKEND_SERVER + 'chat/messages\/');
-      $http.get(BACKEND_SERVER + 'chat/messages\/')
-        .then(function (results) {
-          console.log('get messages', results);
-          messages = results.data.results;
-          console.log('got messages', messages);
-        })
-    }
-
-    function check_in(callback) {
-      console.log('check in');
-      $http.post(BACKEND_SERVER + 'chat/check_in\/', {})
-        .success(function (result) {
-          connected_users = result.connected_users;
-        });
-    }
-
-    function leave_chat() {
-      // not yet called
-      $http.post(BACKEND_SERVER + 'chat/leave_chat\/')
-        .success(function (result) {
-          console.log("left chat", result);
-        });
-    }
-
-    function socket_open(e) {
-      console.log("Socket opened");
-    }
-
-    function socket_error(e) {
-      var code = e.field;
-      var description = e.description;
-      console.log("Socket error", code, description);
-      // Token timed out, get a new one.
-      if (code == 401 && description == "Token+timed+out.") {
-        join_chat();
-      }
-    }
-
-    function socket_close(e) {
-      console.log("Socket closed", e);
-    }
-
-    function build_socket() {
-      console.log('building socket', token);
-      chan = new goog.appengine.Channel(token);
-      console.log('tokenchan', token, chan);
-      socket = chan.open({
-        onerror: function (e) {
-          console.log('socket error: ', e);
-        },
-        onmessage: function (e) {
-          console.log('socket message', e);
-          messages.push(e)
-        },
-        onopen: function (e) {
-          console.log("Socket opened", e);
-        },
-        onclose: function (e) {
-          console.log("Socket closed", e);
-        }
-      });
-      console.log("Socket", chan, socket)
-    }
-
-    function join_chat() {
-      console.log('join chat', BACKEND_SERVER + 'chat/sessions\/');
-      if (token != undefined) {
-
-      } else {
-        $http.post(BACKEND_SERVER + 'chat/sessions\/', {})
-          .success(function (result) {
-            console.log("session result", result);
-            session = result;
-            token = result.session_key;
-            build_socket();
-          });
-      }
-    }
-
-    console.log('joining chat');
-    join_chat();
-    console.log('chat joined');
-    get_messages();
-    console.log('init messages', messages, connected_users);
     return {
-      messages: $http.get(BACKEND_SERVER + 'chat/messages\/'),
-      connected_users: connected_users,
-      session: session
-    }
+      getMessages: function() {
+        return $http.get(BACKEND_SERVER + 'chat/messages\/');
+      },
+
+    };
+  })
+  .factory('Channel', function ($rootScope, $http, BACKEND_SERVER) {
+    var Notifications = {};
+    Notifications.stream = [];
+
+    // Broadcast changes in notifications
+//    $rootScope.$watch(Notifications.stream, function(notification) {
+//      console.log('broadcasting', notification);
+//      if (notification) {
+//        $rootScope.$broadcast(notification.type, notification.data);
+//      }
+//    });
+
+    var SocketHandler = function (BACKEND_SERVER, session, $rootScope) {
+      console.log('creating socket handler for ', BACKEND_SERVER, session);
+      this.messageCallback = function () {
+      };
+
+      var context = this;
+      this.socketCreationCallback = function (token) {
+        console.log('socket created', token);
+        var channel = new goog.appengine.Channel(token);
+        console.log('channel', channel);
+        context.channelId = channel.channelId;
+        var socket = channel.open();
+        socket.onerror = function () {
+          console.log("Channel error");
+        };
+        socket.onclose = function () {
+          console.log("Channel closed");
+        };
+        socket.onmessage = function(message) {
+          var data = JSON.parse(message.data);
+//          console.log('broadcasting', data);
+          Notifications.stream.push(data);
+//          console.log('notes', Notifications);
+        };
+        context.channelSocket = socket;
+      };
+      console.log('sending root scope');
+      this.socketCreationCallback(session.session_key);
+      var post_data = {
+        'session': session.id,
+        'message': 'test'
+      };
+      console.log('post_data', post_data);
+    };
+
+    // init
+    var session = $http.post(BACKEND_SERVER + 'chat/sessions\/', {})
+      .success(function (result) {
+        console.log('notification', result);
+        return result;
+      });
+
+    //that's where we connect
+    session.then(function(s) {
+      console.log('socket building', s.data);
+      var socket = new SocketHandler(BACKEND_SERVER, s.data);
+      console.log('built socket', socket);
+    });
+
+    return Notifications;
   });
 
 app.run(function ($rootScope, $http, $location) {

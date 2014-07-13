@@ -1,6 +1,9 @@
+import json
 import logging
+from datetime import timedelta, datetime
 
 from google.appengine.api import channel
+from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import generics
 from rest_framework import renderers
 from rest_framework import status
@@ -43,6 +46,7 @@ class ChatSessionList(generics.ListCreateAPIView):
 class ChatMessageList(generics.ListCreateAPIView):
     model = ChatMessage
     serializer_class = ChatMessageSerializer
+    queryset = ChatMessage.objects.all()
 
     paginate_by = 25
     paginate_by_param = 'messages'
@@ -54,5 +58,10 @@ class ChatMessageList(generics.ListCreateAPIView):
         if created:
             # Send out the message to everyone. Support for editing messages
             # may come later. Maybe not.
-            for session in ChatSession.objects.all():
-                channel.send_message(session.session_key, session.to_json())
+            j = json.dumps({
+                'type': 'chat',
+                'data': obj.to_json()
+            }, cls=DjangoJSONEncoder)
+            five_mins_ago = datetime.now() - timedelta(minutes=5)
+            for session in ChatSession.objects.filter(ended__isnull=True).filter(last_update__gt=five_mins_ago):
+                channel.send_message(session.session_key, j)

@@ -30,7 +30,7 @@
           <!-- Right Nav Section -->
           <ul class="right" ng-controller="TabCtrl">
             <li ng-repeat="tab in tabs" ng-click="select(tab)"
-                ng-class="itemClass(tab)"><a href="{{ tab.link }}">{{ tab.name
+                ng-class="itemClass(tab)"><span ng-if="tab.alert > 0" class="alert round label">{{ tab.alert }}</span><a href="{{ tab.link }}">{{ tab.name
               }}</a></li>
           </ul>
         </section>

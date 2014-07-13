@@ -309,6 +309,15 @@ angular.module('post_controllers', [])
 
   })
   .controller('ChatCtrl', function ($scope, $http, Chat, BACKEND_SERVER) {
+    $scope.messages = [];
+
+    var handleSuccess = function(data, status) {
+        $scope.messages = data.results;
+        console.log("messages", $scope.messages);
+    };
+
+    Chat.getMessages().success(handleSuccess);
+
     $scope.send_message = function () {
       console.log($scope.text);
       $http({
@@ -317,15 +326,8 @@ angular.module('post_controllers', [])
         data: {'message': $scope.text}
       })
     };
-
-    $scope.connected_users = Chat.connected_users;
-    Chat.messages.success(function (r) {
-      console.log("then", r);
-      $scope.messages = r.results;
-    });
-    console.log('messages', $scope.messages, $scope.connected_users);
-
   })
+
   .controller('PollListCtrl', function (BACKEND_SERVER) {
     $http.get(BACKEND_SERVER + 'polls\/')
       .then(function (res) {
@@ -431,15 +433,15 @@ angular.module('post_controllers', [])
     console.log("notedata", Notifications);
     $scope.notifications = Notifications;
   })
-  .controller('TabCtrl', function ($scope) {
+  .controller('TabCtrl', function ($scope, Channel) {
+    $scope.chat_count = Channel.stream.length;
     $scope.tabs = [
-      {'name': 'Posts', 'link': '/#/posts'},
-      {'name': 'Notifications', 'link': '/#/notifications'},
-      {'name': 'Chat', 'link': '/#/chat'},
-      {'name': 'BotD', 'link': '/#/polls/BotD'},
-      {'name': 'Profile', 'link': '/#/profile'}
+      {'name': 'Posts', 'link': '/#/posts', 'alert': ''},
+      {'name': 'Notifications', 'link': '/#/notifications', 'alert': ''},
+      {'name': 'Chat', 'link': '/#/chat', 'alert': $scope.chat_count},
+      {'name': 'BotD', 'link': '/#/polls/BotD', 'alert': ''},
+      {'name': 'Profile', 'link': '/#/profile', 'alert': ''}
     ];
-    console.log($scope.tabs);
     $scope.selected = $scope.tabs[0];
     $scope.select = function (item) {
       $scope.selected = item;
@@ -448,11 +450,14 @@ angular.module('post_controllers', [])
       return item === $scope.selected ? 'active' : undefined;
     };
   })
-  .controller('SwipeCtrl', function ($scope) {
-    console.log('swipe');
-    $scope.swipeLeft = function () {
-      console.log('swipe left');
-    }
-  })
   .controller('OffCanvasDemoCtrl', function ($scope) {
   });
+
+function removeChatIfAlreadyExists(chat, array) {
+  var result = array.filter(function (potentialMatch) {
+    return potentialMatch.id != chat.id;
+  });
+
+  return result;
+}
+

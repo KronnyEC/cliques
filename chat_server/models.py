@@ -2,6 +2,7 @@ import json
 import random
 from django.db import models
 from website.models import UserProfile
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 def random_key(length=64):
@@ -17,7 +18,7 @@ class ChatSession(models.Model):
     ended = models.DateTimeField(blank=True, null=True, default=None)
 
     def __unicode__(self):
-        return "{0}: {1}, connected: {2}".format(self.user.username,
+        return "{0}: {1}, connected: {2}".format(self.user,
                                                  self.session_key,
                                                  self.started)
 
@@ -31,15 +32,14 @@ class ChatMessage(models.Model):
     sent = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __unicode__(self):
-        return "{0}: {1}".format(self.user.username,
-                                                 self.message)
+        return "{0}: {1}".format(self.session, self.message)
 
     def __repr__(self):
         return "<{0}, {1}>".format(ChatMessage, self.__unicode__())
 
     def to_json(self):
-        return json.dumps({
+        return {
             'user': self.session.user.username,
             'message': self.message,
             'sent': self.sent
-        })
+        }
