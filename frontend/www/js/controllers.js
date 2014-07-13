@@ -311,19 +311,24 @@ angular.module('post_controllers', [])
   .controller('ChatCtrl', function ($scope, $http, Chat, BACKEND_SERVER) {
     $scope.messages = [];
 
-    var handleSuccess = function(data, status) {
+    var messagesSuccess = function(data, status) {
         $scope.messages = data.results;
         console.log("messages", $scope.messages);
     };
 
-    Chat.getMessages().success(handleSuccess);
+    Chat.getMessages().success(messagesSuccess);
+    Chat.getSession().success(function(result) {
+      console.log('session results', result);
+      $scope.session = result;
+      console.log("session", $scope.session);
+    });
 
     $scope.send_message = function () {
-      console.log($scope.text);
+      console.log($scope.text, $scope.session);
       $http({
         method: 'POST',
         url: BACKEND_SERVER + 'chat/messages\/',
-        data: {'message': $scope.text}
+        data: {'message': $scope.text, 'session': $scope.session.id}
       })
     };
   })

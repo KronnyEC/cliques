@@ -64,4 +64,5 @@ class ChatMessageList(generics.ListCreateAPIView):
             }, cls=DjangoJSONEncoder)
             five_mins_ago = datetime.now() - timedelta(minutes=5)
             for session in ChatSession.objects.filter(ended__isnull=True).filter(last_update__gt=five_mins_ago):
+                print "Sending {} to {}".format(j, session.session_key)
                 channel.send_message(session.session_key, j)

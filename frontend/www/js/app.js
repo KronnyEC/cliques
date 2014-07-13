@@ -79,10 +79,6 @@ app.config(['$routeProvider',
     notAuthenticated: 'auth-not-authenticated',
     notAuthorized: 'auth-not-authorized'
   })
-  .constant('angularMomentConfig', {
-    preprocess: 'unix', // optional
-    timezone: 'America/Chicago' // optional
-  })
   .service('Session', function () {
     this.create = function (sessionId, userId, token) {
       this.id = sessionId;
@@ -112,12 +108,15 @@ app.config(['$routeProvider',
       getMessages: function() {
         return $http.get(BACKEND_SERVER + 'chat/messages\/');
       },
-
+      getSession: function() {
+        return Channel.session;
+      }
     };
   })
   .factory('Channel', function ($rootScope, $http, BACKEND_SERVER) {
     var Notifications = {};
     Notifications.stream = [];
+    Notifications.session = {};
 
     // Broadcast changes in notifications
 //    $rootScope.$watch(Notifications.stream, function(notification) {
@@ -146,6 +145,7 @@ app.config(['$routeProvider',
           console.log("Channel closed");
         };
         socket.onmessage = function(message) {
+          console.log('message received', message)
           var data = JSON.parse(message.data);
 //          console.log('broadcasting', data);
           Notifications.stream.push(data);
@@ -163,14 +163,15 @@ app.config(['$routeProvider',
     };
 
     // init
-    var session = $http.post(BACKEND_SERVER + 'chat/sessions\/', {})
+    Notifications.session = $http.post(BACKEND_SERVER + 'chat/sessions\/', {})
       .success(function (result) {
+
         console.log('notification', result);
         return result;
       });
 
     //that's where we connect
-    session.then(function(s) {
+      Notifications.session.then(function(s) {
       console.log('socket building', s.data);
       var socket = new SocketHandler(BACKEND_SERVER, s.data);
       console.log('built socket', socket);
