@@ -149,8 +149,8 @@ app.config(['$routeProvider',
         socket.onmessage = function(message) {
           console.log('message received', message)
           var data = JSON.parse(message.data);
-          console.log('pushing', data);
-          Notifications.stream.push(data.data);
+//          console.log('broadcasting', data);
+          Notifications.stream.push(data);
 //          console.log('notes', Notifications);
         };
         context.channelSocket = socket;

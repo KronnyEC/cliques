@@ -25,8 +25,11 @@ class ChatSessionList(generics.ListCreateAPIView):
     max_paginate_by = 1000
 
     def pre_save(self, obj):
+        # Disable existing sessions for this user
+        ChatSession.objects.filter(user=self.request.user).update(ended=datetime.now())
         obj.user = self.request.user
         obj.session_key = channel.create_channel(obj.user.username, 24 * 60)
+        print "new session", obj
         logger.info("Presave, Created token {} for {}".format(
             obj.session_key, obj.user.username))
         super(ChatSessionList, self).pre_save(obj)
@@ -63,6 +66,6 @@ class ChatMessageList(generics.ListCreateAPIView):
                 'data': obj.to_json()
             }, cls=DjangoJSONEncoder)
             five_mins_ago = datetime.now() - timedelta(minutes=5)
-            for session in ChatSession.objects.filter(ended__isnull=True).filter(last_update__gt=five_mins_ago):
+            for session in ChatSession.objects.filter(ended__isnull=True).filter(last_update__gt=five_mins_ago).filter(ended__isnull=True):
                 print "Sending {} to {}".format(j, session.session_key)
                 channel.send_message(session.session_key, j)
