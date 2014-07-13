@@ -102,16 +102,18 @@ app.config(['$routeProvider',
   .factory('Chat', function($http, Channel, BACKEND_SERVER) {
     var Chats = {};
     Chats.messages = [];
+    Chats.messages = Channel.stream;
     Chats.connected_users = [];
+    Chats.session = Channel.session;
+    console.log('Chat init', Chats);
 
-    return {
-      getMessages: function() {
-        return $http.get(BACKEND_SERVER + 'chat/messages\/');
-      },
-      getSession: function() {
-        return Channel.session;
-      }
-    };
+    $http.get(BACKEND_SERVER + 'chat/messages\/').success(function(results) {
+      console.log('messages results', results)
+      results.results.forEach(function(message) {
+        Chats.messages.push(message);
+      });
+    })
+    return Chats;
   })
   .factory('Channel', function ($rootScope, $http, BACKEND_SERVER) {
     var Notifications = {};
@@ -147,8 +149,8 @@ app.config(['$routeProvider',
         socket.onmessage = function(message) {
           console.log('message received', message)
           var data = JSON.parse(message.data);
-//          console.log('broadcasting', data);
-          Notifications.stream.push(data);
+          console.log('pushing', data);
+          Notifications.stream.push(data.data);
 //          console.log('notes', Notifications);
         };
         context.channelSocket = socket;
