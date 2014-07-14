@@ -4,10 +4,11 @@ from chat_server.models import ChatMessage, ChatSession
 
 class ChatMessageSerializer(serializers.ModelSerializer):
     session = serializers.PrimaryKeyRelatedField()
+    username = serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
         model = ChatMessage
-        fields = ('session', 'message', 'sent')
+        fields = ('session', 'message', 'sent', 'username')
         depth = 1
 
 

@@ -8,14 +8,14 @@
   </div>
 
   <div class="chat_messages">
-    <div class="message" ng-repeat="message in messages">
-      {{ message.sent | DTSince }}: {{ message.message }}
+    <div class="message" ng-repeat="message in messages" title="{{ message.sent | DTSince }}">
+      {{ message.username }}: {{ message.message }}
     </div>
   </div>
   <form name="chat_server" id="chat_form" ng-submit="send_message()">
     <div class="row collapse">
       <div class="small-10 columns">
-        <input name="text" type="text" placeholder="Chat" id="chat_box" ng-model="text">
+        <input name="text" type="text" placeholder="Chat" id="chat_box" ng-model="text" ng-enter="send_message()">
       </div>
       <div class="small-2 columns">
         <button class="button postfix" id="chat_send">Send</button>

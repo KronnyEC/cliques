@@ -312,7 +312,7 @@ angular.module('post_controllers', [])
     $scope.messages = [];
 
     $scope.messages = Chat.messages;
-    Chat.session.success(function(result) {
+    Chat.session.success(function (result) {
       $scope.session = result;
     });
 
@@ -323,15 +323,28 @@ angular.module('post_controllers', [])
         url: BACKEND_SERVER + 'chat/messages\/',
         data: {'message': $scope.text, 'session': $scope.session.id}
       })
+      $scope.text = "";
     };
   })
+  .directive('ngEnter', function () {
+    return function (scope, element, attrs) {
+      element.bind("keydown keypress", function (event) {
+        if (event.which === 13) {
+          scope.$apply(function () {
+            scope.$eval(attrs.ngEnter, {'event': event});
+          });
 
-  .controller('PollListCtrl', function (BACKEND_SERVER) {
-    $http.get(BACKEND_SERVER + 'polls\/')
-      .then(function (res) {
-        $scope.polls = res.data.results;
+          event.preventDefault();
+        }
       });
+    };
   })
+.controller('PollListCtrl', function (BACKEND_SERVER) {
+  $http.get(BACKEND_SERVER + 'polls\/')
+    .then(function (res) {
+      $scope.polls = res.data.results;
+    });
+})
   .controller('PollDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
     $scope.pollStub = $routeParams.pollStub;
     console.log('/#/polls/' + $scope.pollStub);

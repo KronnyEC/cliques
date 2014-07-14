@@ -30,6 +30,14 @@ class ChatMessage(models.Model):
     session = models.ForeignKey(ChatSession)
     message = models.TextField()
     sent = models.DateTimeField(auto_now_add=True, db_index=True)
+    # Convenience field
+    username = models.CharField(max_length=255, default=None, blank=True,
+                                null=True)
+
+    def save(self, **kwargs):
+        if not self.username:
+            self.username = self.session.user.username
+        super(ChatMessage, self).save(**kwargs)
 
     def __unicode__(self):
         return "{0}: {1}".format(self.session, self.message)
@@ -39,7 +47,7 @@ class ChatMessage(models.Model):
 
     def to_json(self):
         return {
-            'user': self.session.user.username,
+            'username': self.session.user.username,
             'message': self.message,
             'sent': self.sent
         }
