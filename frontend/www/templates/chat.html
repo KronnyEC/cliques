@@ -12,8 +12,7 @@
       {{ message.sent | DTSince }}: {{ message.message }}
     </div>
   </div>
-  <form name="chat_server" id="chat_form" ng-submit="send_message()"
-        ui-keypress="{13:'send_message($event)'}">
+  <form name="chat_server" id="chat_form" ng-submit="send_message()">
     <div class="row collapse">
       <div class="small-10 columns">
         <input name="text" type="text" placeholder="Chat" id="chat_box" ng-model="text">

@@ -99,7 +99,7 @@ app.config(['$routeProvider',
       data: data
     };
   })
-  .factory('Chat', function($http, Channel, BACKEND_SERVER) {
+  .factory('Chat', function($http, $rootScope, Channel, BACKEND_SERVER) {
     var Chats = {};
     Chats.messages = [];
     Chats.messages = Channel.stream;
@@ -107,12 +107,23 @@ app.config(['$routeProvider',
     Chats.session = Channel.session;
     console.log('Chat init', Chats);
 
+    // Get the first page of results
     $http.get(BACKEND_SERVER + 'chat/messages\/').success(function(results) {
-      console.log('messages results', results)
-      results.results.forEach(function(message) {
+      console.log('messages results', results);
+      results.results.reverse().forEach(function(message) {
         Chats.messages.push(message);
       });
-    })
+    });
+
+    console.log('rootscope on', $rootScope.$on);
+
+    $rootScope.$on('chat', function(event, message) {
+      console.log('values', message);
+      Chats.messages.push(message);
+//      $rootScope.apply();
+      console.log(Chats.messages)
+    });
+
     return Chats;
   })
   .factory('Channel', function ($rootScope, $http, BACKEND_SERVER) {
@@ -120,25 +131,25 @@ app.config(['$routeProvider',
     Notifications.stream = [];
     Notifications.session = {};
 
-    // Broadcast changes in notifications
-//    $rootScope.$watch(Notifications.stream, function(notification) {
-//      console.log('broadcasting', notification);
-//      if (notification) {
-//        $rootScope.$broadcast(notification.type, notification.data);
-//      }
-//    });
+    var messageCallback = function (data) {
+      // Call back on every Channel message. Broadcast out with type to
+      // listeners
+      data = angular.fromJson(data.data)
+      $rootScope.$apply(function () {
+        console.log('message callback', data.data, data.type);
+        if (data) {
+          console.log('broadcast', data.type, data.data);
+          $rootScope.$broadcast(data.type, data.data);
+        }
+      })
+    };
 
-    var SocketHandler = function (BACKEND_SERVER, session, $rootScope) {
-      console.log('creating socket handler for ', BACKEND_SERVER, session);
-      this.messageCallback = function () {
-      };
-
+    var SocketHandler = function (BACKEND_SERVER, session, onMessageCallback) {
       var context = this;
       this.socketCreationCallback = function (token) {
-        console.log('socket created', token);
         var channel = new goog.appengine.Channel(token);
-        console.log('channel', channel);
         context.channelId = channel.channelId;
+
         var socket = channel.open();
         socket.onerror = function () {
           console.log("Channel error");
@@ -146,37 +157,22 @@ app.config(['$routeProvider',
         socket.onclose = function () {
           console.log("Channel closed");
         };
-        socket.onmessage = function(message) {
-          console.log('message received', message)
-          var data = JSON.parse(message.data);
-//          console.log('broadcasting', data);
-          Notifications.stream.push(data);
-//          console.log('notes', Notifications);
-        };
+        socket.onmessage = messageCallback;
+
         context.channelSocket = socket;
       };
-      console.log('sending root scope');
       this.socketCreationCallback(session.session_key);
-      var post_data = {
-        'session': session.id,
-        'message': 'test'
-      };
-      console.log('post_data', post_data);
     };
 
     // init
     Notifications.session = $http.post(BACKEND_SERVER + 'chat/sessions\/', {})
       .success(function (result) {
-
-        console.log('notification', result);
         return result;
       });
 
     //that's where we connect
-      Notifications.session.then(function(s) {
-      console.log('socket building', s.data);
-      var socket = new SocketHandler(BACKEND_SERVER, s.data);
-      console.log('built socket', socket);
+    Notifications.session.then(function(s) {
+      var socket = new SocketHandler(BACKEND_SERVER, s.data, messageCallback);
     });
 
     return Notifications;

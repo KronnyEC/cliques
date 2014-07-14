@@ -43,3 +43,6 @@ class ChatMessage(models.Model):
             'message': self.message,
             'sent': self.sent
         }
+
+    class Meta:
+        ordering = ['-sent']
