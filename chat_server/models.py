@@ -1,43 +1,16 @@
-import json
 import random
 from django.db import models
-from website.models import UserProfile
-from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
 
 
 def random_key(length=64):
     return ''.join(random.choice('0123456789ABCDEF') for i in range(length))
 
 
-class ChatSession(models.Model):
-    user = models.ForeignKey(UserProfile)
-    started = models.DateTimeField(auto_now_add=True)
-    last_update = models.DateTimeField(auto_now=True, db_index=True)
-    session_key = models.CharField(max_length=255, default=random_key,
-                                   db_index=True, unique=True)
-    ended = models.DateTimeField(blank=True, null=True, default=None)
-
-    def __unicode__(self):
-        return "{0}: {1}, connected: {2}".format(self.user,
-                                                 self.session_key,
-                                                 self.started)
-
-    def __repr__(self):
-        return "<{0}, {1}>".format(ChatSession, self.__unicode__())
-
-
 class ChatMessage(models.Model):
-    session = models.ForeignKey(ChatSession)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     message = models.TextField()
     sent = models.DateTimeField(auto_now_add=True, db_index=True)
-    # Convenience field
-    username = models.CharField(max_length=255, default=None, blank=True,
-                                null=True)
-
-    def save(self, **kwargs):
-        if not self.username:
-            self.username = self.session.user.username
-        super(ChatMessage, self).save(**kwargs)
 
     def __unicode__(self):
         return "{0}: {1}".format(self.session, self.message)

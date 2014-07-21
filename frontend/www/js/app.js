@@ -5,6 +5,7 @@ var app = angular.module('cliques', [
 //    'ngSanitize',
   'infinite-scroll',
   'mm.foundation',
+  'luegg.directives',
   'post_controllers'
 ]);
 
@@ -83,7 +84,6 @@ app.config(['$routeProvider',
     this.create = function (sessionId, userId, token) {
       this.id = sessionId;
       this.username = username;
-      token = token;
     };
     this.destroy = function () {
       this.id = null;
@@ -99,29 +99,28 @@ app.config(['$routeProvider',
       data: data
     };
   })
-  .factory('Chat', function($http, $rootScope, Channel, BACKEND_SERVER) {
+  .factory('Chat', function ($http, $rootScope, $timeout, Channel, BACKEND_SERVER) {
     var Chats = {};
     Chats.messages = [];
     Chats.messages = Channel.stream;
     Chats.connected_users = [];
     Chats.session = Channel.session;
     console.log('Chat init', Chats);
+    var session_data = {
+      'id': Chats.session.id
+    };
 
     // Get the first page of results
-    $http.get(BACKEND_SERVER + 'chat/messages\/').success(function(results) {
+    $http.get(BACKEND_SERVER + 'chat/messages\/').success(function (results) {
       console.log('messages results', results);
-      results.results.reverse().forEach(function(message) {
+      results.results.reverse().forEach(function (message) {
         Chats.messages.push(message);
       });
     });
 
-    console.log('rootscope on', $rootScope.$on);
-
-    $rootScope.$on('chat', function(event, message) {
-      console.log('values', message);
+    $rootScope.$on('chat', function (event, message) {
       Chats.messages.push(message);
-//      $rootScope.apply();
-      console.log(Chats.messages)
+      console.log('chat on', message, Chats.messages);
     });
 
     return Chats;
@@ -134,9 +133,9 @@ app.config(['$routeProvider',
     var messageCallback = function (data) {
       // Call back on every Channel message. Broadcast out with type to
       // listeners
-      data = angular.fromJson(data.data)
+      data = angular.fromJson(data.data);
       $rootScope.$apply(function () {
-        console.log('message callback', data.data, data.type);
+        console.log('message callback', data.type, data.data);
         if (data) {
           console.log('broadcast', data.type, data.data);
           $rootScope.$broadcast(data.type, data.data);
@@ -147,12 +146,13 @@ app.config(['$routeProvider',
     var SocketHandler = function (BACKEND_SERVER, session, onMessageCallback) {
       var context = this;
       this.socketCreationCallback = function (token) {
+        console.log('token', token)
         var channel = new goog.appengine.Channel(token);
         context.channelId = channel.channelId;
 
         var socket = channel.open();
-        socket.onerror = function () {
-          console.log("Channel error");
+        socket.onerror = function (e) {
+          console.log("Channel error", e);
         };
         socket.onclose = function () {
           console.log("Channel closed");
@@ -165,13 +165,14 @@ app.config(['$routeProvider',
     };
 
     // init
-    Notifications.session = $http.post(BACKEND_SERVER + 'chat/sessions\/', {})
+    Notifications.session = $http.post(BACKEND_SERVER + 'push\/', {})
       .success(function (result) {
+        console.log('new session created', result);
         return result;
       });
 
     //that's where we connect
-    Notifications.session.then(function(s) {
+    Notifications.session.then(function (s) {
       var socket = new SocketHandler(BACKEND_SERVER, s.data, messageCallback);
     });
 

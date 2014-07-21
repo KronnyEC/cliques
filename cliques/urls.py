@@ -4,6 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from notify.api import NotificationViewSet
 from poll.views import PollDetailView, SubmissionFormView
+from push.api import PushSessionList
+from rest_framework import renderers
+import website
 from website.views import PostsListView, PostFormView, CommentFormView, \
     PostDetailView, ProfileDetailView, ProfileEditView, CategoryListView
 from website.models import Post, UserProfile
@@ -11,12 +14,10 @@ from django.contrib import admin
 from invite_only.views import InviteCodeView
 from website.api import PostList, PostDetail, PostCommentList, CategoryList,\
     CategoryDetail, UserDetail
-from poll.api import SubmissionList, SubmissionDetail, PollDetail, PollList, \
+from poll.api import SubmissionList, PollDetail, PollList, \
     VoteDetail, VoteList
-from chat_server.api import ChatSessionList, ChatMessageList
+from chat_server.api import ChatMessageList
 from django.views.generic import TemplateView
-from django.conf.urls.static import static
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 admin.autodiscover()
@@ -55,6 +56,12 @@ v1_poll_urls = patterns('',
         name='submission-list'),
 )
 
+v1_push_urls = patterns('',
+    url(r'^push/$',
+        PushSessionList.as_view(),
+        name='push-session-list'),
+)
+
 v1_category_urls = patterns('',
     url(r'^categories/$',
         CategoryList.as_view(),
@@ -81,9 +88,6 @@ v1_chat_urls = patterns('',
     url(r'^chat/messages/$',
         ChatMessageList.as_view(),
         name='chat-messages'),
-    url(r'^chat/sessions/$',
-        ChatSessionList.as_view(),
-        name='chat-sessions'),
 )
 
 v1_vote_urls = patterns('',
@@ -152,14 +156,16 @@ urlpatterns = patterns('',
     url(r'^api/v1/', include(v1_chat_urls)),
     url(r'^api/v1/', include(v1_category_urls)),
     url(r'^api/v1/', include(v1_vote_urls)),
+    url(r'^api/v1/', include(v1_push_urls)),
     #TODO(JoshNang) match other api urls.
     url('^api/v1/notifications/$', notification_list),
     url('^api/v1/notifications/(?P<pk>\d+)/$', notification_detail),
+    url('^api/v1/check_in/$', website.views.check_in),
 
     url(r'^api/v1/token/', get_token),
     url(r'^api/cookie/', get_cookie),
-    url(r'^_ah/channel/connected', 'chat_server.views.connect'),
-    url(r'^_ah/channel/disconnected', 'chat_server.views.disconnect'),
+    url(r'^_ah/channel/connected', 'push.views.connect'),
+    url(r'^_ah/channel/disconnected', 'push.views.disconnect'),
     # url(r'^_ah/channel/receive', 'chat_server.views.receive'),
     # url(r'^chat/$', TemplateView.as_view(template_name="chat/chat.html")),
     # url(r'^chat/message/$', 'chat_server.views.receive'),

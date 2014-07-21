@@ -259,9 +259,19 @@ body, html {
     /*overflow-y: scroll;*/
     padding-left: 5px;
     padding-right: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     min-height: 500px;
     border: 1px solid grey;
     overflow-y: scroll;
+}
+
+.message {
+    margin-bottom: 5px;
+}
+
+.message .username {
+    color: #FF8800;
 }
 
 .main-section {
@@ -306,10 +316,12 @@ body, html {
 .connected_users {
     margin-bottom: 10px;
     margin-top: 10px;
+    color: #eee;
 }
 
 .connect_users_title {
-    border-bottom: 1px solid grey;
+    color: #eee;
+    border-bottom: 1px solid #eee;
 }
 
 .pagination {

@@ -3,13 +3,15 @@
     <span class="connect_users_title">Connected Users</span>
 
     <div id="connected_users" class="connected_users">
-      <div ng-repeat="user in connected_users" ng-model="user.username"></div>
+      <span ng-repeat="user in connected_users">
+        {{ user.user.username }}<span ng-if="!$last">,</span>
+      </span>
     </div>
   </div>
 
-  <div class="chat_messages">
+  <div scroll-glue class="chat_messages">
     <div class="message" ng-repeat="message in messages" title="{{ message.sent | DTSince }}">
-      {{ message.username }}: {{ message.message }}
+      <span class="username">{{ message.user | UsernameFilter }}:</span> <span class="text">{{ message.message | ChatMessageFilter }}</span>
     </div>
   </div>
   <form name="chat_server" id="chat_form" ng-submit="send_message()">

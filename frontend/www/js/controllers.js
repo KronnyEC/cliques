@@ -312,6 +312,8 @@ angular.module('post_controllers', [])
     $scope.messages = [];
 
     $scope.messages = Chat.messages;
+    $scope.connected_users = Chat.connected_users;
+    console.log('connected_users', $scope.connected_users)
     Chat.session.success(function (result) {
       $scope.session = result;
     });
@@ -321,10 +323,21 @@ angular.module('post_controllers', [])
       $http({
         method: 'POST',
         url: BACKEND_SERVER + 'chat/messages\/',
-        data: {'message': $scope.text, 'session': $scope.session.id}
-      })
+        data: {'message': $scope.text}
+      });
       $scope.text = "";
     };
+  })
+  .filter('UsernameFilter', function() {
+    return function (userid) {
+      var users = {1: 'josh'};
+      return users[userid]
+    }
+  })
+  .filter('ChatMessageFilter', function() {
+    return function (message) {
+      return message.replace('\n', '<br/>')
+    }
   })
   .directive('ngEnter', function () {
     return function (scope, element, attrs) {
@@ -339,12 +352,12 @@ angular.module('post_controllers', [])
       });
     };
   })
-.controller('PollListCtrl', function (BACKEND_SERVER) {
-  $http.get(BACKEND_SERVER + 'polls\/')
-    .then(function (res) {
-      $scope.polls = res.data.results;
-    });
-})
+  .controller('PollListCtrl', function (BACKEND_SERVER) {
+    $http.get(BACKEND_SERVER + 'polls\/')
+      .then(function (res) {
+        $scope.polls = res.data.results;
+      });
+  })
   .controller('PollDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
     $scope.pollStub = $routeParams.pollStub;
     console.log('/#/polls/' + $scope.pollStub);

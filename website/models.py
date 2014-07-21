@@ -1,7 +1,10 @@
 import logging
+import re
 import urlparse
+from django.core import validators
 
 from django.core.mail import send_mail
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
@@ -26,11 +29,12 @@ CATEGORY_COLORS = (('red', 'Red'), ('blue', 'Blue'), ('purple', 'Purple'),
 
 
 class UserProfile(AbstractUser):
-    profile_pic = models.ImageField(upload_to='traxx-profile', blank=True,
+    profile_pic = models.ImageField(upload_to='cliques-profile', blank=True,
                                     null=True, default=None)
     email_settings = models.CharField(max_length=64, choices=EMAIL_PREFERENCES,
                                       default='posts')
     poll_votes = models.IntegerField(default=0)
+    last_updated = models.DateTimeField(auto_now=True)
 
 
 class Category(models.Model):
