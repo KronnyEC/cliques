@@ -35,8 +35,9 @@
 
     <div class="outer">
       <div class="inner">
-        <a href="/#/posts/{{ post.id }}"><img class="post_list image"
-                                              src="{{ post.url }}"></a>
+        <!--<a href="/#/posts/{{ post.id }}"><img class="post_list image"
+                                              src="{{ post.url }}"></a>-->
+        <div embed></div>
       </div>
     </div>
   </div>
@@ -47,7 +48,7 @@
     <!--<div class="flex-video">
                     <iframe width="420" height="315" src="http://www.youtube.com/embed/{{ post.youtube_video_id }}" frameborder="0" allowfullscreen widescreen></iframe>
                 </div>-->
-    <div youtube video_id="{{ post.youtube_video_id }}"></div>
+    <div embed></div>
   </div>
   <div class="video" ng-switch-when="video">
     <h4>

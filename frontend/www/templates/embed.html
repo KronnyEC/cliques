@@ -1,0 +1,12 @@
+<div ng-switch="post.type" class="embed">
+  <div ng-switch-when="youtube" class="flex-video">
+    <iframe style="overflow:hidden;" width="420px" height="315px"
+            src="{{ url }}" frameborder="0" allowfullscreen></iframe>
+  </div>
+  <div ng-switch-when="image" class="image">
+    <a href="/#/posts/{{ post.id }}">
+      <img class="post_list image" src="{{ post.url }}">
+    </a>
+  </div>
+</div>
+

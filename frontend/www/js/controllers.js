@@ -21,20 +21,16 @@ angular.module('post_controllers', [])
     };
     console.log("post list auth", $http.defaults.headers.common.Authorization)
   })
-  .directive('youtube', function ($sce) {
+  .directive('embed', function ($sce) {
     return {
-      restrict: 'EA',
-      scope: { post: '=' },
+      restrict: 'AE',
+      transclude: true,
       replace: true,
-      template: '<div class="flex-video"><iframe style="overflow:hidden;" width="420px" height="315px" src="{{url}}" frameborder="0" allowfullscreen></iframe></div>',
-      link: function (scope) {
-        scope.$watch('video_id', function (newVal) {
-          if (newVal) {
-            scope.url = $sce.trustAsResourceUrl("http://www.youtube.com/embed/" + newVal);
-          }
-        });
+      templateUrl: 'templates/embed.html',
+      link: function (post, element) {
+        post.url = $sce.trustAsResourceUrl("http://www.youtube.com/embed/" + post.url);
       }
-    };
+    }
   })
   .controller('PostDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
     $scope.postId = $routeParams.postId;
@@ -328,13 +324,13 @@ angular.module('post_controllers', [])
       $scope.text = "";
     };
   })
-  .filter('UsernameFilter', function() {
+  .filter('UsernameFilter', function () {
     return function (userid) {
       var users = {1: 'josh'};
       return users[userid]
     }
   })
-  .filter('ChatMessageFilter', function() {
+  .filter('ChatMessageFilter', function () {
     return function (message) {
       return message.replace('\n', '<br/>')
     }
