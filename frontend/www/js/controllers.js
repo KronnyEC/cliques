@@ -29,27 +29,11 @@ angular.module('post_controllers', [])
     console.log("post list auth", $http.defaults.headers.common.Authorization)
   })
   .directive('media', function () {
-
     return {
       restrict: 'AE',
       transclude: true,
       replace: false,
       templateUrl: 'templates/media.html'
-//      link: function(scope, element, attrs) {
-//        console.log(scope,element,attrs);
-//        console.log('post url', scope.post, scope.post.url.split('v='));
-//        scope.youtube_id = scope.post.url.split('v=')[1];
-//        if(! scope.youtube_id) {
-//          return;
-//        }
-//        var ampersandPosition = scope.youtube_id.indexOf('&');
-//        if(ampersandPosition != -1) {
-//          scope.youtube_id = scope.youtube_id.substring(0, ampersandPosition);
-//        }
-//        scope.youtube = 'https://www.youtube.com/embed/' + scope.youtube_id
-//        console.log('youtube', scope.youtube)
-//      }
-
     }
   })
   .controller('PostDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
@@ -473,7 +457,7 @@ angular.module('post_controllers', [])
     console.log("notedata", Notifications);
     $scope.notifications = Notifications;
   })
-  .controller('TabCtrl', function ($scope, Channel) {
+  .controller('TabCtrl', function ($scope, $location, Channel) {
     $scope.chat_count = Channel.stream.length;
     $scope.tabs = [
       {'name': 'Posts', 'link': '/#/posts', 'alert': ''},
@@ -482,13 +466,24 @@ angular.module('post_controllers', [])
       {'name': 'BotD', 'link': '/#/polls/BotD', 'alert': ''},
       {'name': 'Profile', 'link': '/#/profile', 'alert': ''}
     ];
-    $scope.selected = $scope.tabs[0];
+    // Highlight current tab
+    var current_location = "/#" + $location.path();
+    $scope.tabs.forEach(function(tab) {
+      if (tab.link == current_location) {
+        $scope.selected = tab;
+      }
+    })
+//    $scope.selected = $scope.tabs[0];
     $scope.select = function (item) {
       $scope.selected = item;
     };
     $scope.itemClass = function (item) {
       return item === $scope.selected ? 'active' : undefined;
     };
+    // Update highlighted tab
+    $scope.$on('$routeUpdate', function(){
+      console.log('route update')
+    });
   })
   .controller('OffCanvasDemoCtrl', function ($scope) {
   });
