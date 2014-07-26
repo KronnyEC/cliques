@@ -13,6 +13,10 @@ angular.module('post_controllers', [])
     // Get data on startup
     $http.get(BACKEND_SERVER + 'posts/')
       .then(function (res) {
+        res.data.results.forEach(function(result) {
+          result.youtube = youtube_url_to_id(result.url);
+          console.log('youtube', result)
+        });
         $scope.posts = res.data.results;
         console.log($scope.posts);
       });
@@ -31,6 +35,21 @@ angular.module('post_controllers', [])
       transclude: true,
       replace: false,
       templateUrl: 'templates/media.html'
+//      link: function(scope, element, attrs) {
+//        console.log(scope,element,attrs);
+//        console.log('post url', scope.post, scope.post.url.split('v='));
+//        scope.youtube_id = scope.post.url.split('v=')[1];
+//        if(! scope.youtube_id) {
+//          return;
+//        }
+//        var ampersandPosition = scope.youtube_id.indexOf('&');
+//        if(ampersandPosition != -1) {
+//          scope.youtube_id = scope.youtube_id.substring(0, ampersandPosition);
+//        }
+//        scope.youtube = 'https://www.youtube.com/embed/' + scope.youtube_id
+//        console.log('youtube', scope.youtube)
+//      }
+
     }
   })
   .controller('PostDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
@@ -480,5 +499,20 @@ function removeChatIfAlreadyExists(chat, array) {
   });
 
   return result;
+}
+
+function youtube_url_to_id(url) {
+  if (! url) {
+    return;
+  }
+  var vid = url.split('v=')[1];
+  if(! vid) {
+    return;
+  }
+  var ampersandPosition = vid.indexOf('&');
+  if(ampersandPosition != -1) {
+    vid = vid.substring(0, ampersandPosition);
+  }
+  return vid
 }
 
