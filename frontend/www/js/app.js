@@ -61,10 +61,16 @@ app.config(['$routeProvider',
   }
 
 ])
-  .config(['$httpProvider', function ($httpProvider) {
-    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-  }])
+  .config(function ($sceDelegateProvider) {
+    $sceDelegateProvider.resourceUrlWhitelist([
+      'self',
+      'http://**.youtube.com/**'
+    ]);
+  })
+.config(['$httpProvider', function ($httpProvider) {
+  $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+  $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+}])
   .constant("BACKEND_SERVER", "http://127.0.0.1:8080/api/v1/")
   .constant('USER_ROLES', {
     all: '*',

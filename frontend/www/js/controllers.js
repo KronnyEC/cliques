@@ -9,7 +9,7 @@ angular.module('post_controllers', [])
       });
 
   })
-  .controller('PostListCtrl', function ($scope, $http, BACKEND_SERVER) {
+  .controller('PostListCtrl', function ($scope, $http, $sce, BACKEND_SERVER) {
     // Get data on startup
     $http.get(BACKEND_SERVER + 'posts/')
       .then(function (res) {
@@ -19,17 +19,18 @@ angular.module('post_controllers', [])
     $scope.infiniteScroll = function () {
       console.log('scroll!');
     };
+    $scope.trustSrc = function(src) {
+      return $sce.trustAsResourceUrl(src);
+    };
     console.log("post list auth", $http.defaults.headers.common.Authorization)
   })
-  .directive('embed', function ($sce) {
+  .directive('media', function () {
+
     return {
       restrict: 'AE',
       transclude: true,
-      replace: true,
-      templateUrl: 'templates/embed.html',
-      link: function (post, element) {
-        post.url = $sce.trustAsResourceUrl("http://www.youtube.com/embed/" + post.url);
-      }
+      replace: false,
+      templateUrl: 'templates/media.html'
     }
   })
   .controller('PostDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
