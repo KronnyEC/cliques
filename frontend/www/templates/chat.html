@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <div scroll-glue class="chat_messages">
+  <div id="chat_messages" class="chat_messages">
     <div class="message" ng-repeat="message in messages" title="{{ message.sent | DTSince }}">
       <span class="username">{{ message.user | UsernameFilter }}:</span> <span class="text">{{ message.message | ChatMessageFilter }}</span>
     </div>

@@ -120,11 +120,14 @@ app.config(['$routeProvider',
       console.log('messages results', results);
       results.results.reverse().forEach(function (message) {
         Chats.messages.push(message);
+
       });
+      $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
     });
 
     $rootScope.$on('chat', function (event, message) {
       Chats.messages.push(message);
+      $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
       console.log('chat on', message, Chats.messages);
     });
 

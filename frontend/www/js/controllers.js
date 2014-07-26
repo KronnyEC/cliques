@@ -13,7 +13,7 @@ angular.module('post_controllers', [])
     // Get data on startup
     $http.get(BACKEND_SERVER + 'posts/')
       .then(function (res) {
-        res.data.results.forEach(function(result) {
+        res.data.results.forEach(function (result) {
           result.youtube = youtube_url_to_id(result.url);
           console.log('youtube', result)
         });
@@ -23,7 +23,7 @@ angular.module('post_controllers', [])
     $scope.infiniteScroll = function () {
       console.log('scroll!');
     };
-    $scope.trustSrc = function(src) {
+    $scope.trustSrc = function (src) {
       return $sce.trustAsResourceUrl(src);
     };
     console.log("post list auth", $http.defaults.headers.common.Authorization)
@@ -313,11 +313,17 @@ angular.module('post_controllers', [])
 
     $scope.messages = Chat.messages;
     $scope.connected_users = Chat.connected_users;
-    console.log('connected_users', $scope.connected_users)
+    console.log('connected_users', $scope.connected_users);
     Chat.session.success(function (result) {
       $scope.session = result;
     });
 
+    $scope.$watch(function() {
+      console.log('messages watch');
+      $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
+    });
+
+    // Handler to sending messages
     $scope.send_message = function () {
       console.log($scope.text, $scope.session);
       $http({
@@ -458,7 +464,6 @@ angular.module('post_controllers', [])
     $scope.notifications = Notifications;
   })
   .controller('TabCtrl', function ($scope, $location, Channel) {
-    $scope.chat_count = Channel.stream.length;
     $scope.tabs = [
       {'name': 'Posts', 'link': '/#/posts', 'alert': ''},
       {'name': 'Notifications', 'link': '/#/notifications', 'alert': ''},
@@ -466,24 +471,30 @@ angular.module('post_controllers', [])
       {'name': 'BotD', 'link': '/#/polls/BotD', 'alert': ''},
       {'name': 'Profile', 'link': '/#/profile', 'alert': ''}
     ];
+
     // Highlight current tab
     var current_location = "/#" + $location.path();
-    $scope.tabs.forEach(function(tab) {
+    $scope.tabs.forEach(function (tab) {
       if (tab.link == current_location) {
         $scope.selected = tab;
       }
-    })
-//    $scope.selected = $scope.tabs[0];
+    });
+
+    // Update highlighted tab when clicked
     $scope.select = function (item) {
       $scope.selected = item;
     };
     $scope.itemClass = function (item) {
       return item === $scope.selected ? 'active' : undefined;
     };
+
     // Update highlighted tab
-    $scope.$on('$routeUpdate', function(){
+    $scope.$on('$routeUpdate', function () {
       console.log('route update')
     });
+
+    // Bind chat alerts
+    $scope.chat_count = Channel.stream.length;
   })
   .controller('OffCanvasDemoCtrl', function ($scope) {
   });
@@ -497,15 +508,15 @@ function removeChatIfAlreadyExists(chat, array) {
 }
 
 function youtube_url_to_id(url) {
-  if (! url) {
+  if (!url) {
     return;
   }
   var vid = url.split('v=')[1];
-  if(! vid) {
+  if (!vid) {
     return;
   }
   var ampersandPosition = vid.indexOf('&');
-  if(ampersandPosition != -1) {
+  if (ampersandPosition != -1) {
     vid = vid.substring(0, ampersandPosition);
   }
   return vid
