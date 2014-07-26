@@ -7,8 +7,8 @@ angular.module('post_controllers', [])
         console.log('user result', res);
         $scope.user = res.data
       });
-
   })
+
   .controller('PostListCtrl', function ($scope, $http, $sce, BACKEND_SERVER) {
     // Get data on startup
     $http.get(BACKEND_SERVER + 'posts/')
@@ -28,6 +28,7 @@ angular.module('post_controllers', [])
     };
     console.log("post list auth", $http.defaults.headers.common.Authorization)
   })
+
   .directive('media', function () {
     return {
       restrict: 'AE',
@@ -36,6 +37,7 @@ angular.module('post_controllers', [])
       templateUrl: 'templates/media.html'
     }
   })
+
   .controller('PostDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
     $scope.postId = $routeParams.postId;
     $http.get(BACKEND_SERVER + 'posts/' + $scope.postId + '\/')
@@ -62,6 +64,7 @@ angular.module('post_controllers', [])
       });
     };
   })
+
   .controller('AuthCtrl', function ($scope, $rootScope, $location, httpInterceptor, authorization, api, AuthService, Auth) {
     $scope.credentials = {
       username: '',
@@ -72,6 +75,7 @@ angular.module('post_controllers', [])
       $location.path('/#/posts');
     };
   })
+
   .filter('DTSince', function () {
     return function (dt) {
       var now = new Date();
@@ -105,6 +109,7 @@ angular.module('post_controllers', [])
 
     }
   })
+
   .factory('httpInterceptor', function httpInterceptor($q, $window, $location) {
     return function (promise) {
       console.log('http intercepted');
@@ -141,6 +146,7 @@ angular.module('post_controllers', [])
       }
     };
   })
+
   .factory('AuthService', function ($http, $cookies, Session) {
     return {
       login: function (credentials) {
@@ -157,6 +163,7 @@ angular.module('post_controllers', [])
       }
     };
   })
+
   .factory('Auth', ['Base64', '$http', '$rootScope', '$location', function (Base64, $http, $location, BACKEND_SERVER) {
     // initialize to whatever is in the cookie, if anything
     $http.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
@@ -191,6 +198,7 @@ angular.module('post_controllers', [])
       }
     };
   }])
+
   .factory('Base64', function () {
     var keyStr = 'ABCDEFGHIJKLMNOP' +
       'QRSTUVWXYZabcdef' +
@@ -275,6 +283,7 @@ angular.module('post_controllers', [])
       }
     };
   })
+
   .controller('NewPostCtrl', function ($scope, $rootScope, $http, $location, BACKEND_SERVER) {
     // Get a list of categories for the dropdown
     $http.get(BACKEND_SERVER + 'categories/')
@@ -308,6 +317,7 @@ angular.module('post_controllers', [])
   .controller('ProfileCtrl', function () {
 
   })
+
   .controller('ChatCtrl', function ($scope, $http, Chat, BACKEND_SERVER) {
     $scope.messages = [];
 
@@ -318,9 +328,10 @@ angular.module('post_controllers', [])
       $scope.session = result;
     });
 
-    $scope.$watch(function() {
+    $scope.$watch(function () {
       console.log('messages watch');
-      $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
+      var message_div = $('#chat_messages');
+      message_div.scrollTop(message_div[0].scrollHeight);
     });
 
     // Handler to sending messages
@@ -334,17 +345,20 @@ angular.module('post_controllers', [])
       $scope.text = "";
     };
   })
+
   .filter('UsernameFilter', function () {
     return function (userid) {
       var users = {1: 'josh'};
       return users[userid]
     }
   })
+
   .filter('ChatMessageFilter', function () {
     return function (message) {
       return message.replace('\n', '<br/>')
     }
   })
+
   .directive('ngEnter', function () {
     return function (scope, element, attrs) {
       element.bind("keydown keypress", function (event) {
@@ -358,12 +372,23 @@ angular.module('post_controllers', [])
       });
     };
   })
+
+  .directive('chat', function () {
+    return {
+      restrict: 'E',
+      transclude: true,
+      replace: false,
+      templateUrl: 'partials/chat.html'
+    }
+  })
+
   .controller('PollListCtrl', function (BACKEND_SERVER) {
     $http.get(BACKEND_SERVER + 'polls\/')
       .then(function (res) {
         $scope.polls = res.data.results;
       });
   })
+
   .controller('PollDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
     $scope.pollStub = $routeParams.pollStub;
     console.log('/#/polls/' + $scope.pollStub);
@@ -426,6 +451,7 @@ angular.module('post_controllers', [])
         $scope.poll = res.data;
       });
   })
+
   .controller('InviteCtrl', function () {
     $scope.invite_submit = function () {
       console.log("submitting", $scope.formData, $rootScope.basic_authorization);
@@ -445,8 +471,10 @@ angular.module('post_controllers', [])
       });
     }
   })
-  .controller('NotificationCtrl', function ($scope, $http, Notifications, BACKEND_SERVER) {
-    console.log('notectrl');
+
+  .controller('NotificationCtrl', function ($scope, $http, Notification, BACKEND_SERVER) {
+    $scope.notifications = [];
+    $scope.notifications = Notification.notifications;
     $scope.remove_all = function () {
       $http.delete(BACKEND_SERVER + 'notifications\/')
         .success(function (res) {
@@ -460,9 +488,8 @@ angular.module('post_controllers', [])
           console.log('removed notification', item.id);
         });
     };
-    console.log("notedata", Notifications);
-    $scope.notifications = Notifications;
   })
+
   .controller('TabCtrl', function ($scope, $location, Channel) {
     $scope.tabs = [
       {'name': 'Posts', 'link': '/#/posts', 'alert': ''},

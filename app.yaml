@@ -30,6 +30,8 @@ handlers:
   static_dir: frontend/www/img
 - url: /templates/
   static_dir: frontend/www/templates
+- url: /partials/
+  static_dir: frontend/www/partials
 - url: /static/
   static_dir: staticfiles
 - url: /_ah/channel/connected/

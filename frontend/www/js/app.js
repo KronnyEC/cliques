@@ -97,12 +97,23 @@ app.config(['$routeProvider',
     };
     return this;
   })
-  .factory('Notifications', function ($http, $timeout, BACKEND_SERVER) {
-    var data = [];
+  .factory('Notification', function ($http, $rootScope, $timeout, BACKEND_SERVER) {
+    var Notifications = {};
+    Notifications.notifications = [];
 
-    return {
-      data: data
-    };
+    // Get the first page of results
+    $http.get(BACKEND_SERVER + 'notifications\/').success(function (results) {
+      console.log('note results', results);
+      results.results.forEach(function (n) {
+        Notifications.notifications.push(n);
+      });
+    });
+
+    $rootScope.$on('notification', function (event, message) {
+      Notifications.notifications.push(message);
+    });
+
+    return Notifications
   })
   .factory('Chat', function ($http, $rootScope, $timeout, Channel, BACKEND_SERVER) {
     var Chats = {};
@@ -122,13 +133,10 @@ app.config(['$routeProvider',
         Chats.messages.push(message);
 
       });
-      $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
     });
 
     $rootScope.$on('chat', function (event, message) {
       Chats.messages.push(message);
-      $('#chat_messages').scrollTop($('#chat_messages')[0].scrollHeight);
-      console.log('chat on', message, Chats.messages);
     });
 
     return Chats;
@@ -204,7 +212,7 @@ app.run(function ($rootScope, $http, $location) {
   });
 });
 
-app.run(function (Notifications) {
+app.run(function (Notification) {
 });
 
 function urlify(text) {

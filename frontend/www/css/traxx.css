@@ -264,6 +264,12 @@ body, html {
     min-height: 500px;
     border: 1px solid grey;
     overflow-y: scroll;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.chat_send {
+    background:#FF8800;
 }
 
 .message {
@@ -362,6 +368,16 @@ body, html {
 
 .notification_wrapper {
     line-height: 1;
+}
+
+.notification p {
+    /*position: absolute;*/
+    /*margin:5px 15px;*/
+
+    /* edit: added z-index */
+    color:#111;
+    margin-bottom: 0;
+    z-index: 1;
 }
 
 .image_container {
@@ -495,7 +511,7 @@ body, html {
     width: 100%;
     overflow: hidden;
     position: relative;
-    height: 200px;
+    height: 300px;
 }
 
 .inner {
@@ -591,4 +607,9 @@ span.textbox {
     background-color: #eeeeee;
     border-radius: 3px;
     margin-bottom: 20px;
+}
+.top-bar-section li.active:not(.has-form) a:not(.button) {
+    background:#f08a24;
+    border-color: #de770f;
+
 }

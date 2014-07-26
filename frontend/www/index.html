@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="bower_components/foundation/css/foundation.css"/>
   <link rel="stylesheet" href="css/traxx.css"/>
 </head>
-<body ng-controller="UserCtrl" >
+<body ng-controller="UserCtrl">
 <div class="off-canvas-wrap" ng-controller="OffCanvasDemoCtrl">
   <div class="inner-wrap">
     <div class="fixed">
@@ -30,8 +30,11 @@
           <!-- Right Nav Section -->
           <ul class="right" ng-controller="TabCtrl">
             <li ng-repeat="tab in tabs" ng-click="select(tab)"
-                ng-class="itemClass(tab)"><span ng-if="tab.alert > 0" class="alert round label">{{ tab.alert }}</span><a href="{{ tab.link }}">{{ tab.name
-              }}</a></li>
+                ng-class="itemClass(tab)">
+              <span ng-if="tab.alert > 0" class="alert round label">
+                {{ tab.alert }}
+              </span>
+              <a href="{{ tab.link }}">{{ tab.name }}</a></li>
           </ul>
         </section>
       </nav>
@@ -50,7 +53,7 @@
 
     <section class="main-section">
       <div class="row">
-        <div class="large-6 large-offset-3 small-12 columns content">
+        <div class="large-12 small-12 columns content">
           <ng-view></ng-view>
         </div>
       </div>

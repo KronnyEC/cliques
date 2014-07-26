@@ -1,5 +1,16 @@
-<div ng-controller="NotificationCtrl">
-  <div class="card" ng-repeat="notification in notifications">
-    <p>{{ notification.text }}</p>
+<div ng-controller="NotificationCtrl"
+     class="large-offset-2 large-6 small-12 columns">
+  <div data-alert class="alert-box warning radius"
+       ng-repeat="notification in notifications">
+    <a href="#" class="close">&times;</a>
+    <a href="{{ notification.link }}">
+      <span class="notification">
+        <p>{{ notification.text }}</p>
+      </span>
+    </a>
   </div>
+</div>
+
+<div class="large-4 hide-for-small-down columns">
+  <chat></chat>
 </div>
