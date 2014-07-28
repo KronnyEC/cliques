@@ -11,10 +11,11 @@ NOTIFICATION_LEVELS = (('debug', 'Debug'), ('info', 'Info'),
 class Notification(models.Model):
     text = models.TextField()
     user = models.ForeignKey(UserProfile)
+    from_user = models.ForeignKey(UserProfile, related_name='from_user_set')
     type = models.CharField(max_length=64, choices=NOTIFICATION_TYPES)
     level = models.CharField(max_length=16, choices=NOTIFICATION_LEVELS,
                              default='info')
-    link = models.URLField()
+    link = models.CharField(max_length=255, default=None, blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True)
 
     class Meta:

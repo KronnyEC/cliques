@@ -31,22 +31,48 @@ angular.module('post_controllers', [])
 
   .directive('media', function () {
     return {
-      restrict: 'AE',
+      restrict: 'E',
       transclude: true,
       replace: false,
-      templateUrl: 'templates/media.html'
+      templateUrl: 'partials/media.html'
     }
   })
 
-  .controller('PostDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
+  .directive('post', function () {
+    return {
+      restrict: 'E',
+      transclude: true,
+      replace: false,
+      templateUrl: 'partials/post.html'
+    }
+  })
+
+  .directive('comment', function () {
+    return {
+      restrict: 'E',
+      transclude: true,
+      replace: false,
+      templateUrl: 'partials/comment.html'
+    }
+  })
+
+  .controller('PostDetailCtrl', function ($scope, $http, $sce, $route, $routeParams, $location, BACKEND_SERVER) {
     $scope.postId = $routeParams.postId;
     $http.get(BACKEND_SERVER + 'posts/' + $scope.postId + '\/')
       .then(function (res) {
         $scope.post = res.data;
+        $scope.post.youtube = youtube_url_to_id($scope.post.url);
       });
+    var success_callback = function(data, status, headers, config) {
+    };
+    var error_callback = function($scope, data, status, headers, config) {
+      console.log('error', data);
+      $scope.status = status + ' ' + headers;
+    };
     $scope.new_comment_submit = function () {
       $scope.formData['post'] = $scope.postId;
       console.log("submitting", $scope.formData, this);
+
       $http({
         url: BACKEND_SERVER + 'posts\/' + $scope.postId + '/comments\/',
         method: "POST",
@@ -55,23 +81,25 @@ angular.module('post_controllers', [])
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
           'Authorization': 'Token ' + localStorage.getItem('token')
         }
-      }).success(function (data, status, headers, config) {
-        console.log('new post');
-        $location.path('/#/posts/' + $scope.postId);
-      }).error(function ($scope, data, status, headers, config) {
-        console.log('error', data);
-        $scope.status = status + ' ' + headers;
-      });
+
+      }).success(success_callback)
+        .error(error_callback);
+      $scope.formData = "";
+      // TODO(pcsforeducation) remove when we get push comment add
+      $route.reload();
+    };
+    $scope.trustSrc = function (src) {
+      return $sce.trustAsResourceUrl(src);
     };
   })
 
-  .controller('AuthCtrl', function ($scope, $rootScope, $location, httpInterceptor, authorization, api, AuthService, Auth) {
+  .controller('AuthCtrl', function ($scope, $rootScope, $location, httpInterceptor, authorization, api, AuthService, Auth, BACKEND_SERVER) {
     $scope.credentials = {
       username: '',
       password: ''
     };
     $scope.login = function (credentials) {
-      Auth.setCredentials($rootScope, credentials);
+      Auth.setCredentials($rootScope, BACKEND_SERVER, credentials);
       $location.path('/#/posts');
     };
   })
@@ -169,9 +197,9 @@ angular.module('post_controllers', [])
     $http.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
 
     return {
-      setCredentials: function (scope, credentials) {
+      setCredentials: function (scope, BACKEND_SERVER, credentials) {
         var encoded = Base64.encode(credentials['username'] + ':' + credentials['password']);
-        console.log('encoded', encoded);
+        console.log('encoded', encoded, BACKEND_SERVER + 'token\/');
         $http({
           url: BACKEND_SERVER + 'token\/',
           method: "GET",
@@ -476,17 +504,11 @@ angular.module('post_controllers', [])
     $scope.notifications = [];
     $scope.notifications = Notification.notifications;
     $scope.remove_all = function () {
-      $http.delete(BACKEND_SERVER + 'notifications\/')
-        .success(function (res) {
-          console.log('removed all notifications')
-        });
+      Notification.remove_all();
+      $scope.notifications = Notification.notifications;
     };
-    $scope.remove_notification = function (location) {
-      console.log("notification remove", item);
-      $http.delete(BACKEND_SERVER + 'notifications/' + item.id + '\/')
-        .success(function (res) {
-          console.log('removed notification', item.id);
-        });
+    $scope.remove_notification = function (item) {
+      Notification.remove_notification(item);
     };
   })
 

@@ -1,13 +1,21 @@
 <div ng-controller="NotificationCtrl"
-     class="large-offset-2 large-6 small-12 columns">
-  <div data-alert class="alert-box warning radius"
-       ng-repeat="notification in notifications">
-    <a href="#" class="close">&times;</a>
-    <a href="{{ notification.link }}">
+     class="large-offset-2 large-6 small-12 columns notifications">
+  <div ng-repeat="notification in notifications">
+    <div class="card">
+      <a class="close" ng-click="remove_notification(notification)">&times;</a>
+      <a href="{{ notification.link }}">
       <span class="notification">
         <p>{{ notification.text }}</p>
       </span>
-    </a>
+      </a>
+    </div>
+  </div>
+
+  <button ng-click="remove_all()" ng-if="notifications.length > 0"
+          class="button alert  radius remove_all">Clear
+  </button>
+  <div ng-if="notifications.length == 0" class="card">
+    <h3 >No notifications!</h3>
   </div>
 </div>
 

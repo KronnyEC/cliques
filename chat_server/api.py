@@ -1,14 +1,11 @@
-import json
 import logging
-from datetime import timedelta, datetime
 
-from google.appengine.api import channel
-from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import generics
 
 from .models import ChatMessage
 from .serializers import ChatMessageSerializer
 from push.models import send_all
+
 logger = logging.getLogger(__name__)
 
 

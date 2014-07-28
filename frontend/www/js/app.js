@@ -101,6 +101,28 @@ app.config(['$routeProvider',
     var Notifications = {};
     Notifications.notifications = [];
 
+    Notifications.remove_all = function () {
+      for (var i = 0; i < Notifications.notifications.length; i++) {
+        var item = Notifications.notifications[i];
+        $http.delete(BACKEND_SERVER + 'notifications/' + item.id + '\/');
+      }
+      Notifications.notifications.splice(0, Notifications.notifications.length + 1);
+    };
+
+    Notifications.remove_notification = function (item) {
+      console.log("notification remove", item);
+      $http.delete(BACKEND_SERVER + 'notifications/' + item.id + '\/')
+        .success(function (res) {
+          console.log('removed notification', item.id);
+          for (var i = 0; i < Notifications.notifications.length; i++) {
+            if (Notifications.notifications[i].id == item.id) {
+              Notifications.notifications.splice(i, 1);
+              break;
+            }
+          }
+        });
+    };
+
     // Get the first page of results
     $http.get(BACKEND_SERVER + 'notifications\/').success(function (results) {
       console.log('note results', results);
@@ -109,8 +131,15 @@ app.config(['$routeProvider',
       });
     });
 
+    // Listen to Channel updates for notifications
     $rootScope.$on('notification', function (event, message) {
       Notifications.notifications.push(message);
+    });
+
+    // Listen for location changes, remove notifications if user sees page that
+    // they were notified about changes on
+    $rootScope.$on('$routeUpdate', function () {
+      console.log('remove notifications')
     });
 
     return Notifications
@@ -226,3 +255,17 @@ function urlify(text) {
   // or alternatively
   // return text.replace(urlRegex, '<a href="$1">$1</a>')
 }
+
+function highlight(text, highlight_text) {
+  text = text.insert(text.indexOf(highlight_text) - 1, '<span class="highlight">');
+  return text.insert(text.indexOf(highlight_text) + highlight_text.length, '</span>');
+
+}
+
+// Add insert so we can add highlights easily.
+String.prototype.insert = function (index, string) {
+  if (index > 0)
+    return this.substring(0, index) + string + this.substring(index, this.length);
+  else
+    return string + this;
+};

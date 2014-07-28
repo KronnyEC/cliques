@@ -1,10 +1,6 @@
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
 from notify.models import Notification
 from notify.serializers import NotificationSerializer
 from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
@@ -16,21 +12,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
     paginate_by_param = 'num_notifications'
     max_paginate_by = 20
     serializer = NotificationSerializer
-
-    # def get(self, request, format=None):
-    #     if not self.request.user.is_authenticated():
-    #         return HttpResponseForbidden()
-    #     notifications = self.get_queryset()
-    #     serializer = NotificationSerializer(notifications, many=True)
-    #     return Response(serializer.data)
-    #
-    # def delete(self, request, format=None):
-    #     if not self.request.user.is_authenticated():
-    #         return HttpResponseForbidden()
-    #     notifications = self.get_queryset()
-    #     print notifications
-    #     notifications.delete()
-    #     return Response('ok')
 
     def get_queryset(self):
         """
