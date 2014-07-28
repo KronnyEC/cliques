@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'invite_only',
     'chat_server',
     'poll',
+    'push',
     'notify',
     'website',
 ]

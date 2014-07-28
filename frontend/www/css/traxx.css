@@ -20,8 +20,8 @@ Holo
 }
 
 .post {
-    margin-left: 10px;
-    margin-right: 10px;
+    /*margin-left: 10px;*/
+    /*margin-right: 10px;*/
     /*margin-bottom:10px;*/
     /*border-bottom:1px solid #33B5E5;*/
     /*padding-bottom:10px;*/
@@ -79,16 +79,25 @@ Holo
     /*position: relative;*/
     /*bottom: 40px;*/
     /*right: 20px;*/
-    text-align: right;
     font-size: 100%;
 }
 
 .metadata,
 .metadata a {
-    font-size: 80%;
+    /*font-size: 80%;*/
     color: #111;
     font-family: 'Play', sans-serif;
     margin-top: 15px;
+}
+
+.metadata p {
+    margin-bottom: 0;
+    margin-left: 20px;
+    font-size: 80%;
+}
+
+.comment .metadata {
+    color: #FF8800;
 }
 
 .post p {
@@ -259,9 +268,25 @@ body, html {
     /*overflow-y: scroll;*/
     padding-left: 5px;
     padding-right: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     min-height: 500px;
     border: 1px solid grey;
     overflow-y: scroll;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.chat_send {
+    background: #FF8800;
+}
+
+.message {
+    margin-bottom: 5px;
+}
+
+.message .username {
+    color: #FF8800;
 }
 
 .main-section {
@@ -306,10 +331,12 @@ body, html {
 .connected_users {
     margin-bottom: 10px;
     margin-top: 10px;
+    color: #eee;
 }
 
 .connect_users_title {
-    border-bottom: 1px solid grey;
+    color: #eee;
+    border-bottom: 1px solid #eee;
 }
 
 .pagination {
@@ -350,6 +377,22 @@ body, html {
 
 .notification_wrapper {
     line-height: 1;
+}
+
+.notification p {
+    /*position: absolute;*/
+    /*margin:5px 15px;*/
+
+    /* edit: added z-index */
+    color: #111;
+    margin-bottom: 0;
+    z-index: 1;
+}
+
+.notifications .remove_all {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
 
 .image_container {
@@ -483,7 +526,7 @@ body, html {
     width: 100%;
     overflow: hidden;
     position: relative;
-    height: 200px;
+    height: 300px;
 }
 
 .inner {
@@ -543,14 +586,31 @@ body, html {
     position: relative;
 }
 
-.comment {
-    padding: 10px;
+.comments {
     background-color: #eeeeee;
     border-radius: 3px;
+    margin-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
-.row .comment_list {
-    margin-bottom: 20px;
+.comments p {
+    margin-bottom: 0;
+}
+
+.comment {
+    padding: 10px;
+    /*background-color: #eeeeee;*/
+    /*border-radius: 3px;*/
+}
+
+/*.row .comment_list {*/
+/*margin-bottom: 20px;*/
+/*}*/
+
+.comment_form {
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 textarea,
@@ -579,4 +639,23 @@ span.textbox {
     background-color: #eeeeee;
     border-radius: 3px;
     margin-bottom: 20px;
+}
+
+.card .close {
+    float: right;
+}
+
+.top-bar-section li.active:not(.has-form) a:not(.button) {
+    background: #f08a24;
+    border-color: #de770f;
+
+}
+
+.icon-chat {
+    text-align: right;
+}
+
+.right p,
+.right a {
+    text-align: right;
 }

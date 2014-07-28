@@ -1,7 +1,10 @@
 import logging
+import re
 import urlparse
+from django.core import validators
 
 from django.core.mail import send_mail
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
@@ -26,11 +29,12 @@ CATEGORY_COLORS = (('red', 'Red'), ('blue', 'Blue'), ('purple', 'Purple'),
 
 
 class UserProfile(AbstractUser):
-    profile_pic = models.ImageField(upload_to='traxx-profile', blank=True,
+    profile_pic = models.ImageField(upload_to='cliques-profile', blank=True,
                                     null=True, default=None)
     email_settings = models.CharField(max_length=64, choices=EMAIL_PREFERENCES,
                                       default='posts')
     poll_votes = models.IntegerField(default=0)
+    last_updated = models.DateTimeField(auto_now=True)
 
 
 class Category(models.Model):
@@ -66,13 +70,25 @@ class Post(models.Model):
             new = True
         else:
             new = False
+        self.type = detect_content_type(self.url)
 
         super(Post, self).save(*args, **kwargs)
-        # Check if text field is
-        self.type = detect_content_type(self.url)
-        logger.info('type is {}'.format(self.type))
-        if not new:
-            return
+
+        logger.info('type {} is {}'.format(self.title, self.type))
+        if new:
+            self._new_post_email()
+
+    def _new_post_email(self):
+        #TODO(pcsforeducation) Make async
+        if self.type in ['youtube', 'video']:
+            post_type = 'video'
+        elif self.type == 'text':
+            post_type = 'text post'
+        elif self.type in ['imgur', 'image']:
+            post_type = 'image'
+        else:
+            logger.warning('Post {} was of type none'.format(self.title))
+            post_type = 'none'
 
         # Send email to everyone posts or all for new posts
         users_to_email = UserProfile.objects.filter(
@@ -85,15 +101,6 @@ class Post(models.Model):
 
         subject = '[slashertraxx] {} - {}'.format(self.title,
                                                   self.user.username)
-
-        if self.type in ['youtube', 'video']:
-            post_type = 'video'
-        elif self.type == 'text':
-            post_type = 'text post'
-        elif self.type in ['imgur', 'image']:
-            post_type = 'image'
-        else:
-            post_type = 'none'
 
         message = '''
         {username} posted a new {post_type}.

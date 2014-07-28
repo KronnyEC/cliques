@@ -7,44 +7,72 @@ angular.module('post_controllers', [])
         console.log('user result', res);
         $scope.user = res.data
       });
-
   })
-  .controller('PostListCtrl', function ($scope, $http, BACKEND_SERVER) {
+
+  .controller('PostListCtrl', function ($scope, $http, $sce, BACKEND_SERVER) {
     // Get data on startup
     $http.get(BACKEND_SERVER + 'posts/')
       .then(function (res) {
+        res.data.results.forEach(function (result) {
+          result.youtube = youtube_url_to_id(result.url);
+          console.log('youtube', result)
+        });
         $scope.posts = res.data.results;
         console.log($scope.posts);
       });
     $scope.infiniteScroll = function () {
       console.log('scroll!');
     };
+    $scope.trustSrc = function (src) {
+      return $sce.trustAsResourceUrl(src);
+    };
     console.log("post list auth", $http.defaults.headers.common.Authorization)
   })
-  .directive('youtube', function ($sce) {
+
+  .directive('media', function () {
     return {
-      restrict: 'EA',
-      scope: { post: '=' },
-      replace: true,
-      template: '<div class="flex-video"><iframe style="overflow:hidden;" width="420px" height="315px" src="{{url}}" frameborder="0" allowfullscreen></iframe></div>',
-      link: function (scope) {
-        scope.$watch('video_id', function (newVal) {
-          if (newVal) {
-            scope.url = $sce.trustAsResourceUrl("http://www.youtube.com/embed/" + newVal);
-          }
-        });
-      }
-    };
+      restrict: 'E',
+      transclude: true,
+      replace: false,
+      templateUrl: 'partials/media.html'
+    }
   })
-  .controller('PostDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
+
+  .directive('post', function () {
+    return {
+      restrict: 'E',
+      transclude: true,
+      replace: false,
+      templateUrl: 'partials/post.html'
+    }
+  })
+
+  .directive('comment', function () {
+    return {
+      restrict: 'E',
+      transclude: true,
+      replace: false,
+      templateUrl: 'partials/comment.html'
+    }
+  })
+
+  .controller('PostDetailCtrl', function ($scope, $http, $sce, $route, $routeParams, $location, BACKEND_SERVER) {
     $scope.postId = $routeParams.postId;
     $http.get(BACKEND_SERVER + 'posts/' + $scope.postId + '\/')
       .then(function (res) {
         $scope.post = res.data;
+        $scope.post.youtube = youtube_url_to_id($scope.post.url);
       });
+    var success_callback = function(data, status, headers, config) {
+    };
+    var error_callback = function($scope, data, status, headers, config) {
+      console.log('error', data);
+      $scope.status = status + ' ' + headers;
+    };
     $scope.new_comment_submit = function () {
       $scope.formData['post'] = $scope.postId;
       console.log("submitting", $scope.formData, this);
+
       $http({
         url: BACKEND_SERVER + 'posts\/' + $scope.postId + '/comments\/',
         method: "POST",
@@ -53,25 +81,29 @@ angular.module('post_controllers', [])
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
           'Authorization': 'Token ' + localStorage.getItem('token')
         }
-      }).success(function (data, status, headers, config) {
-        console.log('new post');
-        $location.path('/#/posts/' + $scope.postId);
-      }).error(function ($scope, data, status, headers, config) {
-        console.log('error', data);
-        $scope.status = status + ' ' + headers;
-      });
+
+      }).success(success_callback)
+        .error(error_callback);
+      $scope.formData = "";
+      // TODO(pcsforeducation) remove when we get push comment add
+      $route.reload();
+    };
+    $scope.trustSrc = function (src) {
+      return $sce.trustAsResourceUrl(src);
     };
   })
-  .controller('AuthCtrl', function ($scope, $rootScope, $location, httpInterceptor, authorization, api, AuthService, Auth) {
+
+  .controller('AuthCtrl', function ($scope, $rootScope, $location, httpInterceptor, authorization, api, AuthService, Auth, BACKEND_SERVER) {
     $scope.credentials = {
       username: '',
       password: ''
     };
     $scope.login = function (credentials) {
-      Auth.setCredentials($rootScope, credentials);
+      Auth.setCredentials($rootScope, BACKEND_SERVER, credentials);
       $location.path('/#/posts');
     };
   })
+
   .filter('DTSince', function () {
     return function (dt) {
       var now = new Date();
@@ -105,6 +137,7 @@ angular.module('post_controllers', [])
 
     }
   })
+
   .factory('httpInterceptor', function httpInterceptor($q, $window, $location) {
     return function (promise) {
       console.log('http intercepted');
@@ -141,6 +174,7 @@ angular.module('post_controllers', [])
       }
     };
   })
+
   .factory('AuthService', function ($http, $cookies, Session) {
     return {
       login: function (credentials) {
@@ -157,14 +191,15 @@ angular.module('post_controllers', [])
       }
     };
   })
+
   .factory('Auth', ['Base64', '$http', '$rootScope', '$location', function (Base64, $http, $location, BACKEND_SERVER) {
     // initialize to whatever is in the cookie, if anything
     $http.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
 
     return {
-      setCredentials: function (scope, credentials) {
+      setCredentials: function (scope, BACKEND_SERVER, credentials) {
         var encoded = Base64.encode(credentials['username'] + ':' + credentials['password']);
-        console.log('encoded', encoded);
+        console.log('encoded', encoded, BACKEND_SERVER + 'token\/');
         $http({
           url: BACKEND_SERVER + 'token\/',
           method: "GET",
@@ -191,6 +226,7 @@ angular.module('post_controllers', [])
       }
     };
   }])
+
   .factory('Base64', function () {
     var keyStr = 'ABCDEFGHIJKLMNOP' +
       'QRSTUVWXYZabcdef' +
@@ -275,6 +311,7 @@ angular.module('post_controllers', [])
       }
     };
   })
+
   .controller('NewPostCtrl', function ($scope, $rootScope, $http, $location, BACKEND_SERVER) {
     // Get a list of categories for the dropdown
     $http.get(BACKEND_SERVER + 'categories/')
@@ -308,30 +345,78 @@ angular.module('post_controllers', [])
   .controller('ProfileCtrl', function () {
 
   })
+
   .controller('ChatCtrl', function ($scope, $http, Chat, BACKEND_SERVER) {
+    $scope.messages = [];
+
+    $scope.messages = Chat.messages;
+    $scope.connected_users = Chat.connected_users;
+    console.log('connected_users', $scope.connected_users);
+    Chat.session.success(function (result) {
+      $scope.session = result;
+    });
+
+    $scope.$watch(function () {
+      console.log('messages watch');
+      var message_div = $('#chat_messages');
+      message_div.scrollTop(message_div[0].scrollHeight);
+    });
+
+    // Handler to sending messages
     $scope.send_message = function () {
-      console.log($scope.text);
+      console.log($scope.text, $scope.session);
       $http({
         method: 'POST',
         url: BACKEND_SERVER + 'chat/messages\/',
         data: {'message': $scope.text}
-      })
+      });
+      $scope.text = "";
     };
-
-    $scope.connected_users = Chat.connected_users;
-    Chat.messages.success(function (r) {
-      console.log("then", r);
-      $scope.messages = r.results;
-    });
-    console.log('messages', $scope.messages, $scope.connected_users);
-
   })
+
+  .filter('UsernameFilter', function () {
+    return function (userid) {
+      var users = {1: 'josh'};
+      return users[userid]
+    }
+  })
+
+  .filter('ChatMessageFilter', function () {
+    return function (message) {
+      return message.replace('\n', '<br/>')
+    }
+  })
+
+  .directive('ngEnter', function () {
+    return function (scope, element, attrs) {
+      element.bind("keydown keypress", function (event) {
+        if (event.which === 13) {
+          scope.$apply(function () {
+            scope.$eval(attrs.ngEnter, {'event': event});
+          });
+
+          event.preventDefault();
+        }
+      });
+    };
+  })
+
+  .directive('chat', function () {
+    return {
+      restrict: 'E',
+      transclude: true,
+      replace: false,
+      templateUrl: 'partials/chat.html'
+    }
+  })
+
   .controller('PollListCtrl', function (BACKEND_SERVER) {
     $http.get(BACKEND_SERVER + 'polls\/')
       .then(function (res) {
         $scope.polls = res.data.results;
       });
   })
+
   .controller('PollDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
     $scope.pollStub = $routeParams.pollStub;
     console.log('/#/polls/' + $scope.pollStub);
@@ -394,6 +479,7 @@ angular.module('post_controllers', [])
         $scope.poll = res.data;
       });
   })
+
   .controller('InviteCtrl', function () {
     $scope.invite_submit = function () {
       console.log("submitting", $scope.formData, $rootScope.basic_authorization);
@@ -413,46 +499,75 @@ angular.module('post_controllers', [])
       });
     }
   })
-  .controller('NotificationCtrl', function ($scope, $http, Notifications, BACKEND_SERVER) {
-    console.log('notectrl');
+
+  .controller('NotificationCtrl', function ($scope, $http, Notification, BACKEND_SERVER) {
+    $scope.notifications = [];
+    $scope.notifications = Notification.notifications;
     $scope.remove_all = function () {
-      $http.delete(BACKEND_SERVER + 'notifications\/')
-        .success(function (res) {
-          console.log('removed all notifications')
-        });
+      Notification.remove_all();
+      $scope.notifications = Notification.notifications;
     };
-    $scope.remove_notification = function (location) {
-      console.log("notification remove", item);
-      $http.delete(BACKEND_SERVER + 'notifications/' + item.id + '\/')
-        .success(function (res) {
-          console.log('removed notification', item.id);
-        });
+    $scope.remove_notification = function (item) {
+      Notification.remove_notification(item);
     };
-    console.log("notedata", Notifications);
-    $scope.notifications = Notifications;
   })
-  .controller('TabCtrl', function ($scope) {
+
+  .controller('TabCtrl', function ($scope, $location, Channel) {
     $scope.tabs = [
-      {'name': 'Posts', 'link': '/#/posts'},
-      {'name': 'Notifications', 'link': '/#/notifications'},
-      {'name': 'Chat', 'link': '/#/chat'},
-      {'name': 'BotD', 'link': '/#/polls/BotD'},
-      {'name': 'Profile', 'link': '/#/profile'}
+      {'name': 'Posts', 'link': '/#/posts', 'alert': ''},
+      {'name': 'Notifications', 'link': '/#/notifications', 'alert': ''},
+      {'name': 'Chat', 'link': '/#/chat', 'alert': $scope.chat_count},
+      {'name': 'BotD', 'link': '/#/polls/BotD', 'alert': ''},
+      {'name': 'Profile', 'link': '/#/profile', 'alert': ''}
     ];
-    console.log($scope.tabs);
-    $scope.selected = $scope.tabs[0];
+
+    // Highlight current tab
+    var current_location = "/#" + $location.path();
+    $scope.tabs.forEach(function (tab) {
+      if (tab.link == current_location) {
+        $scope.selected = tab;
+      }
+    });
+
+    // Update highlighted tab when clicked
     $scope.select = function (item) {
       $scope.selected = item;
     };
     $scope.itemClass = function (item) {
       return item === $scope.selected ? 'active' : undefined;
     };
-  })
-  .controller('SwipeCtrl', function ($scope) {
-    console.log('swipe');
-    $scope.swipeLeft = function () {
-      console.log('swipe left');
-    }
+
+    // Update highlighted tab
+    $scope.$on('$routeUpdate', function () {
+      console.log('route update')
+    });
+
+    // Bind chat alerts
+    $scope.chat_count = Channel.stream.length;
   })
   .controller('OffCanvasDemoCtrl', function ($scope) {
   });
+
+function removeChatIfAlreadyExists(chat, array) {
+  var result = array.filter(function (potentialMatch) {
+    return potentialMatch.id != chat.id;
+  });
+
+  return result;
+}
+
+function youtube_url_to_id(url) {
+  if (!url) {
+    return;
+  }
+  var vid = url.split('v=')[1];
+  if (!vid) {
+    return;
+  }
+  var ampersandPosition = vid.indexOf('&');
+  if (ampersandPosition != -1) {
+    vid = vid.substring(0, ampersandPosition);
+  }
+  return vid
+}
+

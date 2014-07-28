@@ -60,6 +60,12 @@ app.config(['$routeProvider',
   }
 
 ])
+  .config(function ($sceDelegateProvider) {
+    $sceDelegateProvider.resourceUrlWhitelist([
+      'self',
+      'http://**.youtube.com/**'
+    ]);
+  })
   .config(['$httpProvider', function ($httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -79,15 +85,10 @@ app.config(['$routeProvider',
     notAuthenticated: 'auth-not-authenticated',
     notAuthorized: 'auth-not-authorized'
   })
-  .constant('angularMomentConfig', {
-    preprocess: 'unix', // optional
-    timezone: 'America/Chicago' // optional
-  })
   .service('Session', function () {
     this.create = function (sessionId, userId, token) {
       this.id = sessionId;
       this.username = username;
-      token = token;
     };
     this.destroy = function () {
       this.id = null;
@@ -96,120 +97,131 @@ app.config(['$routeProvider',
     };
     return this;
   })
-  .factory('Notifications', function ($http, $timeout, BACKEND_SERVER) {
-    var data = [];
-    var poller = function () {
-      $http.get(BACKEND_SERVER + 'notifications\/').then(function (r) {
-        data = r.data.results;
-        $timeout(poller, 30000);
-      });
-    };
-    poller();
+  .factory('Notification', function ($http, $rootScope, $timeout, BACKEND_SERVER) {
+    var Notifications = {};
+    Notifications.notifications = [];
 
-    return {
-      data: data
+    Notifications.remove_all = function () {
+      for (var i = 0; i < Notifications.notifications.length; i++) {
+        var item = Notifications.notifications[i];
+        $http.delete(BACKEND_SERVER + 'notifications/' + item.id + '\/');
+      }
+      Notifications.notifications.splice(0, Notifications.notifications.length + 1);
     };
+
+    Notifications.remove_notification = function (item) {
+      console.log("notification remove", item);
+      $http.delete(BACKEND_SERVER + 'notifications/' + item.id + '\/')
+        .success(function (res) {
+          console.log('removed notification', item.id);
+          for (var i = 0; i < Notifications.notifications.length; i++) {
+            if (Notifications.notifications[i].id == item.id) {
+              Notifications.notifications.splice(i, 1);
+              break;
+            }
+          }
+        });
+    };
+
+    // Get the first page of results
+    $http.get(BACKEND_SERVER + 'notifications\/').success(function (results) {
+      console.log('note results', results);
+      results.results.forEach(function (n) {
+        Notifications.notifications.push(n);
+      });
+    });
+
+    // Listen to Channel updates for notifications
+    $rootScope.$on('notification', function (event, message) {
+      Notifications.notifications.push(message);
+    });
+
+    // Listen for location changes, remove notifications if user sees page that
+    // they were notified about changes on
+    $rootScope.$on('$routeUpdate', function () {
+      console.log('remove notifications')
+    });
+
+    return Notifications
   })
-  .factory('Chat', function ($http, $timeout, BACKEND_SERVER) {
-    var token;
-    var chan;
-    var socket;
-    var messages = [];
-    var connected_users = [];
-    var session;
+  .factory('Chat', function ($http, $rootScope, $timeout, Channel, BACKEND_SERVER) {
+    var Chats = {};
+    Chats.messages = [];
+    Chats.messages = Channel.stream;
+    Chats.connected_users = [];
+    Chats.session = Channel.session;
+    console.log('Chat init', Chats);
+    var session_data = {
+      'id': Chats.session.id
+    };
 
-    function get_messages() {
-      // callback will get a list of messages as the only arg
-      console.log(BACKEND_SERVER + 'chat/messages\/');
-      $http.get(BACKEND_SERVER + 'chat/messages\/')
-        .then(function (results) {
-          console.log('get messages', results);
-          messages = results.data.results;
-          console.log('got messages', messages);
-        })
-    }
+    // Get the first page of results
+    $http.get(BACKEND_SERVER + 'chat/messages\/').success(function (results) {
+      console.log('messages results', results);
+      results.results.reverse().forEach(function (message) {
+        Chats.messages.push(message);
 
-    function check_in(callback) {
-      console.log('check in');
-      $http.post(BACKEND_SERVER + 'chat/check_in\/', {})
-        .success(function (result) {
-          connected_users = result.connected_users;
-        });
-    }
-
-    function leave_chat() {
-      // not yet called
-      $http.post(BACKEND_SERVER + 'chat/leave_chat\/')
-        .success(function (result) {
-          console.log("left chat", result);
-        });
-    }
-
-    function socket_open(e) {
-      console.log("Socket opened");
-    }
-
-    function socket_error(e) {
-      var code = e.field;
-      var description = e.description;
-      console.log("Socket error", code, description);
-      // Token timed out, get a new one.
-      if (code == 401 && description == "Token+timed+out.") {
-        join_chat();
-      }
-    }
-
-    function socket_close(e) {
-      console.log("Socket closed", e);
-    }
-
-    function build_socket() {
-      console.log('building socket', token);
-      chan = new goog.appengine.Channel(token);
-      console.log('tokenchan', token, chan);
-      socket = chan.open({
-        onerror: function (e) {
-          console.log('socket error: ', e);
-        },
-        onmessage: function (e) {
-          console.log('socket message', e);
-          messages.push(e)
-        },
-        onopen: function (e) {
-          console.log("Socket opened", e);
-        },
-        onclose: function (e) {
-          console.log("Socket closed", e);
-        }
       });
-      console.log("Socket", chan, socket)
-    }
+    });
 
-    function join_chat() {
-      console.log('join chat', BACKEND_SERVER + 'chat/sessions\/');
-      if (token != undefined) {
+    $rootScope.$on('chat', function (event, message) {
+      Chats.messages.push(message);
+    });
 
-      } else {
-        $http.post(BACKEND_SERVER + 'chat/sessions\/', {})
-          .success(function (result) {
-            console.log("session result", result);
-            session = result;
-            token = result.session_key;
-            build_socket();
-          });
-      }
-    }
+    return Chats;
+  })
+  .factory('Channel', function ($rootScope, $http, BACKEND_SERVER) {
+    var Notifications = {};
+    Notifications.stream = [];
+    Notifications.session = {};
 
-    console.log('joining chat');
-    join_chat();
-    console.log('chat joined');
-    get_messages();
-    console.log('init messages', messages, connected_users);
-    return {
-      messages: $http.get(BACKEND_SERVER + 'chat/messages\/'),
-      connected_users: connected_users,
-      session: session
-    }
+    var messageCallback = function (data) {
+      // Call back on every Channel message. Broadcast out with type to
+      // listeners
+      data = angular.fromJson(data.data);
+      $rootScope.$apply(function () {
+        console.log('message callback', data.type, data.data);
+        if (data) {
+          console.log('broadcast', data.type, data.data);
+          $rootScope.$broadcast(data.type, data.data);
+        }
+      })
+    };
+
+    var SocketHandler = function (BACKEND_SERVER, session, onMessageCallback) {
+      var context = this;
+      this.socketCreationCallback = function (token) {
+        console.log('token', token)
+        var channel = new goog.appengine.Channel(token);
+        context.channelId = channel.channelId;
+
+        var socket = channel.open();
+        socket.onerror = function (e) {
+          console.log("Channel error", e);
+        };
+        socket.onclose = function () {
+          console.log("Channel closed");
+        };
+        socket.onmessage = messageCallback;
+
+        context.channelSocket = socket;
+      };
+      this.socketCreationCallback(session.session_key);
+    };
+
+    // init
+    Notifications.session = $http.post(BACKEND_SERVER + 'push\/', {})
+      .success(function (result) {
+        console.log('new session created', result);
+        return result;
+      });
+
+    //that's where we connect
+    Notifications.session.then(function (s) {
+      var socket = new SocketHandler(BACKEND_SERVER, s.data, messageCallback);
+    });
+
+    return Notifications;
   });
 
 app.run(function ($rootScope, $http, $location) {
@@ -229,7 +241,7 @@ app.run(function ($rootScope, $http, $location) {
   });
 });
 
-app.run(function (Notifications) {
+app.run(function (Notification) {
 });
 
 function urlify(text) {
@@ -243,3 +255,17 @@ function urlify(text) {
   // or alternatively
   // return text.replace(urlRegex, '<a href="$1">$1</a>')
 }
+
+function highlight(text, highlight_text) {
+  text = text.insert(text.indexOf(highlight_text) - 1, '<span class="highlight">');
+  return text.insert(text.indexOf(highlight_text) + highlight_text.length, '</span>');
+
+}
+
+// Add insert so we can add highlights easily.
+String.prototype.insert = function (index, string) {
+  if (index > 0)
+    return this.substring(0, index) + string + this.substring(index, this.length);
+  else
+    return string + this;
+};
