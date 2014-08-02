@@ -1,6 +1,6 @@
 /*
 
-Holo
+Holo Theme
 
  51, 181, 229 blue 33B5E5
 170, 102, 204 purple AA66CC
@@ -20,20 +20,11 @@ Holo
 }
 
 .post {
-    /*margin-left: 10px;*/
-    /*margin-right: 10px;*/
-    /*margin-bottom:10px;*/
-    /*border-bottom:1px solid #33B5E5;*/
-    /*padding-bottom:10px;*/
     font-family: 'Droid Sans', sans-serif;
     background-color: #eee;
     padding: 10px;
     border-radius: 3px;
     margin-bottom: 20px;
-    /*min-height: 150px;*/
-    /*margin-top: 20px;*/
-    /*border-radius: 10px;*/
-    /*padding: 10px;*/
 }
 
 .category_label.blue a {
@@ -57,34 +48,18 @@ Holo
 }
 
 .category_label {
-    /*position:absolute;*/
-    /*top:35px;*/
 }
 
 .post_submitted {
-    /*position: relative;*/
-    /*bottom: 30px;*/
-    /*right: 20px;*/
     text-align: right;
-    font-size: 80%;
-}
-
-.post_user {
-    /*position:absolute;*/
-    /*bottom:15px;*/
-    /*left:20px;*/
 }
 
 .post_comments {
-    /*position: relative;*/
-    /*bottom: 40px;*/
-    /*right: 20px;*/
     font-size: 100%;
 }
 
 .metadata,
 .metadata a {
-    /*font-size: 80%;*/
     color: #111;
     font-family: 'Play', sans-serif;
     margin-top: 15px;
@@ -106,20 +81,11 @@ Holo
 
 .post.image {
     max-height: 600px;
-    /*max-width: 600px;*/
     max-width: 90%;
 }
 
-/*.post_list.image {*/
-/*max-height: 200px;*/
-/*max-width: 500px;*/
-/*display:block;*/
-/*margin:0 auto;*/
-/*}*/
 .link h4,
 .text h4 {
-    /*margin-top:40px;*/
-    /*margin-bottom:40px;*/
 }
 
 .title {
@@ -132,12 +98,17 @@ Holo
     margin-bottom: 0px;
 }
 
+.post img {
+    max-height: 600px;
+    display: block;
+    margin: auto;
+}
+
 .post h4 {
+    text-align: center;
 }
 
 .post_list.flex-video {
-    /*height: 200px;*/
-    /*max-width: 400px;*/
 }
 
 .youtube,
@@ -317,9 +288,11 @@ body, html {
     text-align: center;
 }
 
-.submission_image img {
+.submission_entry .image {
     display: block;
     margin: auto;
+    max-height: 400px;
+    max-width: 100%;
 }
 
 .submission_vote_button {
@@ -380,10 +353,6 @@ body, html {
 }
 
 .notification p {
-    /*position: absolute;*/
-    /*margin:5px 15px;*/
-
-    /* edit: added z-index */
     color: #111;
     margin-bottom: 0;
     z-index: 1;
@@ -422,7 +391,7 @@ body, html {
     font-style: normal;
 }
 
-[class^="icon-"], [class*=" icon-"] {
+.icomoon {
     font-family: 'icomoon';
     speak: none;
     font-style: normal;
@@ -536,9 +505,6 @@ body, html {
 }
 
 .outer img {
-    /*position: absolute;*/
-    /*top: 0;*/
-    /*left: 0;*/
     position: relative;
     width: 100%;
 }
@@ -552,7 +518,7 @@ body, html {
     padding: 0;
 }
 
-.tabs .tab-title.active a {
+.tabs .tab-title .active a {
     background-color: #FF8800;
     color: #eee;
 }
@@ -600,13 +566,7 @@ body, html {
 
 .comment {
     padding: 10px;
-    /*background-color: #eeeeee;*/
-    /*border-radius: 3px;*/
 }
-
-/*.row .comment_list {*/
-/*margin-bottom: 20px;*/
-/*}*/
 
 .comment_form {
     padding-left: 15px;
@@ -622,10 +582,10 @@ textarea:active {
     outline-offset: 0;
 }
 
-span.textbox {
-    height: 50px;
+.textbox {
     vertical-align: middle;
     padding-top: 8px;
+    padding-bottom: 40px;
 }
 
 .submission_entry {

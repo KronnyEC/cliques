@@ -3,12 +3,7 @@
     <h4>
       <a class="title" href="/#/posts/{{ post.id }}">{{ post.title }}</a>
     </h4>
-
-    <div class="outer">
-      <div class="inner">
-        <media></media>
-      </div>
-    </div>
+    <media></media>
   </div>
 
   <div class="youtube" ng-switch-when="youtube">
@@ -40,22 +35,22 @@
   <!--Metadata-->
   <div class="metadata row">
     <span
-        class="category_label {{ post.category.color }} large-6 columns">
+        class="category_label {{ post.category.color }} large-6 small-6 columns">
       <p><a
           href="/#/posts/?category={{ post.category.name }}">{{ post.category.name }}</a>
       </p>
     </span>
 
-    <span class="post_comments {{ post.category.color }} large-6 columns">
+    <span class="post_comments {{ post.category.color }} large-6 small-6 columns">
         <p class="right"><a href="/#/posts/{{ post.id }}/"><span
-            class="icon-chat"></span></a></p>
+            class="icomoon icon-chat"></span></a></p>
     </span>
-    <span class="post_user {{ post.category.color }} large-6 columns">
+    <span class="post_user {{ post.category.color }} large-6 small-6 columns">
       <p>
         <a href="/#/user/{{ post.user.id }}/">{{ post.user.username }}</a>
       </p>
     </span>
-    <span class="post_submitted {{ post.category.color }} large-6 columns">
+    <span class="post_submitted {{ post.category.color }} large-6 small-6 columns">
 
         <p ng-bind="post.submitted | DTSince ">{{ post.submitted }}</p>
     </span>

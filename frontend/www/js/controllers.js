@@ -63,9 +63,9 @@ angular.module('post_controllers', [])
         $scope.post = res.data;
         $scope.post.youtube = youtube_url_to_id($scope.post.url);
       });
-    var success_callback = function(data, status, headers, config) {
+    var success_callback = function (data, status, headers, config) {
     };
-    var error_callback = function($scope, data, status, headers, config) {
+    var error_callback = function ($scope, data, status, headers, config) {
       console.log('error', data);
       $scope.status = status + ' ' + headers;
     };
