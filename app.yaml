@@ -26,6 +26,8 @@ handlers:
   static_dir: frontend/www/js
 - url: /css/
   static_dir: frontend/www/css
+- url: /build/
+  static_dir: frontend/www/build
 - url: /img/
   static_dir: frontend/www/img
 - url: /templates/
@@ -38,8 +40,13 @@ handlers:
   script: cliques.wsgi.application
 - url: /_ah/channel/disconnected/
   script: cliques.wsgi.application
-- url: /.*
+- url: /admin/*.
   script: cliques.wsgi.application
+- url: /
+  static_files: frontend/www/index.html
+  upload: frontend/www/index.html
+#- url: /*.
+#  script: cliques.wsgi.application
 
 env_variables:
   DJANGO_SETTINGS_MODULE: 'cliques.settings'

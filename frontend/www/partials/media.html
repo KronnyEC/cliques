@@ -3,9 +3,9 @@
     <iframe style="overflow:hidden;" width="420px" height="315px"
             src="{{ trustSrc('https://youtube.com/embed/' + post.youtube + '?disablekb=1&enablejsapi=1&modestbranding=1&rel=0&showinfo=0&autohide=1&iv_load_policy=3') }}" frameborder="0" allowfullscreen></iframe>
   </div>
-  <div ng-switch-when="image" class="image">
+  <div ng-switch-when="image">
     <a href="/#/posts/{{ post.id }}">
-      <img class="post_list image" src="{{ post.url }}">
+      <img src="{{ post.url }}">
     </a>
   </div>
 </div>

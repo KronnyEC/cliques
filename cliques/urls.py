@@ -145,7 +145,7 @@ urlpatterns = patterns('',
     # url(r'^users/(?P<slug>\w+)/$', profile_update, name='profile_detail'),
 
     # Single root page
-    url(r'^$', TemplateView.as_view(template_name='index.html'), name='post_list', ),
+    # url(r'^$', TemplateView.as_view(template_name='index.html'), name='post_list', ),
 
     # API
     url(r'^api-auth/', include('rest_framework.urls',

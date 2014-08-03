@@ -1,35 +1,35 @@
 <div class="post" ng-switch="post.type">
   <div class="image" ng-switch-when="image">
-    <h4>
-      <a class="title" href="/#/posts/{{ post.id }}">{{ post.title }}</a>
+    <h4 class="title">
+      <a href="/#/posts/{{ post.id }}">{{ post.title }}</a>
     </h4>
     <media></media>
   </div>
 
   <div class="youtube" ng-switch-when="youtube">
-    <h4>
-      <a class="title" href="/#/posts/{{ post.id }}">{{ post.title }}</a>
+    <h4 class="title">
+      <a href="/#/posts/{{ post.id }}">{{ post.title }}</a>
     </h4>
     <media></media>
   </div>
 
   <div class="video" ng-switch-when="video">
-    <h4>
-      <a class="title" href="/#/posts/{{ post.id }}">{{ post.title }}</a>
+    <h4 class="title">
+      <a href="/#/posts/{{ post.id }}">{{ post.title }}</a>
     </h4>
     <media></media>
   </div>
 
   <div class="link" ng-switch-when="link">
-    <h4>
-      <a class="title" href="{{ post.url }}"
+    <h4 class="title">
+      <a href="{{ post.url }}"
          target="_blank">{{ post.title }}</a>
     </h4>
   </div>
 
   <div class="text" ng-switch-default>
-    <h4>
-      <a class="title" href="/#/posts/{{ post.id }}">{{ post.title }}</a>
+    <h4 class="title">
+      <a href="/#/posts/{{ post.id }}">{{ post.title }}</a>
     </h4>
   </div>
   <!--Metadata-->
@@ -42,7 +42,7 @@
     </span>
 
     <span class="post_comments {{ post.category.color }} large-6 small-6 columns">
-        <p class="right"><a href="/#/posts/{{ post.id }}/"><span
+        <p class="right"><a href="/#/posts/{{ post.id }}/">{{ post.comment_set.length }}<span
             class="icomoon icon-chat"></span></a></p>
     </span>
     <span class="post_user {{ post.category.color }} large-6 small-6 columns">

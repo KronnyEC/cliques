@@ -19,7 +19,7 @@ app.config(['$routeProvider',
         controller: 'PostListCtrl'
       }).
       when('/posts/:postId', {
-        templateUrl: 'templates/post.html',
+        templateUrl: 'templates/post_detail.html',
         controller: 'PostDetailCtrl'
       }).
       when('/new_post', {
