@@ -41,11 +41,10 @@
     </div>
 
     <aside class="left-off-canvas-menu" ng-cloak>
-      <ul class="off-canvas-list">
-        <li><label>Menu</label></li>
-        <li><a href="/#/users/{{ user.username }}/">{{ user.username }}</a></li>
-        <li><a href="/#/chat/">Chat</a></li>
-        <li><a href="/#/polls/BotD/">BotD</a></li>
+      <ul class="off-canvas-list" ng-controller="TabCtrl">
+        <li><label>{{ user.username }}</label></li>
+          <li ng-repeat="tab in tabs">
+            <a href="{{ tab.link }}">{{ tab.name }}</a></li>
         <li><a href="/#/invite/">Invite</a></li>
         <li><a href="/#/accounts/logout/">Log out</a></li>
       </ul>

@@ -3,12 +3,10 @@ import json
 import logging
 import re
 
+from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
-import re
-
 import urllib3
-from django.conf import settings
 
 logger = logging.getLogger(__name__)
 

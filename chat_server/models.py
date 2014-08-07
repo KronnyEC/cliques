@@ -1,7 +1,6 @@
 import random
 from django.db import models
 from django.conf import settings
-from website.models import UserProfile
 
 
 def random_key(length=64):
@@ -18,13 +17,6 @@ class ChatMessage(models.Model):
 
     def __repr__(self):
         return "<{0}, {1}>".format(ChatMessage, self.__unicode__())
-
-    def save(self, *args, **kwargs):
-        if self.id:
-            created = False
-        else:
-            create = True
-        super(ChatMessage, self).save(*args, **kwargs)
 
     def to_json(self):
         return {

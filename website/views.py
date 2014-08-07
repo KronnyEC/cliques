@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 def check_in(request):
     request.user.save()
     logger.info('{} checked in '.format(request.user))
-    return HttpResponse(status_code=201)
+    return HttpResponse(status=201)
 
 
 def home(request):
@@ -78,12 +78,13 @@ class PostsListView(ListView):
             if hasattr(queryset, '_clone'):
                 queryset = queryset._clone()
         elif self.model is not None:
-            queryset = self.model._default_manager.all()\
+            queryset = self.model._default_manager.all() \
                 .select_related(*['user', 'category', 'comment_set'])
         else:
             raise ImproperlyConfigured("'%s' must define 'queryset' or 'model'"
                                        % self.__class__.__name__)
-        queryset = queryset.annotate(comment_count=Count('comment')).select_related('category')
+        queryset = queryset.annotate(
+            comment_count=Count('comment')).select_related('category')
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -143,7 +144,8 @@ class CommentFormView(CreateView):
         user_model = get_user_model()
         post = Post.objects.get(id=self.kwargs.get('pk'))
         form.instance.post = post
-        other_users = set(Comment.objects.select_related().filter(post=post)\
+        other_users = set(
+            Comment.objects.select_related().filter(post=post)
             .exclude(user=self.request.user).values_list('user', flat=True))
         # Add post auth
         if post.user_id not in other_users and \

@@ -1,17 +1,15 @@
 import logging
-import re
 import urlparse
-from django.core import validators
 
-from django.core.mail import send_mail
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import AbstractUser
-from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
+from django.core.mail import send_mail
+from django.db import models
 from django import forms
 
 from website.content_types import YouTube
 from website.utils import detect_content_type
+
 
 if settings.ENV == 'appengine':
     from google.appengine.api import mail
@@ -62,7 +60,7 @@ class Post(models.Model):
                                   default=None,
                                   null=True,
                                   upload_to='media'
-                                  )
+    )
     category = models.ForeignKey(Category)
 
     def save(self, *args, **kwargs):
@@ -79,7 +77,7 @@ class Post(models.Model):
             self._new_post_email()
 
     def _new_post_email(self):
-        #TODO(pcsforeducation) Make async
+        # TODO(pcsforeducation) Make async
         if self.type in ['youtube', 'video']:
             post_type = 'video'
         elif self.type == 'text':
@@ -92,7 +90,7 @@ class Post(models.Model):
 
         # Send email to everyone posts or all for new posts
         users_to_email = UserProfile.objects.filter(
-            email_settings__in=['all', 'posts'])\
+            email_settings__in=['all', 'posts']) \
             .exclude(email=u'').values_list('email', flat=True)
 
         if not users_to_email:
@@ -158,7 +156,6 @@ class Comment(models.Model):
 
 
 class PostForm(forms.ModelForm):
-
     def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__()
         self.fields['title'].label = "Title (*)"
@@ -183,7 +180,6 @@ class CommentForm(forms.ModelForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
-
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__()
 
@@ -191,16 +187,17 @@ class ProfileUpdateForm(forms.ModelForm):
         model = UserProfile
         fields = ['email', 'email_settings']
 
+
 # class ProfileRegistrationForm(RegistrationForm):
-#     is_human = forms.ChoiceField(label = "Are you human?:")
+# is_human = forms.ChoiceField(label = "Are you human?:")
 
 
 def send(recipient_list, subject, body):
     from_email = "josh@slashertraxx.com"
     logging.info("Sending invite mail from {} to {}, subject: {}, "
                  "messages: {}. MAIL_PROVIDER: {}".format(
-                     from_email, recipient_list, subject, body,
-                     settings.MAIL_PROVIDER))
+        from_email, recipient_list, subject, body,
+        settings.MAIL_PROVIDER))
     if settings.MAIL_PROVIDER == "APPENGINE":
         # mail.send_mail(from_email, recipient_list[0], subject, message)
         message = mail.EmailMessage(

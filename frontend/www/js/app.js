@@ -144,6 +144,50 @@ app.config(['$routeProvider',
 
     return Notifications
   })
+  .factory('User', function ($http, $timeout, BACKEND_SERVER) {
+    var Users = {
+      users: [],
+      connected_users: []
+    };
+
+    function set_connected_users() {
+      var now = new Date();
+      // 60 seconds
+      var disconnect_threshold = 1000 * 60;
+      Users.users.forEach(function (user) {
+        console.log('checking for connected', user, now, now - Date.parse(user.last_updated));
+        if ((now - Date.parse(user.last_updated)) < disconnect_threshold) {
+
+          Users.connected_users.push(user);
+        }
+      });
+    }
+
+    // Check in every 15 seconds.
+    var check_in = function ($http, BACKEND_SERVER) {
+      $http.post(BACKEND_SERVER + 'check_in\/', {}).success(function (result) {
+        console.log('checked in', result);
+        set_connected_users();
+      });
+    };
+
+    // Get an updated list of connected users every minute
+    // TODO(pcsforeducation) switch to push
+    Users.get_users = function ($http, BACKEND_SERVER) {
+      $http.get(BACKEND_SERVER + 'users/').success(function (result) {
+        console.log('users list', result);
+        result.results.forEach(function (user) {
+          Users.users.push(user);
+        });
+        check_in($http, BACKEND_SERVER);
+
+      })
+    };
+    Users.get_users($http, BACKEND_SERVER);
+//    check_in($http, BACKEND_SERVER);
+    console.log('connected', Users);
+    return Users;
+  })
   .factory('Chat', function ($http, $rootScope, $timeout, Channel, BACKEND_SERVER) {
     var Chats = {};
     Chats.messages = [];
@@ -191,7 +235,7 @@ app.config(['$routeProvider',
     var SocketHandler = function (BACKEND_SERVER, session, onMessageCallback) {
       var context = this;
       this.socketCreationCallback = function (token) {
-        console.log('token', token)
+        console.log('token', token);
         var channel = new goog.appengine.Channel(token);
         context.channelId = channel.channelId;
 

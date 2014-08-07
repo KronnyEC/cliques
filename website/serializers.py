@@ -8,14 +8,15 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('id', 'username', 'profile_pic', 'email',
-                  'first_name', 'last_name', 'poll_votes', 'user_votes')
+        fields = (
+            'id', 'username', 'profile_pic', 'email', 'first_name',
+            'last_name', 'poll_votes', 'user_votes', 'last_updated'
+        )
 
 
 class PostSerializer(serializers.ModelSerializer):
-    comment_count = serializers.Field(source='comment_set.count')
     url = serializers.URLField(source='url', required=False)
-    user = UserSerializer()
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Post

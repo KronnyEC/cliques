@@ -2,9 +2,9 @@
   <div class="connected_users_container">
     <span class="connect_users_title">Connected Users</span>
 
-    <div id="connected_users" class="connected_users">
+    <div class="connected_users" ng-controller="UsersCtrl">
       <span ng-repeat="user in connected_users">
-        {{ user.user.username }}<span ng-if="!$last">,</span>
+        user: {{ user.username }}<span ng-if="!$last">,</span>
       </span>
     </div>
   </div>

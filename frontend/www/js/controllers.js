@@ -8,14 +8,18 @@ angular.module('post_controllers', [])
         $scope.user = res.data
       });
   })
+  .controller('UsersCtrl', function ($scope, User) {
+    $scope.users = User.users;
+    $scope.connected_users = User.connected_users;
+    console.log("UserCTL", $scope.users, $scope.connected_users)
 
+  })
   .controller('PostListCtrl', function ($scope, $http, $sce, BACKEND_SERVER) {
     // Get data on startup
     $http.get(BACKEND_SERVER + 'posts/')
       .then(function (res) {
         res.data.results.forEach(function (result) {
           result.youtube = youtube_url_to_id(result.url);
-          console.log('youtube', result)
         });
         $scope.posts = res.data.results;
         console.log($scope.posts);
@@ -350,8 +354,6 @@ angular.module('post_controllers', [])
     $scope.messages = [];
 
     $scope.messages = Chat.messages;
-    $scope.connected_users = Chat.connected_users;
-    console.log('connected_users', $scope.connected_users);
     Chat.session.success(function (result) {
       $scope.session = result;
     });
