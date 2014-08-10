@@ -8,10 +8,15 @@ angular.module('post_controllers', [])
         $scope.user = res.data
       });
   })
-  .controller('UsersCtrl', function ($scope, User) {
-    $scope.users = User.users;
-    $scope.connected_users = User.connected_users;
-    console.log("UserCTL", $scope.users, $scope.connected_users)
+  .controller('UsersCtrl', function ($scope, $interval, $http, BACKEND_SERVER, User) {
+//    $scope.users = [];
+    $scope.$watch(function() {
+      $scope.users = User.users;
+//    $scope.connected_users = [];
+      $scope.connected_users = User.connected_users;
+      console.log("UserCTL", $scope.users, $scope.connected_users);
+    })
+
 
   })
   .controller('PostListCtrl', function ($scope, $http, $sce, BACKEND_SERVER) {
@@ -104,8 +109,20 @@ angular.module('post_controllers', [])
     };
     $scope.login = function (credentials) {
       Auth.setCredentials($rootScope, BACKEND_SERVER, credentials);
-      $location.path('/#/posts');
+      $location.path('/posts').replace();
+//      $scope.$apply();
+      console.log('pathed');
+//      $route.reload();
     };
+    $scope.logout = function () {
+      Auth.clearCredentials();
+      $location.path('/login').replace();
+//      $scope.$apply();
+    };
+    if (localStorage.getItem('token')) {
+      $location.path('/posts').replace();
+//      $scope.$apply();
+    }
   })
 
   .filter('DTSince', function () {
@@ -151,7 +168,8 @@ angular.module('post_controllers', [])
 
       var error = function (response) {
         if (response.status === 401) {
-          $location.path('/login');
+          $location.path('/#/login');
+//          $scope.$apply();
         }
 
         return $q.reject(response);
@@ -196,9 +214,25 @@ angular.module('post_controllers', [])
     };
   })
 
-  .factory('Auth', ['Base64', '$http', '$rootScope', '$location', function (Base64, $http, $location, BACKEND_SERVER) {
+  .factory('Auth', ['Base64', '$http', '$rootScope', '$location', 'BACKEND_SERVER', function (Base64, $http, $rootScope, $location, BACKEND_SERVER) {
     // initialize to whatever is in the cookie, if anything
     $http.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
+
+    var success_function = function (data, status, headers, config) {
+      console.log('authdata', data);
+      var token = data['token'];
+      localStorage.setItem('token', token);
+      localStorage.setItem('username', data['username']);
+      $http.defaults.headers.common.Authorization = 'Token ' + token;
+      $rootScope.loggedIn = true;
+      $location.path('/posts');
+//      $scope.$apply();
+//      $rootScope.$apply();
+    };
+
+    var error_function = function (data, status, headers, config) {
+      console.log('login error', status, headers);
+    };
 
     return {
       setCredentials: function (scope, BACKEND_SERVER, credentials) {
@@ -210,17 +244,7 @@ angular.module('post_controllers', [])
           headers: {
             'Authorization': 'Basic ' + encoded
           }
-        }).success(function (data, status, headers, config) {
-          console.log('data', data);
-          var token = data['token'];
-          $http.defaults.headers.common.Authorization = 'Token ' + token;
-          localStorage.setItem('token', token);
-          localStorage.setItem('username', data['username']);
-          scope.loggedIn = true;
-          $location.path('/#/posts');
-        }).error(function (data, status, headers, config) {
-          console.log('login error', status, headers);
-        });
+        }).success(success_function).error(error_function);
       },
       clearCredentials: function () {
         document.execCommand("ClearAuthenticationCache");
@@ -338,7 +362,8 @@ angular.module('post_controllers', [])
         }
       }).success(function (data, status, headers, config) {
         console.log('new post');
-        $location.path('/#/posts')
+        $location.path('/#/posts').replace();
+//        $scope.$apply();
       }).error(function ($scope, data, status, headers, config) {
         console.log('error', data);
         $scope.status = status + ' ' + headers;
@@ -359,7 +384,6 @@ angular.module('post_controllers', [])
     });
 
     $scope.$watch(function () {
-      console.log('messages watch');
       var message_div = $('#chat_messages');
       message_div.scrollTop(message_div[0].scrollHeight);
     });
@@ -436,6 +460,7 @@ angular.module('post_controllers', [])
       }).success(function (data, status, headers, config) {
         console.log('new post');
         $location.path('/#/polls/' + $scope.pollStub);
+//        $scope.$apply();
       }).error(function ($scope, data, status, headers, config) {
         console.log('error', data);
         $scope.status = status + ' ' + headers;
@@ -494,7 +519,8 @@ angular.module('post_controllers', [])
           'Authorization': 'Token ' + localStorage.getItem('token')
         }
       }).success(function ($location, data, status, headers, config) {
-        $location.path('/#/posts')
+        $location.path('/#/posts');
+//        $scope.$apply();
       }).error(function ($scope, data, status, headers, config) {
         console.log('error', data);
         $scope.status = status + ' ' + headers;

@@ -18,12 +18,6 @@ from website.serializers import PostSerializer
 logger = logging.getLogger(__name__)
 
 
-def check_in(request):
-    request.user.save()
-    logger.info('{} checked in '.format(request.user))
-    return HttpResponse(status=201)
-
-
 def home(request):
     template_data = {}
     template_data['posts'] = Post.object.order_by('submitted')[:25]

@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from notify.api import NotificationViewSet
 from push.api import PushSessionList
-import website
+import api
 from website.views import PostsListView, PostFormView, CommentFormView, \
     PostDetailView, ProfileDetailView, ProfileEditView, CategoryListView
 from website.models import Post, UserProfile
@@ -137,7 +137,7 @@ urlpatterns = patterns(
     url('^api/v1/notifications/$', notification_list),
     url('^api/v1/notifications/(?P<pk>\d+)/$',
         notification_detail),
-    url('^api/v1/check_in/$', website.views.check_in),
+    url('^api/v1/check_in/$', api.views.check_in),
 
     url(r'^api/v1/token/', get_token),
     url(r'^api/cookie/', get_cookie),

@@ -571,3 +571,7 @@ textarea:active {
 .right a {
     text-align: right;
 }
+
+fieldset legend {
+    background: none;
+}

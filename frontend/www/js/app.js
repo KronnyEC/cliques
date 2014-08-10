@@ -144,51 +144,59 @@ app.config(['$routeProvider',
 
     return Notifications
   })
-  .factory('User', function ($http, $timeout, BACKEND_SERVER) {
-    var Users = {
-      users: [],
-      connected_users: []
-    };
+  .factory('User', function ($http, $interval, $rootScope, BACKEND_SERVER) {
+    var Users = {};
+    Users.users = [];
+    Users.connected_users = [];
 
     function set_connected_users() {
       var now = new Date();
       // 60 seconds
       var disconnect_threshold = 1000 * 60;
+      Users.connected_users = [];
       Users.users.forEach(function (user) {
-        console.log('checking for connected', user, now, now - Date.parse(user.last_updated));
+        console.log('connected user?', user, now, now - Date.parse(user.last_updated));
         if ((now - Date.parse(user.last_updated)) < disconnect_threshold) {
-
+          console.log('user is connected', user);
           Users.connected_users.push(user);
         }
       });
+      $rootScope.$apply();
+      console.log('Users.connected_users', Users.connected_users);
     }
 
-    // Check in every 15 seconds.
-    var check_in = function ($http, BACKEND_SERVER) {
-      $http.post(BACKEND_SERVER + 'check_in\/', {}).success(function (result) {
-        console.log('checked in', result);
-        set_connected_users();
-      });
-    };
-
-    // Get an updated list of connected users every minute
-    // TODO(pcsforeducation) switch to push
-    Users.get_users = function ($http, BACKEND_SERVER) {
+    var get_users = function () {
       $http.get(BACKEND_SERVER + 'users/').success(function (result) {
         console.log('users list', result);
+        Users.users = [];
         result.results.forEach(function (user) {
           Users.users.push(user);
         });
-        check_in($http, BACKEND_SERVER);
-
+        console.log('users.users', Users.users);
+        set_connected_users();
       })
     };
-    Users.get_users($http, BACKEND_SERVER);
-//    check_in($http, BACKEND_SERVER);
+
+    // Check in every 15 seconds.
+    var check_in = function () {
+      $http.post(BACKEND_SERVER + 'check_in\/', {}).success(function (result) {
+        console.log('checked in', result);
+//        Users.connected_users = [];
+        get_users();
+
+      });
+    };
+
+    var stop = $interval(function() {
+      console.log('interval');
+      check_in()
+    }, 15 * 1000);
+
+    check_in();
     console.log('connected', Users);
     return Users;
   })
-  .factory('Chat', function ($http, $rootScope, $timeout, Channel, BACKEND_SERVER) {
+  .factory('Chat', function ($http, $rootScope, $interval, Channel, BACKEND_SERVER) {
     var Chats = {};
     Chats.messages = [];
     Chats.messages = Channel.stream;
@@ -286,6 +294,9 @@ app.run(function ($rootScope, $http, $location) {
 });
 
 app.run(function (Notification) {
+});
+
+app.run(function (User) {
 });
 
 function urlify(text) {
