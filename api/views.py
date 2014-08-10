@@ -1,6 +1,5 @@
 import logging
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from website.models import UserProfile
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 def get_token(request):
-    user = UserProfile.objects.get(id=  request.user.id)
+    user = UserProfile.objects.get(id=request.user.id)
     token = Token.objects.get_or_create(user=user)
     return render_to_json(request, {
         'id': request.user.id,

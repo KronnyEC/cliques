@@ -15,7 +15,8 @@ class Notification(models.Model):
     type = models.CharField(max_length=64, choices=NOTIFICATION_TYPES)
     level = models.CharField(max_length=16, choices=NOTIFICATION_LEVELS,
                              default='info')
-    link = models.CharField(max_length=255, default=None, blank=True, null=True)
+    link = models.CharField(max_length=255, default=None,
+                            blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
