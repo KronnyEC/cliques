@@ -69,6 +69,7 @@ Holo Theme
 .metadata p {
     margin-bottom: 0;
     margin-left: 20px;
+    margin-right: 20px;
     font-size: 80%;
 }
 
@@ -105,7 +106,7 @@ Holo Theme
 }
 
 .youtube,
-.video {
+.videos {
     padding-bottom: 20px;
 }
 
@@ -167,6 +168,8 @@ Holo Theme
 
 body, html {
     height: 100%;
+    width:100%;
+    overflow-x:hidden;
     background-color: #333;
     font-family: 'Droid Sans', sans-serif;
 }
@@ -208,11 +211,18 @@ body, html {
     position: relative;
 }
 
+.chat_box {
+    /*max-height:90%;*/
+    width:100%;
+    overflow-x:hidden;
+}
+
 .chat_messages {
     background-color: #eee;
-    max-height: 500px;
+
+    height: 65vh;
     padding: 10px 5px;
-    min-height: 500px;
+    /*min-height: 500px;*/
     border: 1px solid grey;
     overflow-y: scroll;
     border-top-left-radius: 3px;
