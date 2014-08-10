@@ -20,7 +20,9 @@ module.exports = function(grunt) {
       options: {
         force: true,
         absoluteFilePathsForFormatters: true,
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+        "important": false,
+        "unqualified-attributes": false
 
       },
       lax: {

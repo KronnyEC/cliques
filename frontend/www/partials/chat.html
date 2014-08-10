@@ -4,7 +4,7 @@
 
     <div class="connected_users" ng-controller="UsersCtrl">
       <span ng-repeat="user in connected_users">
-        user: {{ user.username }}<span ng-if="!$last">,</span>
+        {{ user.username }}<span ng-if="!$last">,</span>
       </span>
     </div>
   </div>

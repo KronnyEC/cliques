@@ -30,7 +30,7 @@
           <!-- Right Nav Section -->
           <ul class="right" ng-controller="TabCtrl">
             <li ng-repeat="tab in tabs" ng-click="select(tab)"
-                ng-class="itemClass(tab)">
+                ng-class="itemClass(tab)" ng-cloak>
               <span ng-if="tab.alert > 0" class="alert round label">
                 {{ tab.alert }}
               </span>
@@ -40,10 +40,10 @@
       </nav>
     </div>
 
-    <aside class="left-off-canvas-menu" ng-cloak>
+    <aside class="left-off-canvas-menu" >
       <ul class="off-canvas-list" ng-controller="TabCtrl">
         <li><label>{{ user.username }}</label></li>
-          <li ng-repeat="tab in tabs">
+          <li ng-repeat="tab in tabs" ng-cloak>
             <a href="{{ tab.link }}">{{ tab.name }}</a></li>
         <li><a href="/#/invite/">Invite</a></li>
         <li ng-controller="AuthCtrl "><a ng-click="logout()">Log out</a></li>

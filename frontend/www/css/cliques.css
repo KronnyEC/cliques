@@ -15,6 +15,10 @@ Holo Theme
 
 
 */
+[ng\:cloak], [ng-cloak], .ng-cloak {
+    display: none !important;
+}
+
 .content {
     margin-top: 20px;
 }
