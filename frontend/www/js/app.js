@@ -148,6 +148,14 @@ app.config(['$routeProvider',
     var Users = {};
     Users.users = [];
     Users.connected_users = [];
+    Users.get_users = function() {
+      if (Users.users == []) {
+        return
+      }
+      else {
+        return Users.users;
+      }
+    }
 
     function set_connected_users() {
       var now = new Date();
@@ -196,7 +204,7 @@ app.config(['$routeProvider',
     console.log('connected', Users);
     return Users;
   })
-  .factory('Chat', function ($http, $rootScope, $interval, Channel, BACKEND_SERVER) {
+  .factory('Chat', function ($http, $rootScope, $interval, Channel, User, BACKEND_SERVER) {
     var Chats = {};
     Chats.messages = [];
     Chats.messages = Channel.stream;

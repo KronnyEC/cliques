@@ -400,13 +400,6 @@ angular.module('post_controllers', [])
     };
   })
 
-  .filter('UsernameFilter', function () {
-    return function (userid) {
-      var users = {1: 'josh'};
-      return users[userid]
-    }
-  })
-
   .filter('ChatMessageFilter', function () {
     return function (message) {
       return message.replace('\n', '<br/>')

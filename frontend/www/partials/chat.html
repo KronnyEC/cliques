@@ -11,7 +11,7 @@
 
   <div id="chat_messages" class="chat_messages">
     <div class="message" ng-repeat="message in messages" title="{{ message.sent | DTSince }}">
-      <span class="username">{{ message.user | UsernameFilter }}:</span> <span class="text">{{ message.message | ChatMessageFilter }}</span>
+      <span class="username">{{ message.username }}:</span> <span class="text">{{ message.message | ChatMessageFilter }}</span>
     </div>
   </div>
   <form name="chat_server" id="chat_form" ng-submit="send_message()">
