@@ -9,32 +9,50 @@ angular.module('post_controllers', [])
       });
   })
   .controller('UsersCtrl', function ($scope, $interval, $http, BACKEND_SERVER, User) {
-//    $scope.users = [];
     $scope.$watch(function() {
       $scope.users = User.users;
-//    $scope.connected_users = [];
       $scope.connected_users = User.connected_users;
-      console.log("UserCTL", $scope.users, $scope.connected_users);
     })
-
 
   })
   .controller('PostListCtrl', function ($scope, $http, $sce, BACKEND_SERVER) {
     // Get data on startup
-    $http.get(BACKEND_SERVER + 'posts/')
+    var page = 1;
+    var busy = false;
+    $scope.posts = []
+    var add_pages = function(post_page) {
+      console.log('add pages', post_page)
+      busy = true;
+      if (post_page == undefined) {
+        post_page = 1;
+      }
+      $http.get(BACKEND_SERVER + 'posts/?page=' + post_page)
       .then(function (res) {
         res.data.results.forEach(function (result) {
           result.youtube = youtube_url_to_id(result.url);
+          $scope.posts.push(result);
         });
-        $scope.posts = res.data.results;
         console.log($scope.posts);
+        page = post_page;
+        busy = false;
+        $scope.apply();
       });
-    $scope.infiniteScroll = function () {
+    };
+
+    $scope.scroll = function () {
+      if (busy) {
+        console.log('attempted scroll');
+        return;
+      }
+      add_pages(page + 1);
       console.log('scroll!');
     };
     $scope.trustSrc = function (src) {
       return $sce.trustAsResourceUrl(src);
     };
+
+    // Add first round of pages
+    add_pages(1);
     console.log("post list auth", $http.defaults.headers.common.Authorization)
   })
 

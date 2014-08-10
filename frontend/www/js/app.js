@@ -2,7 +2,6 @@ var app = angular.module('cliques', [
   'ngCookies',
   'ngResource',
   'ngRoute',
-//    'ngSanitize',
   'infinite-scroll',
   'mm.foundation',
   'post_controllers'
@@ -285,7 +284,7 @@ app.config(['$routeProvider',
   });
 
 app.run(function ($rootScope, $http, $location) {
-  angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 250);
+//  angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 250);
   if (localStorage.getItem('token')) {
     $http.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
     $rootScope.loggedIn = true;

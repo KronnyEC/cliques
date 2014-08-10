@@ -27,9 +27,11 @@
       <button type="submit" class="button tiny">Submit</button>
     </form>
   </div>
-  <div class="post_list" ng-repeat="post in posts">
-    <!--<div infinite-scroll="infiniteScroll()" infinite-scroll-distance="0">-->
-    <post></post>
+  <div infinite-scroll="scroll()" infinite-scroll-distance="0">
+    <div class="post_list" ng-repeat="post in posts">
+
+      <post></post>
+    </div>
   </div>
 </div>
 <div class="large-4 hide-for-small-down columns chat_column">

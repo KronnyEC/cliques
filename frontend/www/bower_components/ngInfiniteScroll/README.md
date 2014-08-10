@@ -1,13 +1,13 @@
-![logo](http://sroze.github.com/ngInfiniteScroll/images/logo-resized.png)
+![logo](http://binarymuse.github.com/ngInfiniteScroll/images/logo-resized.png)
 
-[![Build Status](https://travis-ci.org/sroze/ngInfiniteScroll.png?branch=master)](https://travis-ci.org/sroze/ngInfiniteScroll)
+[![Build Status](https://travis-ci.org/BinaryMuse/ngInfiniteScroll.png?branch=master)](https://travis-ci.org/BinaryMuse/ngInfiniteScroll)
 
 ngInfiniteScroll is a directive for [AngularJS](http://angularjs.org/) to evaluate an expression when the bottom of the directive's element approaches the bottom of the browser window, which can be used to implement infinite scrolling.
 
-Demos
------
+Demo
+----
 
-Check out the running demos [at the ngInfiniteScroll web site](http://sroze.github.com/ngInfiniteScroll/demos.html).
+Check out a running demo [at the ngInfiniteScroll web site](http://binarymuse.github.com/ngInfiniteScroll/demo.html).
 
 Version Numbers
 ---------------
@@ -18,16 +18,14 @@ ngInfinite Scroll follows [semantic versioning](http://semver.org/) and uses the
  * Versions with an even minor version (1.0.0, 1.4.0, 2.2.0, etc.) are stable releases
  * Versions with an odd minor version (1.1.0, 1.3.0, 2.1.0, etc.) are development releases
 
-The [download page](http://sroze.github.com/ngInfiniteScroll/#download) allows you to pick among various versions and specify which releases are stable (not including pre-release builds).
+The [download page](http://binarymuse.github.com/ngInfiniteScroll/#download) allows you to pick among various versions and specify which releases are stable (not including pre-release builds).
 
 Getting Started
 ---------------
 
- * Download ngInfiniteScroll from [the download page on the ngInfiniteScroll web site](http://sroze.github.com/ngInfiniteScroll/#download) or install it with [Bower](http://bower.io/) via `bower install ngInfiniteScroll`
- * Include the script tag on your page after the AngularJS and jQuery script tags (ngInfiniteScroll requires jQuery to run)
+ * Download ngInfiniteScroll from [the download page on the ngInfiniteScroll web site](http://binarymuse.github.com/ngInfiniteScroll/#download)
+ * Include the script tag on your page
 
-        <script type='text/javascript' src='path/to/jquery.min.js'></script>
-        <script type='text/javascript' src='path/to/angular.min.js'></script>
         <script type='text/javascript' src='path/to/ng-infinite-scroll.min.js'></script>
 
  * Ensure that your application module specifies `infinite-scroll` as a dependency:
@@ -43,12 +41,7 @@ Note that neither the module nor the directive use the `ng` prefix, as that pref
 Detailed Documentation
 ----------------------
 
-ngInfiniteScroll accepts several attributes to customize the behavior of the directive; detailed instructions can be found [on the ngInfiniteScroll web site](http://sroze.github.com/ngInfiniteScroll/documentation.html).
-
-Ports
------
-
-If you use [AngularDart](https://github.com/angular/angular.dart), Juha Komulainen has [a port of the project](http://pub.dartlang.org/packages/ng_infinite_scroll) you can use.
+ngInfiniteScroll accepts several attributes to customize the behavior of the directive; detailed instructions can be found [on the ngInfiniteScroll web site](http://binarymuse.github.com/ngInfiniteScroll/documentation.html).
 
 License
 -------
