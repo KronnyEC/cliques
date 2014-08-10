@@ -14,7 +14,7 @@ class Poll(models.Model):
     # In hours
     frequency = models.IntegerField(default=24)
     # In hours, when old submissions that haven't won will be removed
-    submission_removal = models.IntegerField(default=7*24)
+    submission_removal = models.IntegerField(default=7 * 24)
     winning_text = models.CharField(max_length=255, blank=True, null=True)
 
     def __unicode__(self):

@@ -24,11 +24,7 @@ class ChatMessageList(generics.ListCreateAPIView):
 
     def post_save(self, obj, created=False):
         if created:
-            data = {
-                'message': obj.message,
-                'user': obj.user.id,
-                'sent': obj.sent
-            }
+            data = obj.to_json()
             logger.info("sending chat to all: {}", data)
             send_all('chat', data)
         else:

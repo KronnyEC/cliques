@@ -5,7 +5,8 @@ import operator
 import random
 
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, \
+    HttpResponseNotFound
 from django.utils.timezone import utc
 from django.views.generic import CreateView, DetailView
 import notify.utils
@@ -18,7 +19,7 @@ logger = logging.getLogger()
 
 
 def vote(request, poll_stub, submission_id):
-    #TODO(pcsforeducation) make this AJAX and POST only.
+    # TODO(pcsforeducation) make this AJAX and POST only.
     # if request.method != "POST":
     #     return HttpResponseBadRequest('Must be a POST')
     try:
@@ -50,7 +51,7 @@ def vote(request, poll_stub, submission_id):
 
 def cron(request):
     # Get all the votes (may need to improve filtering on poll here).
-    #TODO(pcsforeducation) support multiple polls
+    # TODO(pcsforeducation) support multiple polls
     poll = Poll.objects.all()[0]
     submissions = defaultdict(int)
     votes = Vote.objects.all()
@@ -58,7 +59,7 @@ def cron(request):
         submissions[vote.submission.id] += 1
     # Eww.
     top_submissions = list(reversed(sorted(submissions.iteritems(),
-                                    key=operator.itemgetter(1))))
+                                           key=operator.itemgetter(1))))
     logging.info("Top submissions: {}".format(top_submissions))
     if top_submissions:
         top_votes = top_submissions[0][1]
@@ -76,7 +77,7 @@ def cron(request):
             _post_winning_submission(poll, winning_submissions[winning_index])
 
     seven_days_ago = datetime.datetime.utcnow().replace(tzinfo=utc) \
-                           - datetime.timedelta(days=7)
+                     - datetime.timedelta(days=7)
     Submission.objects.filter(submitted__lt=seven_days_ago).delete()
 
     return HttpResponse('ok')

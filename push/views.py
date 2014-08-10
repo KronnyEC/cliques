@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger()
 
+
 @csrf_exempt
 @login_required
 def connect(request):

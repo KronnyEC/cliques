@@ -20,7 +20,8 @@ class ChatMessage(models.Model):
 
     def to_json(self):
         return {
-            'username': self.session.user.username,
+            'user': self.user.id,
+            'username': self.user.username,
             'message': self.message,
             'sent': self.sent
         }
