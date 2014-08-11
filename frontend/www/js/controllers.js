@@ -19,9 +19,9 @@ angular.module('post_controllers', [])
     // Get data on startup
     var page = 1;
     var busy = false;
-    $scope.posts = []
+    $scope.posts = [];
     var add_pages = function(post_page) {
-      console.log('add pages', post_page)
+      console.log('add pages', post_page);
       busy = true;
       if (post_page == undefined) {
         post_page = 1;
@@ -35,7 +35,7 @@ angular.module('post_controllers', [])
         console.log($scope.posts);
         page = post_page;
         busy = false;
-        $scope.apply();
+        $scope.$apply();
       });
     };
 

@@ -4,6 +4,7 @@ var app = angular.module('cliques', [
   'ngRoute',
   'infinite-scroll',
   'mm.foundation',
+  'cliques_config',
   'post_controllers'
 ]);
 
@@ -69,7 +70,7 @@ app.config(['$routeProvider',
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
   }])
-  .constant("BACKEND_SERVER", "http://127.0.0.1:8080/api/v1/")
+//  .constant("BACKEND_SERVER", "http://127.0.0.1:8080/api/v1/")
   .constant('USER_ROLES', {
     all: '*',
     admin: 'admin',

@@ -44,4 +44,5 @@ share/
 staticfiles
 libs/
 frontend/platforms
+frontend/www/build
 dev/

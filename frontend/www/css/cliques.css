@@ -219,11 +219,8 @@ body, html {
 
 .chat_messages {
     background-color: #eee;
-
     height: 65vh;
-    padding: 10px 5px;
-    /*min-height: 500px;*/
-    border: 1px solid grey;
+    /*border: 1px solid grey;*/
     overflow-y: scroll;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
@@ -234,7 +231,9 @@ body, html {
 }
 
 .message {
-    margin-bottom: 5px;
+    /*margin-bottom: 5px;*/
+    line-height: 18px;
+    margin: 0 5px;
 }
 
 .message .username {
