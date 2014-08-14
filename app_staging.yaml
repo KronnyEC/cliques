@@ -1,0 +1,73 @@
+application: cliquesio
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+libraries:
+- name: django
+  version: "1.5"
+- name: MySQLdb
+  version: "latest"
+
+builtins:
+- django_wsgi: on
+
+handlers:
+- url: /favicon.ico
+  static_files: staticfiles/favicon.ico
+  upload: staticfiles/favicon.ico
+- url: /robots.txt
+  static_files: staticfiles/robots.txt
+  upload: staticfiles/robots.txt
+- url: /bower_components/
+  static_dir: frontend/www/build/bower_components
+- url: /js/
+  static_dir: frontend/www/build/js
+- url: /css/
+  static_dir: frontend/www/build/css
+- url: /img/
+  static_dir: frontend/www/build/img
+- url: /templates/
+  static_dir: frontend/www/build/templates
+- url: /partials/
+  static_dir: frontend/www/build/partials
+- url: /static/
+  static_dir: staticfiles
+- url: /_ah/channel/connected/
+  script: cliques.wsgi.application
+- url: /_ah/channel/disconnected/
+  script: cliques.wsgi.application
+- url: /admin/*.
+  script: cliques.wsgi.application
+- url: /
+  static_files: frontend/www/build/index.html
+  upload: frontend/www/build/index.html
+#- url: /*.
+#  script: cliques.wsgi.application
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: 'cliques.settings'
+
+automatic_scaling:
+  min_idle_instances: 1
+  max_pending_latency: 1s
+
+inbound_services:
+- warmup
+- mail
+- channel_presence
+
+skip_files:
+- ^(.*/)?#.*#
+- ^(.*/)?.*~
+- ^(.*/)?.*\.py[co]
+- ^(.*/)?.*/RCS/.*
+- ^(.*/)?\..*
+- ^(lib/.*)
+#- ^(libs/django/.*)
+- ^(bin/.*)
+- ^(share/.*)
+- ^(include/.*)
+- ^(.idea/.*)
+- ^(.git/.*)
