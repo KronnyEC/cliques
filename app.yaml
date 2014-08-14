@@ -33,7 +33,7 @@ handlers:
 - url: /templates/
   static_dir: frontend/templates
 - url: /partials/
-  static_dir: frontend/partials
+  static_dir: fron tend/partials
 - url: /static/
   static_dir: staticfiles
 - url: /_ah/channel/connected/

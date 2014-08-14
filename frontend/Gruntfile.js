@@ -151,7 +151,7 @@ module.exports = function (grunt) {
       }
     },
     usemin: {
-      html: 'index.html'
+      html: 'build/index.html'
     },
     clean: {
       release: ['build/*']
@@ -182,7 +182,7 @@ module.exports = function (grunt) {
     'copy:app'
   ]);
 
-  grunt.registerTask('www', [
+  grunt.registerTask('www', [ 
     'copy:www'
   ]);
 
