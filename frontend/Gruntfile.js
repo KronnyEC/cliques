@@ -137,10 +137,35 @@ module.exports = function (grunt) {
           }
         ]
       },
-      app: {
-        files: []
-      },
       www: {
+        files: [
+          {
+            src: ['build/js/*'],
+            dest: '../www/js/'
+          },
+          {
+            src: ['build/css/*'],
+            dest: '../www/css/'
+          },
+          {
+            src: ['build/partials/*'],
+            dest: '../www/partials/'
+          },
+          {
+            src: ['build/templates/*'],
+            dest: '../www/templates/'
+          },
+          {
+            src: ['build/partials/*'],
+            dest: '../www/partials/'
+          },
+          {
+            src: ['build/index.html'],
+            dest: '../www/index.html'
+          }
+        ]
+      },
+      app: {
         files: []
       }
     },
@@ -154,7 +179,7 @@ module.exports = function (grunt) {
       html: 'build/index.html'
     },
     clean: {
-      release: ['build/*']
+      build: ['build/*']
     },
     concat: {
       options: {
@@ -182,13 +207,13 @@ module.exports = function (grunt) {
     'copy:app'
   ]);
 
-  grunt.registerTask('www', [ 
+  grunt.registerTask('www', [
     'copy:www'
   ]);
 
   // Default task(s).
   grunt.registerTask('default', [
-    'clean',
+    'clean:build',
     'ngconstant:development',
     'csslint',
     'useminPrepare',

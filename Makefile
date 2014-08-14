@@ -15,8 +15,16 @@ test:
 	tox -epep8
 	#tox -edjango
 
-clean:
-	grunt --gruntfile frontend/Gruntfile.js clean
+clean_www:
+	rm -rf www/*
+
+clean_app:
+	rm -rf cordova/www/*
+
+clean_build:
+	rm -rf frontend/build/*
+
+clean: clean_www clean_app clean_build
 
 install_ubuntu:
 	sudo apt-get install python-dev git python-pip mysql-server mysql  libmysqlclient-dev mysql-python
