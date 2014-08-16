@@ -21,7 +21,7 @@ angular.module('post_controllers', [])
     var busy = false;
     $scope.posts = [];
     var add_pages = function(post_page) {
-      console.log('add pages', post_page);
+//      console.log('add pages', post_page);
       busy = true;
       if (post_page == undefined) {
         post_page = 1;
@@ -32,7 +32,7 @@ angular.module('post_controllers', [])
           result.youtube = youtube_url_to_id(result.url);
           $scope.posts.push(result);
         });
-        console.log($scope.posts);
+//        console.log($scope.posts);
         page = post_page;
         busy = false;
 //        $scope.$apply();
@@ -53,7 +53,7 @@ angular.module('post_controllers', [])
 
     // Add first round of pages
     add_pages(1);
-    console.log("post list auth", $http.defaults.headers.common.Authorization)
+//    console.log("post list auth", $http.defaults.headers.common.Authorization)
   })
 
   .directive('media', function () {
@@ -179,7 +179,7 @@ angular.module('post_controllers', [])
 
   .factory('httpInterceptor', function httpInterceptor($q, $window, $location) {
     return function (promise) {
-      console.log('http intercepted');
+//      console.log('http intercepted');
       var success = function (response) {
         return response;
       };
@@ -237,7 +237,7 @@ angular.module('post_controllers', [])
     $http.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
 
     var success_function = function (data, status, headers, config) {
-      console.log('authdata', data);
+//      console.log('authdata', data);
       var token = data['token'];
       localStorage.setItem('token', token);
       localStorage.setItem('username', data['username']);
@@ -255,7 +255,7 @@ angular.module('post_controllers', [])
     return {
       setCredentials: function (scope, BACKEND_SERVER, credentials) {
         var encoded = Base64.encode(credentials['username'] + ':' + credentials['password']);
-        console.log('encoded', encoded, BACKEND_SERVER + 'token\/');
+//        console.log('encoded', encoded, BACKEND_SERVER + 'token\/');
         $http({
           url: BACKEND_SERVER + 'token\/',
           method: "GET",
@@ -379,7 +379,7 @@ angular.module('post_controllers', [])
           'Authorization': 'Token ' + localStorage.getItem('token')
         }
       }).success(function (data, status, headers, config) {
-        console.log('new post');
+//        console.log('new post');
         $location.path('/#/posts').replace();
 //        $scope.$apply();
       }).error(function ($scope, data, status, headers, config) {
@@ -408,7 +408,7 @@ angular.module('post_controllers', [])
 
     // Handler to sending messages
     $scope.send_message = function () {
-      console.log($scope.text, $scope.session);
+//      console.log($scope.text, $scope.session);
       $http({
         method: 'POST',
         url: BACKEND_SERVER + 'chat/messages\/',
@@ -456,7 +456,7 @@ angular.module('post_controllers', [])
 
   .controller('PollDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
     $scope.pollStub = $routeParams.pollStub;
-    console.log('/#/polls/' + $scope.pollStub);
+//    console.log('/#/polls/' + $scope.pollStub);
     $scope.new_submission_submit = function () {
       $scope.formData['poll'] = $scope.poll.id;
       console.log("submitting", $scope.formData, this, $scope.poll);
@@ -469,7 +469,7 @@ angular.module('post_controllers', [])
           'Authorization': 'Token ' + localStorage.getItem('token')
         }
       }).success(function (data, status, headers, config) {
-        console.log('new post');
+//        console.log('new post');
         $location.path('/#/polls/' + $scope.pollStub);
 //        $scope.$apply();
       }).error(function ($scope, data, status, headers, config) {
@@ -478,7 +478,7 @@ angular.module('post_controllers', [])
       });
     };
     $scope.removeVote = function (id) {
-      console.log('removeVote');
+//      console.log('removeVote');
       $http({
         url: BACKEND_SERVER + 'votes/' + id + '\/',
         method: "DELETE",
@@ -493,9 +493,9 @@ angular.module('post_controllers', [])
       })
     };
     $scope.addVote = function (id) {
-      console.log('addVote');
+//      console.log('addVote');
       var data = {'submission': id, 'user': $scope.user.id};
-      console.log('submitting', data);
+//      console.log('submitting', data);
       $http({
         url: BACKEND_SERVER + 'votes\/',
         method: "POST",
@@ -513,7 +513,7 @@ angular.module('post_controllers', [])
 
     $http.get(BACKEND_SERVER + 'polls/' + $scope.pollStub + '\/')
       .then(function (res) {
-        console.log('poll results', res);
+//        console.log('poll results', res);
         $scope.poll = res.data;
       });
   })
@@ -578,7 +578,7 @@ angular.module('post_controllers', [])
 
     // Update highlighted tab
     $scope.$on('$routeUpdate', function () {
-      console.log('route update')
+//      console.log('route update')
     });
 
     // Bind chat alerts

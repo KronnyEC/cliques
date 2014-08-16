@@ -110,10 +110,10 @@ app.config(['$routeProvider',
     };
 
     Notifications.remove_notification = function (item) {
-      console.log("notification remove", item);
+//      console.log("notification remove", item);
       $http.delete(BACKEND_SERVER + 'notifications/' + item.id + '\/')
         .success(function (res) {
-          console.log('removed notification', item.id);
+//          console.log('removed notification', item.id);
           for (var i = 0; i < Notifications.notifications.length; i++) {
             if (Notifications.notifications[i].id == item.id) {
               Notifications.notifications.splice(i, 1);
@@ -125,7 +125,7 @@ app.config(['$routeProvider',
 
     // Get the first page of results
     $http.get(BACKEND_SERVER + 'notifications\/').success(function (results) {
-      console.log('note results', results);
+//      console.log('note results', results);
       results.results.forEach(function (n) {
         Notifications.notifications.push(n);
       });
@@ -139,7 +139,7 @@ app.config(['$routeProvider',
     // Listen for location changes, remove notifications if user sees page that
     // they were notified about changes on
     $rootScope.$on('$routeUpdate', function () {
-      console.log('remove notifications')
+//      console.log('remove notifications')
     });
 
     return Notifications
@@ -163,24 +163,24 @@ app.config(['$routeProvider',
       var disconnect_threshold = 1000 * 60;
       Users.connected_users = [];
       Users.users.forEach(function (user) {
-        console.log('connected user?', user, now, now - Date.parse(user.last_updated));
+//        console.log('connected user?', user, now, now - Date.parse(user.last_updated));
         if ((now - Date.parse(user.last_updated)) < disconnect_threshold) {
-          console.log('user is connected', user);
+//          console.log('user is connected', user);
           Users.connected_users.push(user);
         }
       });
 //      $rootScope.$apply();
-      console.log('Users.connected_users', Users.connected_users);
+//      console.log('Users.connected_users', Users.connected_users);
     }
 
     var get_users = function () {
       $http.get(BACKEND_SERVER + 'users/').success(function (result) {
-        console.log('users list', result);
+//        console.log('users list', result);
         Users.users = [];
         result.results.forEach(function (user) {
           Users.users.push(user);
         });
-        console.log('users.users', Users.users);
+//        console.log('users.users', Users.users);
         set_connected_users();
       })
     };
@@ -196,12 +196,12 @@ app.config(['$routeProvider',
     };
 
     var stop = $interval(function() {
-      console.log('interval');
+//      console.log('interval');
       check_in()
     }, 15 * 1000);
 
     check_in();
-    console.log('connected', Users);
+//    console.log('connected', Users);
     return Users;
   })
   .factory('Chat', function ($http, $rootScope, $interval, Channel, User, BACKEND_SERVER) {
@@ -210,14 +210,14 @@ app.config(['$routeProvider',
     Chats.messages = Channel.stream;
     Chats.connected_users = [];
     Chats.session = Channel.session;
-    console.log('Chat init', Chats);
+//    console.log('Chat init', Chats);
     var session_data = {
       'id': Chats.session.id
     };
 
     // Get the first page of results
     $http.get(BACKEND_SERVER + 'chat/messages\/').success(function (results) {
-      console.log('messages results', results);
+//      console.log('messages results', results);
       results.results.reverse().forEach(function (message) {
         Chats.messages.push(message);
 
@@ -240,9 +240,9 @@ app.config(['$routeProvider',
       // listeners
       data = angular.fromJson(data.data);
 
-      console.log('message callback', data.type, data.data);
+//      console.log('message callback', data.type, data.data);
       if (data) {
-        console.log('broadcast', data.type, data.data);
+//        console.log('broadcast', data.type, data.data);
         $rootScope.$broadcast(data.type, data.data);
       }
 //      })
@@ -251,7 +251,7 @@ app.config(['$routeProvider',
     var SocketHandler = function (BACKEND_SERVER, session, onMessageCallback) {
       var context = this;
       this.socketCreationCallback = function (token) {
-        console.log('token', token);
+//        console.log('token', token);
         var channel = new goog.appengine.Channel(token);
         context.channelId = channel.channelId;
 
@@ -272,7 +272,7 @@ app.config(['$routeProvider',
     // init
     Notifications.session = $http.post(BACKEND_SERVER + 'push\/', {})
       .success(function (result) {
-        console.log('new session created', result);
+//        console.log('new session created', result);
         return result;
       });
 

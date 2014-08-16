@@ -17,12 +17,17 @@ class UserSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     url = serializers.URLField(source='url', required=False)
     user = UserSerializer(read_only=True)
+    comment_set = serializers.SerializerMethodField('get_comment_set')
 
     class Meta:
         model = Post
         fields = ('id', 'submitted', 'edited', 'user', 'title', 'url', 'type',
                   'category', 'comment_set')
         depth = 1
+
+    def get_comment_set(self, obj):
+        return CommentSerializer(obj.comment_set.all(), many=True,
+                                 read_only=True).data
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -31,7 +36,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('id', 'user', 'text', 'submitted', 'edited', 'post', 'user_ob')
+        fields = ('id', 'user', 'text', 'submitted',
+                  'edited', 'post', 'username')
 
     def get_username(self, obj):
         return obj.user.username
