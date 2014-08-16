@@ -35,7 +35,7 @@ angular.module('post_controllers', [])
         console.log($scope.posts);
         page = post_page;
         busy = false;
-        $scope.$apply();
+//        $scope.$apply();
       });
     };
 

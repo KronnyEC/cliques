@@ -13,11 +13,11 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Determine which environment we're running in.
-if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
+if os.environ.get('SERVER_SOFTWARE', '').startswith('Google App Engine'):
     ENV = 'appengine'
-elif os.getenv('SETTINGS_MODE') == 'prod':
+elif os.environ.get('SETTINGS_MODE') == 'prod':
     ENV = 'localprod'
-elif os.getenv('TRAVIS') == 'True':
+elif os.environ.get('TRAVIS') == 'True':
     ENV = 'travis'
 else:
     ENV = 'local'
@@ -136,8 +136,8 @@ elif ENV == 'localprod':
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'HOST': os.environ.get('APPENGINE_IP'),
-            'NAME': os.environ.get('APPENGINE_NAME'),
-            'USER': os.environ.get('APPENGINE_USERNAME'),
+            'NAME': os.environ.get('APPENGINE_NAME', 'cliques'),
+            'USER': os.environ.get('APPENGINE_USERNAME', 'root'),
             'PASSWORD': os.environ.get('APPENGINE_PASSWORD')
         }
     }

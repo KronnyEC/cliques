@@ -1,5 +1,5 @@
 application: cliquesio
-version: 1
+version: 2
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -21,19 +21,17 @@ handlers:
   static_files: staticfiles/robots.txt
   upload: staticfiles/robots.txt
 - url: /bower_components/
-  static_dir: frontend/bower_components
+  static_dir: web/bower_components
 - url: /js/
-  static_dir: frontend/js
+  static_dir: web/js
 - url: /css/
-  static_dir: frontend/css
-- url: /build/
-  static_dir: frontend/build
+  static_dir: web/css
 - url: /img/
-  static_dir: frontend/img
+  static_dir: web/img
 - url: /templates/
-  static_dir: frontend/templates
+  static_dir: web/templates
 - url: /partials/
-  static_dir: fron tend/partials
+  static_dir: web/partials
 - url: /static/
   static_dir: staticfiles
 - url: /_ah/channel/connected/
@@ -43,8 +41,8 @@ handlers:
 - url: /admin/*.
   script: cliques.wsgi.application
 - url: /
-  static_files: frontend/index.html
-  upload: frontend/index.html
+  static_files: web/index.html
+  upload: web/index.html
 #- url: /*.
 #  script: cliques.wsgi.application
 
@@ -67,9 +65,18 @@ skip_files:
 - ^(.*/)?.*/RCS/.*
 - ^(.*/)?\..*
 - ^(lib/.*)
-#- ^(libs/django/.*)
+- ^(libs/django/.*)
 - ^(bin/.*)
 - ^(share/.*)
 - ^(include/.*)
 - ^(.idea/.*)
 - ^(.git/.*)
+- ^(frontend/.*)
+- ^(cordova/.*)
+- ^(dev/.*)
+- ^(.tox/.*)
+- ^(plugins/.*)
+- ^(.idea/.*)
+- ^(platforms/.*)
+- ^(static/.*)
+- ^(staticfiles/.*)

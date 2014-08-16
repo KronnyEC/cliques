@@ -70,7 +70,7 @@ module.exports = function (grunt) {
       },
       development: {
         options: {
-          dest: 'build/js/cliques_config.js'
+          dest: 'js/cliques_config.js'
         },
         constants: {
           ENV: 'development',
@@ -79,7 +79,7 @@ module.exports = function (grunt) {
       },
       production: {
         options: {
-          dest: 'build/js/cliques_config.js'
+          dest: 'js/cliques_config.js'
         },
         constants: {
           ENV: 'production',
@@ -113,18 +113,18 @@ module.exports = function (grunt) {
           },
           {
             expand: true,
-            src: ['spec/'],
-            dest: 'build/'
+            src: ['spec/*'],
+            dest: 'build/spec/'
           },
           {
             expand: true,
-            src: ['res/'],
-            dest: 'build/'
+            src: ['res/*'],
+            dest: 'build/res/*'
           },
           {
             expand: true,
             src: ['partials/*.html'],
-              dest: 'build/'
+            dest: 'build/'
           },
           {
             expand: true,
@@ -140,33 +140,47 @@ module.exports = function (grunt) {
       www: {
         files: [
           {
-            src: ['build/js/*'],
-            dest: '../www/js/'
-          },
-          {
-            src: ['build/css/*'],
-            dest: '../www/css/'
-          },
-          {
-            src: ['build/partials/*'],
-            dest: '../www/partials/'
-          },
-          {
-            src: ['build/templates/*'],
-            dest: '../www/templates/'
-          },
-          {
-            src: ['build/partials/*'],
-            dest: '../www/partials/'
-          },
-          {
-            src: ['build/index.html'],
-            dest: '../www/index.html'
+            expand: true,
+            src: ['**'],
+            cwd: 'build',
+            dest: '../web'
           }
+//          {
+//            cwd: 'build/js',
+//            src: ['**'],
+//            dest: '../www/js'
+//          },
+//          {
+//            cwd: 'build/css',
+//            src: ['**'],
+//            dest: '../www/css'
+//          },
+//          {
+//            cwd: 'build/partials',
+//            src: ['**'],
+//            dest: '../www/partials'
+//          },
+//          {
+//            cwd: 'build/templates',
+//            src: ['**'],
+//            dest: '../www/templates'
+//          },
+//          {
+//            src: ['build/index.html'],
+//            dest: '../www/index.html'
+//          }
         ]
       },
       app: {
-        files: []
+        files: [
+          {
+            expand: true,
+            src: ['**'],
+            cwd: 'build',
+            dest: '../cordova/www'
+          }
+
+        ]
       }
     },
     useminPrepare: {
@@ -185,6 +199,72 @@ module.exports = function (grunt) {
       options: {
         concat: 'generated'
       }
+    },
+    cordovacli: {
+      options: {
+        path: '../cordova/www'
+      },
+      cordova: {
+        options: {
+          command: ['platform', 'plugin', 'build'],
+          platforms: ['ios', 'android'],
+          plugins: ['device', 'dialogs'],
+          path: '../cordova/www',
+          id: 'io.cordova.hellocordova',
+          name: 'HelloCordova'
+        }
+      },
+//      add_platforms: {
+//        options: {
+//          command: 'platform',
+//          action: 'add',
+//          platforms: ['ios', 'android']
+//        }
+//      },
+      add_plugins: {
+        options: {
+          command: 'plugin',
+          action: 'add',
+          plugins: [
+//            'battery-status',
+//            'camera'
+//            'console',
+//            'contacts',
+//            'device',
+//            'device-motion',
+//            'device-orientation',
+//            'dialogs',
+//            'file',
+//            'geolocation',
+//            'globalization',
+//            'inappbrowser',
+//            'media',
+//            'media-capture',
+//            'network-information',
+//            'splashscreen',
+//            'vibration'
+          ]
+        }
+      },
+      build_ios: {
+        options: {
+          command: 'build',
+          platforms: ['ios']
+        }
+      },
+      build_android: {
+        options: {
+          command: 'build',
+          platforms: ['android']
+        }
+      },
+      emulate_android: {
+        options: {
+          command: 'emulate',
+          platforms: ['android'],
+          args: ['--target', 'Nexus5']
+        }
+      }
     }
 
 
@@ -202,6 +282,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-filerev');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-cordovacli');
 
   grunt.registerTask('app', [
     'copy:app'
@@ -215,6 +296,20 @@ module.exports = function (grunt) {
   grunt.registerTask('default', [
     'clean:build',
     'ngconstant:development',
+    'csslint',
+    'useminPrepare',
+    'concat:generated',
+    'cssmin:generated',
+    'ngAnnotate:generated',
+    'uglify',
+    'copy:generated',
+//    'filerev',
+    'usemin'
+  ]);
+
+  grunt.registerTask('prod', [
+    'clean:build',
+    'ngconstant:production',
     'csslint',
     'useminPrepare',
     'concat:generated',

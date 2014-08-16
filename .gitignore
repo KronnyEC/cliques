@@ -47,3 +47,5 @@ frontend/platforms
 frontend/www/build
 dev/
 .tmp
+cordova/www
+prod_exports

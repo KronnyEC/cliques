@@ -169,7 +169,7 @@ app.config(['$routeProvider',
           Users.connected_users.push(user);
         }
       });
-      $rootScope.$apply();
+//      $rootScope.$apply();
       console.log('Users.connected_users', Users.connected_users);
     }
 
@@ -239,13 +239,13 @@ app.config(['$routeProvider',
       // Call back on every Channel message. Broadcast out with type to
       // listeners
       data = angular.fromJson(data.data);
-      $rootScope.$apply(function () {
-        console.log('message callback', data.type, data.data);
-        if (data) {
-          console.log('broadcast', data.type, data.data);
-          $rootScope.$broadcast(data.type, data.data);
-        }
-      })
+
+      console.log('message callback', data.type, data.data);
+      if (data) {
+        console.log('broadcast', data.type, data.data);
+        $rootScope.$broadcast(data.type, data.data);
+      }
+//      })
     };
 
     var SocketHandler = function (BACKEND_SERVER, session, onMessageCallback) {
