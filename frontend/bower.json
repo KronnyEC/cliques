@@ -1,6 +1,6 @@
 {
-  "name": "www",
-  "version": "0.0.0",
+  "name": "cliques",
+  "version": "0.1.0",
   "homepage": "https://github.com/pcsforeducation/cliques",
   "authors": [
     "Josh Gachnang <josh@servercobra.com>"
@@ -13,8 +13,36 @@
     "test",
     "tests"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "angular-animate": "~1.2.21",
+    "angular-cookies": "~1.2.21",
+    "angular-local-storage": "~0.0.5",
+    "angular-mm-foundation": "~0.3.0",
+    "angular-mocks": "~1.2.18",
+    "angular-route": "~1.2.21",
+    "angular-resource": "~1.2.21",
+    "angular-touch": "~1.2.21",
+    "context-free-parser": "Polymer/context-free-parser#>=0.3.0 <1.0.0",
+    "core-collapse": "Polymer/core-collapse#>=0.3.0 <1.0.0",
+    "core-drawer-panel": "Polymer/core-drawer-panel#>=0.3.0 <1.0.0",
+    "core-icon-button": "Polymer/core-icon-button#>=0.3.0 <1.0.0",
+    "core-header-panel": "Polymer/core-header-panel#>=0.3.0 <1.0.0",
+    "core-item": "Polymer/core-item#>=0.3.0 <1.0.0",
+    "core-menu": "Polymer/core-menu#>=0.3.0 <1.0.0",
+    "font-roboto": "Polymer/font-roboto#>=0.3.0 <1.0.0",
+    "core-toolbar": "Polymer/core-toolbar#>=0.3.0 <1.0.0",
+    "highlightjs": "*",
+    "foundation": "~5.3.3",
+    "jquery-cookie": "~1.4.1",
+    "highlightjs-element": "PolymerLabs/highlightjs-element#>=0.3.0 <1.0.0",
+    "marked-element": "PolymerLabs/marked-element#>=0.3.0 <1.0.0",
+    "ngInfiniteScroll": "1.0.0",
+    "sampler-scaffold": "Polymer/sampler-scaffold#>=0.3.0 <1.0.0"
+  },
   "resolutions": {
     "angular": "1.2.21"
-  }
+  },
+  "description": "A small, private social network site",
+  "main": "js/app.js",
+  "private": true
 }

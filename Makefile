@@ -44,8 +44,9 @@ install_osx:
 	mysql.server start
 
 install:
-	npm install grunt grunt-cli
-	cd frontend/ && npm install && cd ..
+	npm install -g grunt grunt-cli bower
+	cd frontend/ && npm install
+	cd frontend/ && bower install
 	pip install tox
 	tox -e dev
 #	msyql -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'create database IF NOT EXISTS cliques'
