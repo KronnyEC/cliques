@@ -70,7 +70,7 @@ module.exports = function (grunt) {
       },
       development: {
         options: {
-          dest: 'js/cliques_config.js'
+          dest: 'build/js/cliques_config.js'
         },
         constants: {
           ENV: 'development',
@@ -79,7 +79,7 @@ module.exports = function (grunt) {
       },
       production: {
         options: {
-          dest: 'js/cliques_config.js'
+          dest: 'build/js/cliques_config.js'
         },
         constants: {
           ENV: 'production',

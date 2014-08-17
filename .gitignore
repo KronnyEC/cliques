@@ -49,3 +49,4 @@ dev/
 .tmp
 cordova/www
 prod_exports
+web/

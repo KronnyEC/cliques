@@ -1,0 +1,27 @@
+<div class="chat_box" data-ng-init="init()" ng-controller="ChatCtrl">
+  <div class="connected_users_container">
+    <span class="connect_users_title">Connected Users</span>
+
+    <div class="connected_users" ng-controller="UsersCtrl">
+      <span ng-repeat="user in connected_users">
+        {{ user.username }}<span ng-if="!$last">,</span>
+      </span>
+    </div>
+  </div>
+
+  <div id="chat_messages" class="chat_messages">
+    <div class="message" ng-repeat="message in messages" title="{{ message.sent | DTSince }}">
+      <span class="username">{{ message.username }}:</span> <span class="text">{{ message.message | ChatMessageFilter }}</span>
+    </div>
+  </div>
+  <form name="chat_server" id="chat_form" ng-submit="send_message()">
+    <div class="row collapse">
+      <div class="small-10 columns">
+        <input name="text" type="text" placeholder="Chat" id="chat_box" ng-model="text" ng-enter="send_message()">
+      </div>
+      <div class="small-2 columns">
+        <button class="button postfix chat_send" id="chat_send">Send</button>
+      </div>
+    </div>
+  </form>
+</div>

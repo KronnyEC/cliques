@@ -26,6 +26,8 @@ handlers:
   static_dir: web/js
 - url: /css/
   static_dir: web/css
+- url: /fonts/
+  static_dir: web/fonts
 - url: /img/
   static_dir: web/img
 - url: /templates/
