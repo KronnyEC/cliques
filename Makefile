@@ -61,6 +61,12 @@ deploy: sync_appengine
 rollback:
 	appcfg.py rollback .
 
+serve:
+	dev_appserver.py dev.yaml
+
+staging:
+	dev_appserver.py staging.yaml
+
 whoopee:
 	echo "Sorry, I'm not in the mood"
 

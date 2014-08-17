@@ -24,7 +24,8 @@ module.exports = function (grunt) {
         absoluteFilePathsForFormatters: true,
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
         "important": false,
-        "unqualified-attributes": false
+        "unqualified-attributes": false,
+        "bulletproof-font-face": false
 
       },
       lax: {
@@ -124,6 +125,11 @@ module.exports = function (grunt) {
           {
             expand: true,
             src: ['partials/*.html'],
+            dest: 'build/'
+          },
+          {
+            expand: true,
+            src: ['fonts/*'],
             dest: 'build/'
           },
           {

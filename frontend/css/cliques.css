@@ -21,15 +21,15 @@ Holo Theme
 
 @font-face {
     font-family: 'Baumans';
-    src: url('../fonts/Baumans/Baumans-Regular.ttf');
+    src: url('../fonts/Baumans-Regular.ttf');
 }
 @font-face {
     font-family: 'Droid Sans';
-    src: url('../fonts/Droid_Sans/DroidSans.ttf');
+    src: url('../fonts/DroidSans.ttf');
 }
 @font-face {
     font-family: 'Play';
-    src: url('../fonts/Play/Play-Regular.ttf');
+    src: url('../fonts/Play-Regular.ttf');
 }
 
 .content {
@@ -361,11 +361,11 @@ body, html {
 /*Icomoon*/
 @font-face {
     font-family: 'icomoon';
-    src: url('../fonts/icomoon/icomoon.eot?3m559g');
-    src: url('../fonts/icomoon/icomoon.eot?#iefix3m559g') format('embedded-opentype'),
-    url('../fonts/icomoon/icomoon.woff?3m559g') format('woff'),
-    url('../fonts/icomoon/icomoon.ttf?3m559g') format('truetype'),
-    url('../fonts/icomoon/icomoon.svg?3m559g#icomoon') format('svg');
+    src: url('../fonts/icomoon.eot?3m559g');
+    src: url('../fonts/icomoon.eot?#iefix3m559g') format('embedded-opentype'),
+    url('../fonts/icomoon.woff?3m559g') format('woff'),
+    url('../fonts/icomoon.ttf?3m559g') format('truetype'),
+    url('../fonts/icomoon.svg?3m559g#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
