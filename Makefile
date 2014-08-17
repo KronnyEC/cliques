@@ -1,6 +1,6 @@
 all: clean test www app
 
-prod: clean test www_prod app_prod deploy
+prod: clean test www_prod app_prod
 
 build_frontend_prod:
 	grunt --gruntfile frontend/Gruntfile.js prod
