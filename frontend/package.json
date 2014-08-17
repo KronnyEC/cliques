@@ -15,6 +15,7 @@
     "grunt-filerev": "~0.2.1",
     "grunt-concat": "~0.1.6",
     "grunt-ng-annotate": "~0.3.2",
-    "grunt-cordovacli": "~0.4.0"
+    "grunt-cordovacli": "~0.4.0",
+    "grunt-eslint": "~1.0.0"
   }
 }

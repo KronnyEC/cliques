@@ -17,10 +17,14 @@ if os.environ.get('SERVER_SOFTWARE', '').startswith('Google App Engine'):
     ENV = 'appengine'
 elif os.environ.get('SETTINGS_MODE') == 'prod':
     ENV = 'localprod'
-elif os.environ.get('TRAVIS') == 'True':
+elif os.environ.get('SETTINGS_MODE') == 'CODESHIP':
+    ENV = 'codeship'
+elif os.environ.get('TRAVIS'):
     ENV = 'travis'
 else:
     ENV = 'local'
+
+print 'ENV', ENV
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -91,7 +95,7 @@ MIDDLEWARE_CLASSES = (
 )
 CORS_ORIGIN_ALLOW_ALL = True
 
-if ENV in ['localprod', 'local']:
+if ENV in ['localprod', 'local', 'codeship', 'travis']:
     INSTALLED_APPS += [
         'south',
         # 'debug_toolbar',
@@ -145,13 +149,27 @@ elif ENV == 'localprod':
     EMAIL_SENDER = 'josh@slashertraxx.com'
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     # EMAIL_BACKEND = 'djangoappengine.mail.EmailBackend'
+elif ENV == 'codeship':
+    # Running in development, so use a local MySQL database.
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'test',
+            'USER': os.environ.get('MYSQL_USER'),
+            'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+        }
+    }
+    MAIL_PROVIDER = 'DJANGO'
+    EMAIL_SENDER = 'josh@slashertraxx.com'
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 elif ENV == 'travis':
     # Running in development, so use a local MySQL database.
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'cliques',
-            'USER': 'travis',
+            'USER': 'root',
+            'HOST': '127.0.0.1',
         }
     }
     MAIL_PROVIDER = 'DJANGO'

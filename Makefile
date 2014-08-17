@@ -44,11 +44,14 @@ install_osx:
 	mysql.server start
 
 install:
+	npm install grunt grunt-cli
+	cd frontend/ && npm install && cd ..
 	pip install tox
 	tox -e dev
-#	msyql -uroot -p -e 'create database cliques'
-	dev/bin/python manage.py syncdb --noinput
-	dev/bin/python manage.py migrate --noinput
+#	msyql -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'create database IF NOT EXISTS cliques'
+        DJANGO_SETTINGS_MODULE="cliques.settings" python manage.py help
+	DJANGO_SETTINGS_MODULE="cliques.settings" dev/bin/python manage.py syncdb --noinput
+	DJANGO_SETTINGS_MODULE="cliques.settings" dev/bin/python manage.py migrate --noinput
 
 sync_appengine:
 #	source prod_exports

@@ -26,7 +26,6 @@ def get_cookie(request):
 
 @api_view(['POST'])
 def check_in(request):
-    print "CHECKIN", request.user
     request.user.save()
     logger.info('{} checked in '.format(request.user))
     return HttpResponse(status=201)

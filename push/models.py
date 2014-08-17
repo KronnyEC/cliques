@@ -50,10 +50,12 @@ def get_all_connected(user=None):
         last_update__gt=timeout_dt)
     if user:
         sessions = sessions.filter(user=user)
+    logger.debug("Conencted users: {}".format(sessions))
     return sessions
 
 
 def send_all(message_type, message, user=None):
     sessions = get_all_connected(user)
+    logger.info("Sending {}:{} to {}".format(message_type, message, sessions))
     for session in sessions:
         session.send_message(message_type, message)

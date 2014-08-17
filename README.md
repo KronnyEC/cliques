@@ -3,13 +3,7 @@ cliques
 
 A private social network focused on small (under 25 people) groups.
 
-1. Install the necessary system packages: `sudo apt-get install python-dev git`
-
-1. First, install tox `sudo pip install tox`
-
-1. Then run `tox -e dev` to create your dev environment.
-
-1. Run `bash install_libs.sh` to symlink your installed Python libraries to a place that App Engine can access them. 
+1. Install the necessary system packages: `make install`. You can run `make install_ubuntu` or `make install_osx` to install system packages first.
 
 1. Create a 'cliques' database in your database with: `mysql -uroot -p` then `create database cliques`. Note:
 we're running cliques database as root. Don't do this in production.
