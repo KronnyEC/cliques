@@ -25,3 +25,6 @@ To run the App Engine dev server, run `dev_appserver.py app.yaml` in the root di
 Running `make test` will run the entire test suite, both the Django backend and the frontend. Travis will run these tests on commit as well.
 
 [![Build Status](https://travis-ci.org/pcsforeducation/cliques.svg?branch=master)](https://travis-ci.org/pcsforeducation/cliques)
+
+[ ![Codeship Status for pcsforeducation/cliques](https://codeship.io/projects/0fb2e970-0825-0132-8774-7a8fe1d63f6e/status)](https://codeship.io/projects/31328)
+

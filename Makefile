@@ -47,8 +47,8 @@ install:
 	sudo pip install tox
 	tox -e dev
 	msyql -uroot -p -e 'create database cliques'
-	dev/bin/python manage.py syncdb
-	dev/bin/python manage.py migrate
+	dev/bin/python manage.py syncdb --noinput
+	dev/bin/python manage.py migrate --noinput
 
 sync_appengine:
 #	source prod_exports
