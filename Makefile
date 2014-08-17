@@ -1,6 +1,6 @@
 all: clean test www app
 
-prod: clean test www_prod app_prod
+prod: clean test www_prod app_prod link_libs
 
 build_frontend_prod:
 	grunt --gruntfile frontend/Gruntfile.js prod
@@ -19,6 +19,10 @@ app_prod: build_frontend_prod
 
 app: build_frontend
 	grunt --gruntfile frontend/Gruntfile.js app
+
+link_libs:
+	mkdir -p libs
+	bash install_libs.sh
 
 test:
 	grunt --gruntfile frontend/Gruntfile.js csslint
