@@ -44,9 +44,9 @@ install_osx:
 	mysql.server start
 
 install:
-	sudo pip install tox
+	pip install tox
 	tox -e dev
-	msyql -uroot -p -e 'create database cliques'
+#	msyql -uroot -p -e 'create database cliques'
 	dev/bin/python manage.py syncdb --noinput
 	dev/bin/python manage.py migrate --noinput
 
