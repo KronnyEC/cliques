@@ -148,14 +148,6 @@ app.config(['$routeProvider',
     var Users = {};
     Users.users = [];
     Users.connected_users = [];
-    Users.get_users = function() {
-      if (Users.users == []) {
-        return
-      }
-      else {
-        return Users.users;
-      }
-    }
 
     function set_connected_users() {
       var now = new Date();

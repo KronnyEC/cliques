@@ -454,7 +454,7 @@ angular.module('post_controllers', [])
       });
   })
 
-  .controller('PollDetailCtrl', function ($scope, $http, $routeParams, $location, BACKEND_SERVER) {
+  .controller('PollDetailCtrl', function ($scope, $http, $routeParams, $location, User, BACKEND_SERVER) {
     $scope.pollStub = $routeParams.pollStub;
 //    console.log('/#/polls/' + $scope.pollStub);
     $scope.new_submission_submit = function () {
@@ -478,16 +478,32 @@ angular.module('post_controllers', [])
       });
     };
     $scope.removeVote = function (id) {
-//      console.log('removeVote');
+      // Find the matching user vote
+      var vote;
+      $scope.user.user_votes.forEach(function(user_vote) {
+        if (user_vote.submission == id) {
+          vote = user_vote;
+        }
+      });
+      if (vote == undefined) {
+        console.log('Could not find matching vote for ', id);
+        return
+      }
       $http({
-        url: BACKEND_SERVER + 'votes/' + id + '\/',
+        url: BACKEND_SERVER + 'votes/' + vote.id + '\/',
         method: "DELETE",
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
           'Authorization': 'Token ' + localStorage.getItem('token')
         }
       }).success(function (data, status, headers, config) {
-        console.log('vote killed', data);
+        console.log('vote killed', data, vote);
+        console.log('submissions', $scope.poll.poll_submissions)
+        $scope.poll.poll_submissions.forEach(function(submission) {
+          if (submission.id == vote.submission) {
+            submission.voted = false;
+          }
+        });
       }).error(function ($scope, data, status, headers, config) {
         console.log('error', data);
       })
@@ -505,7 +521,14 @@ angular.module('post_controllers', [])
           'Authorization': 'Token ' + localStorage.getItem('token')
         }
       }).success(function (data, status, headers, config) {
-        consol.log('new vote', data);
+        console.log('new vote', data);
+        $scope.user.user_votes.push(data);
+        // Update the submission
+        $scope.poll.poll_submissions.forEach(function(submission) {
+          if (submission.id == data.submission) {
+            submission.voted = true;
+          }
+        });
       }).error(function ($scope, data, status, headers, config) {
         console.log('error', data);
       })
@@ -513,8 +536,26 @@ angular.module('post_controllers', [])
 
     $http.get(BACKEND_SERVER + 'polls/' + $scope.pollStub + '\/')
       .then(function (res) {
-//        console.log('poll results', res);
         $scope.poll = res.data;
+        // find user
+        var user;
+        User.users.forEach(function(site_user) {
+          if (localStorage.getItem('username') == site_user.username) {
+            user = site_user;
+          }
+        });
+        console.log('user is', user);
+
+        $scope.poll.poll_submissions.forEach(function(submission) {
+          console.log('sub votes', submission, user.user_votes);
+          var voted = false;
+          user.user_votes.forEach(function(vote) {
+            if (vote.submission == submission.id) {
+              voted = true;
+            }
+          });
+          submission.voted = voted;
+        })
       });
   })
 

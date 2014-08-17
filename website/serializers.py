@@ -1,3 +1,4 @@
+from poll.serializers import VoteSerializer
 from rest_framework import serializers
 from website.models import UserProfile, Post, Comment, Category
 
@@ -5,6 +6,7 @@ from website.models import UserProfile, Post, Comment, Category
 class UserSerializer(serializers.ModelSerializer):
     posts = serializers.HyperlinkedIdentityField(
         'posts', view_name='userpost-list', lookup_field='username')
+    user_votes = serializers.SerializerMethodField('get_user_votes')
 
     class Meta:
         model = UserProfile
@@ -12,6 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'profile_pic', 'email', 'first_name',
             'last_name', 'poll_votes', 'user_votes', 'last_updated'
         )
+
+    def get_user_votes(self, obj):
+        return VoteSerializer(obj.user_votes.all(), many=True,
+                              read_only=True).data
 
 
 class PostSerializer(serializers.ModelSerializer):

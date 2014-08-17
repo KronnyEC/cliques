@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django import forms
 from website.utils import detect_content_type
@@ -31,16 +32,11 @@ class Submission(models.Model):
     # The text that will be show below a winning submission
 
     def save(self, *args, **kwargs):
-        if self.id is None:
-            new = True
-        else:
-            new = False
-
+        if Submission.objects.filter(user=self.user).count() > 4:
+            raise ValidationError('More than 5 submissions.')
         super(Submission, self).save(*args, **kwargs)
         # Check if text field is
         self.type = detect_content_type(self.url)
-        if not new:
-            return
 
     def __unicode__(self):
         return "{}: {}".format(self.user, self.title)
@@ -57,14 +53,10 @@ class Vote(models.Model):
     user = models.ForeignKey(UserProfile, related_name='user_votes')
     day = models.DateField(auto_now_add=True)
 
-    class Meta:
-        """One vote per user per day. Problem if votes are counted at 5am..
-        TODO(pcsforeducation) fix the uniqueness here. Also need to point
-        at the poll. This only supports one vote across all polls, rather than
-        one vote per poll per day per user.
-
-        """
-        unique_together = (('user', 'day'))
+    def validate_unique(self, exclude=None):
+        super(Vote, self).validate_unique(exclude)
+        if Vote.objects.filter(user=self.user).count() > 2:
+            raise ValidationError('More than 3 votes.')
 
     def __unicode__(self):
         return "{} voted on {} on {}".format(self.user.username,

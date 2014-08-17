@@ -42,6 +42,8 @@ handlers:
   script: cliques.wsgi.application
 - url: /admin/*.
   script: cliques.wsgi.application
+- url: /cron/*.
+  script: cliques.wsgi.application
 - url: /
   static_files: web/index.html
   upload: web/index.html

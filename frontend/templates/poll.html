@@ -29,11 +29,11 @@
     <div class="row">
       <div
           class="large-4 large-offset-4 small-8 small-offset-2 columns submission_vote">
-        <div class="vote_button" ng-if="user.user_votes[0] == submission.id">
+        <div class="vote_button" ng-if="submission.voted == true">
           <a class="button tiny alert submission_vote_button"
              ng-click="removeVote(submission.id)">Remove</a>
         </div>
-        <div class="vote_button" ng-if="user.user_votes[0] != submission.id">
+        <div class="vote_button" ng-if="submission.voted == false">
           <a class="button tiny submission_vote_button"
              ng-click="addVote(submission.id)">Vote</a>
         </div>
