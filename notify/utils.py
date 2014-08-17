@@ -2,10 +2,12 @@ from notify.models import Notification
 from website.models import UserProfile
 
 
-def notify_users(user_ids, text, link, type, level):
+def notify_users(user_ids, from_user, text, link, type, level):
         notifications = []
         for user in user_ids:
-            notifications.append(Notification(user_id=user, text=text,
+            notifications.append(Notification(user_id=user,
+                                              from_user=from_user,
+                                              text=text,
                                               type=type,
                                               link=link,
                                               level=level))

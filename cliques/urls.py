@@ -123,6 +123,8 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     url('^_ah/warmup$', 'website.views.warmup'),
 
+    url(r'^cron/poll/$', 'poll.views.cron'),
+
     # API
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),

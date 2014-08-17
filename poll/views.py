@@ -108,6 +108,7 @@ def _post_winning_submission(poll, submission_id):
     # Notify the winner they won
     notify.utils.notify_users(
         user_ids=[winning_user.id],
+        from_user=UserProfile.objects.get(username=poll.bot_name),
         text="Your {} submission won!".format(poll.title),
         link="http://www.slashertraxx.com/post/{}/".format(post.id),
         type='comment',

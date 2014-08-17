@@ -70,6 +70,7 @@ skip_files:
 - ^(.*/)?\..*
 - ^(lib/.*)
 - ^(libs/django/.*)
+- ^(google/.*)
 - ^(bin/.*)
 - ^(share/.*)
 - ^(include/.*)
