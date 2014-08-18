@@ -61,6 +61,7 @@ class Post(models.Model):
                                   null=True,
                                   upload_to='media'
     )
+    nsfw = models.BooleanField(default=False)
     category = models.ForeignKey(Category)
 
     def save(self, *args, **kwargs):

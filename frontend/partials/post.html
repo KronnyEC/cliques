@@ -1,6 +1,7 @@
 <div class="post" ng-switch="post.type">
   <div class="image" ng-switch-when="image">
     <h4 class="title">
+      <span class="round label nsfw_label" ng-show="post.nsfw">NSFW</span>
       <a href="/#/posts/{{ post.id }}">{{ post.title }}</a>
     </h4>
     <media></media>
@@ -8,6 +9,7 @@
 
   <div class="youtube" ng-switch-when="youtube">
     <h4 class="title">
+      <span class="round label nsfw_label" ng-show="post.nsfw">NSFW</span>
       <a href="/#/posts/{{ post.id }}">{{ post.title }}</a>
     </h4>
     <media></media>
@@ -15,6 +17,7 @@
 
   <div class="video" ng-switch-when="video">
     <h4 class="title">
+      <span class="round label nsfw_label" ng-show="post.nsfw">NSFW</span>
       <a href="/#/posts/{{ post.id }}">{{ post.title }}</a>
     </h4>
     <media></media>
@@ -22,6 +25,7 @@
 
   <div class="link" ng-switch-when="link">
     <h4 class="title">
+      <span class="round label nsfw_label" ng-show="post.nsfw">NSFW</span>
       <a href="{{ post.url }}"
          target="_blank">{{ post.title }}</a>
     </h4>
@@ -29,6 +33,7 @@
 
   <div class="text" ng-switch-default>
     <h4 class="title">
+      <span class="round label nsfw_label" ng-show="post.nsfw">NSFW</span>
       <a href="/#/posts/{{ post.id }}">{{ post.title }}</a>
     </h4>
   </div>

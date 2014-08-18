@@ -30,6 +30,7 @@ angular.module('post_controllers', [])
       .then(function (res) {
         res.data.results.forEach(function (result) {
           result.youtube = youtube_url_to_id(result.url);
+          result.nsfw_show = false;
           $scope.posts.push(result);
         });
 //        console.log($scope.posts);
@@ -47,6 +48,11 @@ angular.module('post_controllers', [])
       add_pages(page + 1);
       console.log('scroll!');
     };
+
+    $scope.toggleNSFW = function(post) {
+      post.nsfw_show = !post.nsfw_show;
+    };
+
     $scope.trustSrc = function (src) {
       return $sce.trustAsResourceUrl(src);
     };

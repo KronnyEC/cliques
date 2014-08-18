@@ -60,8 +60,8 @@ install:
 
 sync_appengine:
 #	source prod_exports
-	bin/python manage.py syncdb
-	bin/python manage.py migrate
+	SETTINGS_MODE=prod bin/python manage.py syncdb
+	SETTINGS_MODE=prod bin/python manage.py migrate
 
 deploy: sync_appengine
 	appcfg.py update .

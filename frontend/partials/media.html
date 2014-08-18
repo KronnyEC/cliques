@@ -4,8 +4,11 @@
             src="{{ trustSrc('https://youtube.com/embed/' + post.youtube + '?disablekb=1&enablejsapi=1&modestbranding=1&rel=0&showinfo=0&autohide=1&iv_load_policy=3') }}" frameborder="0" allowfullscreen></iframe>
   </div>
   <div ng-switch-when="image">
+    <div class="nsfw_show" ng-click="toggleNSFW(post)" ng-hide="post.nsfw_show || !post.nsfw" src="/img/nsfw.jpg">
+      <p>Click</p><p>to show</p>
+    </div>
     <a href="/#/posts/{{ post.id }}">
-      <img src="{{ post.url }}">
+      <img ng-show="post.nsfw_show || !post.nsfw" src="{{ post.url }}">
     </a>
   </div>
 </div>

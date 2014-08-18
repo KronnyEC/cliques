@@ -21,7 +21,7 @@ logger = logging.getLogger()
 def vote(request, poll_stub, submission_id):
     # TODO(pcsforeducation) make this AJAX and POST only.
     # if request.method != "POST":
-    #     return HttpResponseBadRequest('Must be a POST')
+    # return HttpResponseBadRequest('Must be a POST')
     try:
         submission = Submission.objects.get(id=submission_id)
     except:
@@ -90,7 +90,8 @@ def _post_winning_submission(poll, submission_id):
                 category=poll.category,
                 title="{}: {}".format(poll.stub, submission.title),
                 url=submission.url,
-                type='image')
+                type='image',
+                nsfw=True)
     post.save()
     text = poll.winning_text.format(
         title=poll.title,

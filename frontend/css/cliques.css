@@ -23,10 +23,12 @@ Holo Theme
     font-family: 'Baumans';
     src: url('../fonts/Baumans-Regular.ttf');
 }
+
 @font-face {
     font-family: 'Droid Sans';
     src: url('../fonts/DroidSans.ttf');
 }
+
 @font-face {
     font-family: 'Play';
     src: url('../fonts/Play-Regular.ttf');
@@ -602,4 +604,24 @@ textarea:active {
 
 fieldset legend {
     background: none;
+}
+
+.nsfw_show {
+    /*height: 250px;*/
+    /*width: 80%;*/
+    margin: 0 auto 15px auto;
+    text-align: center;
+    padding: 80px 0;
+    background-color: #ccc;
+}
+
+.nsfw_show p {
+    font-size: 150%;
+    font-weight: bold;
+}
+
+.nsfw_label {
+    line-height: .8;
+    padding: 0.375rem 0.5rem 0.375rem;
+    margin-bottom: 2px;
 }

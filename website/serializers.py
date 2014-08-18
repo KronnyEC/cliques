@@ -28,7 +28,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('id', 'submitted', 'edited', 'user', 'title', 'url', 'type',
-                  'category', 'comment_set')
+                  'category', 'comment_set', 'nsfw')
         depth = 1
 
     def get_comment_set(self, obj):

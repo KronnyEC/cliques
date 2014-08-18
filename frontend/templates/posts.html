@@ -24,6 +24,11 @@
                 ng-options="category.id as category.name for category in cats"></select><br>
       </div>
 
+      <div class="small-12 large-12 columns text_label">
+        <input id="nsfw_checkbox" type="checkbox" name="nsfw" ng-model="formData.nsfw">
+        <label for="nsfw_checkbox">NSFW</label>
+      </div>
+
       <button type="submit" class="button tiny">Submit</button>
     </form>
   </div>
