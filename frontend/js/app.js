@@ -134,6 +134,7 @@ app.config(['$routeProvider',
     // Listen to Channel updates for notifications
     $rootScope.$on('notification', function (event, message) {
       Notifications.notifications.push(message);
+      $rootScope.$apply();
     });
 
     // Listen for location changes, remove notifications if user sees page that
@@ -218,6 +219,7 @@ app.config(['$routeProvider',
 
     $rootScope.$on('chat', function (event, message) {
       Chats.messages.push(message);
+      $rootScope.$apply();
     });
 
     return Chats;
